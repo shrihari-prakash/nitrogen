@@ -13,7 +13,7 @@ import UsersContext from "./context/users-context";
 import RolesContext from "./context/roles-context";
 import SettingsContext from "./context/settings-context";
 import MeContext from "./context/me-context";
-import { KeyRound, Loader } from "lucide-react";
+import { KeyRound } from "lucide-react";
 
 let roleFetchInProgess = false;
 let settingsFetchInProgess = false;
