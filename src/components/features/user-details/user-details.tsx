@@ -112,7 +112,7 @@ const UserDetails = function () {
             </div>
           </div>
           <SheetFooter className="flex-col">
-            <Button type="submit" className="mb-2">
+            <Button type="submit" className="mb-3">
               <Save className="h-4 w-4 mr-2" /> Save changes
             </Button>
             <SheetClose asChild>
