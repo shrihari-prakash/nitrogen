@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,15 +13,37 @@ import {
 } from "@/components/ui/sheet";
 import { Copy, Save, XCircle } from "lucide-react";
 import { useLocation } from "wouter";
+import axiosInstance from "@/service/axios";
+import { User } from "@/types/user";
 
-const UserDetails = function () {
+const UserDetails = function ({ params }: { params: { id: string } }) {
   const [, setLocation] = useLocation();
+  const [user, setUser] = useState<any | User>({});
+  const [loadError, setLoadError] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const userRef = useRef({});
 
   const onOpenChange = (state: boolean) => {
     if (!state) {
       setLocation("/users");
     }
   };
+
+  useEffect(() => {
+    setLoadError(false);
+    setUser({});
+    userRef.current = {};
+    axiosInstance
+      .get("/user/admin-api/user-info?targets=" + params.id)
+      .then((response) => {
+        setUser(response.data.data.users[0]);
+      })
+      .catch(() => {
+        setLoadError(true);
+      });
+  }, [params.id, setUser]);
+
   return (
     <>
       <Sheet defaultOpen={true} onOpenChange={onOpenChange}>
@@ -39,7 +62,7 @@ const UserDetails = function () {
               <div className="flex col-span-3">
                 <Input
                   id="_id"
-                  defaultValue="60807050402010"
+                  defaultValue={params.id}
                   disabled
                   className="flex-1"
                 />
@@ -54,7 +77,7 @@ const UserDetails = function () {
               </Label>
               <Input
                 id="username"
-                defaultValue="@peduarte"
+                defaultValue={user.username}
                 className="col-span-3"
               />
             </div>
@@ -64,19 +87,19 @@ const UserDetails = function () {
               </Label>
               <Input
                 id="firstName"
-                defaultValue="Pedro"
+                defaultValue={user.firstName}
                 className="col-span-3"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="middleName" className="text-right">
+              <Label
+                htmlFor="middleName"
+                defaultValue={user.middleName}
+                className="text-right"
+              >
                 Middle Name
               </Label>
-              <Input
-                id="middleName"
-                defaultValue="Pedro"
-                className="col-span-3"
-              />
+              <Input id="middleName" defaultValue="" className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="lastName" className="text-right">
@@ -84,7 +107,7 @@ const UserDetails = function () {
               </Label>
               <Input
                 id="lastName"
-                defaultValue="Duarte"
+                defaultValue={user.lastName}
                 className="col-span-3"
               />
             </div>
@@ -94,7 +117,7 @@ const UserDetails = function () {
               </Label>
               <Input
                 id="email"
-                defaultValue="johndoe@gmail.com"
+                defaultValue={user.email}
                 className="col-span-3"
               />
             </div>
@@ -102,13 +125,17 @@ const UserDetails = function () {
               <Label htmlFor="password" className="text-right">
                 Password
               </Label>
-              <Input id="password" className="col-span-3" />
+              <Input id="password" type="password" className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="organization" className="text-right">
                 Organization
               </Label>
-              <Input id="organization" className="col-span-3" />
+              <Input
+                id="organization"
+                defaultValue={user.organization}
+                className="col-span-3"
+              />
             </div>
           </div>
           <SheetFooter className="flex-col">
