@@ -31,22 +31,34 @@ const UserDetails = function () {
           </SheetHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="username" className="text-right">
+                Username
+              </Label>
+              <Input
+                id="username"
+                defaultValue="@peduarte"
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
                 First Name
               </Label>
-              <Input id="firstName" defaultValue="Pedro" className="col-span-3" />
+              <Input
+                id="firstName"
+                defaultValue="Pedro"
+                className="col-span-3"
+              />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
                 Last Name
               </Label>
-              <Input id="lastName" defaultValue="Duarte" className="col-span-3" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="username" className="text-right">
-                Username
-              </Label>
-              <Input id="username" defaultValue="@peduarte" className="col-span-3" />
+              <Input
+                id="lastName"
+                defaultValue="Duarte"
+                className="col-span-3"
+              />
             </div>
           </div>
           <SheetFooter>

@@ -14,13 +14,15 @@ import { Link } from "wouter";
 
 export const userListColumns: ColumnDef<User>[] = [
   {
-    accessorKey: "profilePictureUrl",
+    accessorKey: "ProfilePicture",
     header: "",
     cell: ({ row }) => (
       <Avatar>
         <AvatarImage src={row.original.profilePictureUrl} />
         <AvatarFallback>
-          {row.original.firstName.charAt(0) + row.original.lastName.charAt(0)}
+          {row.original.firstName
+            ? row.original.firstName.charAt(0) + row.original.lastName.charAt(0)
+            : row.original.name && row.original.name.charAt(0)}
         </AvatarFallback>
       </Avatar>
     ),
@@ -30,7 +32,9 @@ export const userListColumns: ColumnDef<User>[] = [
     header: "Username",
     cell: ({ row }) => (
       <Link href={`/users/${row.original._id}`}>
-        {row.getValue("username")}
+        {row.getValue("username") || (
+          <i className="opacity-50">Not available</i>
+        )}
       </Link>
     ),
   },
@@ -38,14 +42,20 @@ export const userListColumns: ColumnDef<User>[] = [
     accessorKey: "firstName",
     header: "First Name",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("firstName")}</div>
+      <div className="capitalize">
+        {row.getValue("firstName") ||
+          ((row.original.name || "") as string).split(" ")[0]}
+      </div>
     ),
   },
   {
     accessorKey: "lastName",
     header: "Last Name",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("lastName")}</div>
+      <div className="capitalize">
+        {row.getValue("lastName") ||
+          ((row.original.name || "") as string).split(" ")[1]}
+      </div>
     ),
   },
   {

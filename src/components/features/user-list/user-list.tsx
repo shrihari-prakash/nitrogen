@@ -10,7 +10,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import Loader from "@/components/ui/loader";
 import {
   Table,
   TableBody,
@@ -30,25 +31,7 @@ import {
 } from "@/components/ui/table";
 import { userListColumns } from "./columns";
 import { User } from "@/types/user";
-
-const data: User[] = [
-  {
-    _id: "507f191e810c19729de860ea",
-    username: "john_doe",
-    firstName: "John",
-    lastName: "Doe",
-    email: "johndoe@gmail.com",
-  },
-  {
-    _id: "507f191e810c19729de860eb",
-    profilePictureUrl: "https://pbs.twimg.com/media/FjU2lkcWYAgNG6d.jpg",
-    username: "rick_asthley",
-    firstName: "Rick",
-    lastName: "Asthley",
-    email: "rickasthley@outlook.com",
-    isBanned: true,
-  },
-];
+import axiosInstance from "@/service/axios";
 
 const UserList = function () {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -56,35 +39,76 @@ const UserList = function () {
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [users, setUsers] = React.useState<any[]>([]);
+  const [searchResults, setSearchResults] = React.useState<any[] | null>();
+  const [loading, setLoading] = React.useState<boolean>(false);
+
+  const searchRef = React.useRef();
+
+  React.useEffect(() => {
+    if (!users.length) {
+      setLoading(true);
+      axiosInstance
+        .get("/user/admin-api/list")
+        .then((response) => {
+          setUsers(response.data.data.users as User[]);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [users, setUsers]);
+
+  const onSearchChange = (e: any) => {
+    searchRef.current = e.target.value;
+  };
+
+  const onSearch = async () => {
+    try {
+      setLoading(true);
+      const query = searchRef.current;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      if (!query || query.length === 0) {
+        return setSearchResults(null);
+      }
+      const response = await axiosInstance.post("/user/search", { query });
+      setSearchResults(response.data.data.results);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const table = useReactTable({
-    data,
+    data: searchResults || users,
     columns: userListColumns,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
     state: {
       columnFilters,
       columnVisibility,
-      rowSelection,
     },
   });
 
   return (
-    <div className="w-full p-2 md:p-8">
+    <div className="w-full h-[calc(100%-4rem)] p-2 md:p-8">
       <div className="flex items-center py-4">
         <Input
           placeholder="Search users..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
           className="max-w-sm"
+          onChange={onSearchChange}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              onSearch();
+            }
+          }}
         />
+        <Button variant="outline" className="mx-2" onClick={onSearch}>
+          <Search className="h-4 w-4" />
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -112,56 +136,62 @@ const UserList = function () {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+
+      {loading ? (
+        <div
+          className={`h-full w-full flex-1 flex items-center justify-center cursor-default relative`}
+        >
+          <Loader />
+        </div>
+      ) : (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={userListColumns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={userListColumns.length}
+                    className="h-24 text-center"
+                  >
+                    Nothing to show.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
     </div>
   );
 };
