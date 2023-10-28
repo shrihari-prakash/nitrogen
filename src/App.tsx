@@ -13,7 +13,7 @@ import UsersContext from "./context/users-context";
 import RolesContext from "./context/roles-context";
 import SettingsContext from "./context/settings-context";
 import MeContext from "./context/me-context";
-import { KeyRound } from "lucide-react";
+import { KeyRound, ShieldOff } from "lucide-react";
 
 let roleFetchInProgess = false;
 let settingsFetchInProgess = false;
@@ -91,6 +91,11 @@ function App() {
       if (!me) {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get("code");
+        const error = urlParams.get("error");
+        if (error) {
+          setAuthError(true);
+          return;
+        }
         try {
           if (code) {
             try {
@@ -119,6 +124,7 @@ function App() {
     return (
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <div className="h-full w-full flex items-center justify-center">
+          <ShieldOff className="mx-4" />
           Authentication Error
         </div>
       </ThemeProvider>
@@ -129,7 +135,8 @@ function App() {
     return (
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <div className="h-full w-full flex items-center justify-center">
-          <KeyRound className="mx-4" />Authenticating...
+          <KeyRound className="mx-4" />
+          Authenticating...
         </div>
       </ThemeProvider>
     );
