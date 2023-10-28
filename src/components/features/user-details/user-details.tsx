@@ -10,7 +10,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Copy } from "lucide-react";
+import { Copy, Save, XCircle } from "lucide-react";
 import { useLocation } from "wouter";
 
 const UserDetails = function () {
@@ -111,9 +111,14 @@ const UserDetails = function () {
               <Input id="organization" className="col-span-3" />
             </div>
           </div>
-          <SheetFooter>
+          <SheetFooter className="flex-col">
+            <Button type="submit" className="mb-2">
+              <Save className="h-4 w-4 mr-2" /> Save changes
+            </Button>
             <SheetClose asChild>
-              <Button type="submit">Save changes</Button>
+              <Button type="submit" variant="outline">
+                <XCircle className="h-4 w-4 mr-2" /> Close
+              </Button>
             </SheetClose>
           </SheetFooter>
         </SheetContent>
