@@ -7,7 +7,6 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { ChevronDown, Search } from "lucide-react";
@@ -49,7 +48,7 @@ const UserList = function () {
     if (!users.length) {
       setLoading(true);
       axiosInstance
-        .get("/user/admin-api/list")
+        .get("/user/admin-api/list", { params: { limit: 50 } })
         .then((response) => {
           setUsers(response.data.data.users as User[]);
         })
@@ -84,7 +83,6 @@ const UserList = function () {
     columns: userListColumns,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     state: {
@@ -145,7 +143,7 @@ const UserList = function () {
         </div>
       ) : (
         <div className="rounded-md border">
-          <Table>
+          <Table className="overflow-y-auto">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
