@@ -67,7 +67,6 @@ export const userListColumns: ColumnDef<User>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      console.log(row);
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -84,7 +83,7 @@ export const userListColumns: ColumnDef<User>[] = [
               </DropdownMenuItem>
             </Link>
             <DropdownMenuItem onClick={() => null}>
-              {row.original.isBanned ? "Unban User" : "Suspend User"}
+              {row.original.isBanned ? "Restore User" : "Suspend User"}
               <DropdownMenuShortcut>⇧⌘S</DropdownMenuShortcut>
             </DropdownMenuItem>
           </DropdownMenuContent>
