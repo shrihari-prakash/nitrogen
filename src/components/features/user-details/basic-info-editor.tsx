@@ -134,23 +134,6 @@ export default function BasicInfoEditor({ user }: { user: User }) {
           />
           <FormField
             control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormDescription>
-                  Must be atleast 8 characters long. Can include alphabets,
-                  numbers and underscores.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
             name="role"
             render={({ field }) => (
               <FormItem>
@@ -164,7 +147,7 @@ export default function BasicInfoEditor({ user }: { user: User }) {
                       <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
+                  <SelectContent defaultValue={user.role}>
                     {(roles || []).map((role: any) => (
                       <SelectItem value={role.name}>
                         {role.displayName}
