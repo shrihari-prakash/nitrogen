@@ -22,6 +22,16 @@ import { toast } from "react-toastify";
 export default function BasicInfoEditor({ user }: { user: User }) {
   const [submitting, setSubmitting] = useState(false);
 
+  const copyId = async (e: any) => {
+    try {
+      e.preventDefault();
+      await navigator.clipboard.writeText(user._id);
+      toast("Copied!");
+    } catch (err) {
+      toast("Copy failed!");
+    }
+  };
+
   const formDefaults = {
     _id: user._id,
     username: user.username,
@@ -82,7 +92,7 @@ export default function BasicInfoEditor({ user }: { user: User }) {
                   <FormControl>
                     <Input disabled defaultValue={user._id} {...field} />
                   </FormControl>
-                  <Button className="ml-2" variant="outline">
+                  <Button onClick={copyId} className="ml-2" variant="outline">
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
