@@ -1,98 +1,223 @@
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { SheetClose, SheetFooter } from "@/components/ui/sheet";
 import { TypographyH4 } from "@/components/ui/typography";
+import axiosInstance from "@/service/axios";
 import { User } from "@/types/user";
 import { Copy, Save, XCircle } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 export default function BasicInfoEditor({ user }: { user: User }) {
+  const [submitting, setSubmitting] = useState(false);
+
+  const formDefaults = {
+    _id: user._id,
+    username: user.username,
+    firstName: user.firstName,
+    middleName: user.middleName,
+    lastName: user.lastName,
+    email: user.email,
+    emailVerified: user.emailVerified,
+    password: "",
+    organization: user.organization,
+  };
+
+  const form = useForm({
+    defaultValues: formDefaults,
+  });
+
+  async function onSubmit(values: any) {
+    setSubmitting(true);
+    Object.keys(values).forEach((key) => {
+      if (values[key] === (formDefaults as any)[key]) {
+        delete values[key];
+        return;
+      }
+      if (values[key] === "") {
+        values[key] = "__unset__";
+      }
+    });
+    console.log(values);
+    let promise;
+    try {
+      promise = axiosInstance.patch("/user/admin-api/user", {
+        target: user._id,
+        ...values,
+      });
+      toast.promise(promise, {
+        pending: "Submitting...",
+        success: "Update successfull",
+        error: "Update failed!",
+      });
+      await promise;
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
     <div className="grid gap-4 py-4">
       <TypographyH4>Basic Info</TypographyH4>
-      <div className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor="_id" className="text-right">
-          User ID
-        </Label>
-        <div className="flex col-span-3">
-          <Input id="_id" defaultValue={user._id} disabled className="flex-1" />
-          <Button className="ml-2" variant="ghost">
-            <Copy className="w-4 h-4 " />
-          </Button>
-        </div>
-      </div>
-      <div className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor="username" className="text-right">
-          Username
-        </Label>
-        <Input
-          id="username"
-          defaultValue={user.username}
-          className="col-span-3"
-        />
-      </div>
-      <div className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor="firstName" className="text-right">
-          First Name
-        </Label>
-        <Input
-          id="firstName"
-          defaultValue={user.firstName}
-          className="col-span-3"
-        />
-      </div>
-      <div className="grid grid-cols-4 items-center gap-4">
-        <Label
-          htmlFor="middleName"
-          defaultValue={user.middleName}
-          className="text-right"
-        >
-          Middle Name
-        </Label>
-        <Input id="middleName" defaultValue="" className="col-span-3" />
-      </div>
-      <div className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor="lastName" className="text-right">
-          Last Name
-        </Label>
-        <Input
-          id="lastName"
-          defaultValue={user.lastName}
-          className="col-span-3"
-        />
-      </div>
-      <div className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor="email" className="text-right">
-          Email
-        </Label>
-        <Input id="email" defaultValue={user.email} className="col-span-3" />
-      </div>
-      <div className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor="password" className="text-right">
-          Password
-        </Label>
-        <Input id="password" type="password" className="col-span-3" />
-      </div>
-      <div className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor="organization" className="text-right">
-          Organization
-        </Label>
-        <Input
-          id="organization"
-          defaultValue={user.organization}
-          className="col-span-3"
-        />
-      </div>
-      <SheetFooter className="flex-col">
-        <Button type="submit" className="mb-3">
-          <Save className="h-4 w-4 mr-2" /> Save changes
-        </Button>
-        <SheetClose asChild>
-          <Button type="submit" variant="outline">
-            <XCircle className="h-4 w-4 mr-2" /> Close
-          </Button>
-        </SheetClose>
-      </SheetFooter>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="_id"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>ID</FormLabel>
+                <div className="flex">
+                  <FormControl>
+                    <Input disabled defaultValue={user._id} {...field} />
+                  </FormControl>
+                  <Button className="ml-2" variant="outline">
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormDescription>
+                  Must be atleast 8 characters long. Can include alphabets,
+                  numbers and underscores.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>First Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="middleName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Middle Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="emailVerified"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                <FormControl>
+                  <Checkbox
+                    defaultChecked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Email Verified</FormLabel>
+                  <FormDescription>
+                    Unverified users cannot login.
+                  </FormDescription>
+                </div>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="organization"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Organization</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <SheetFooter className="flex-col">
+            <Button type="submit" className="mb-3">
+              <Save className="h-4 w-4 mr-2" />
+              {submitting ? "Saving..." : "Save changes"}
+            </Button>
+            <SheetClose asChild>
+              <Button variant="outline">
+                <XCircle className="h-4 w-4 mr-2" /> Close
+              </Button>
+            </SheetClose>
+          </SheetFooter>
+        </form>
+      </Form>
     </div>
   );
 }
