@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { User } from "@/types/user";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Verified } from "lucide-react";
 import { Link } from "wouter";
 
 export const userListColumns: ColumnDef<User>[] = [
@@ -31,10 +31,12 @@ export const userListColumns: ColumnDef<User>[] = [
     accessorKey: "username",
     header: "Username",
     cell: ({ row }) => (
-      <Link href={`/users/${row.original._id}`}>
+      <Link href={`/users/${row.original._id}`} className="flex items-center justify-start">
         {row.getValue("username") || (
           <i className="opacity-50">Not available</i>
         )}
+        &nbsp;
+        {row.original.verified && <Verified className="h-4 w-4"/>}
       </Link>
     ),
   },
