@@ -14,6 +14,8 @@ import RolesContext from "./context/roles-context";
 import SettingsContext from "./context/settings-context";
 import MeContext from "./context/me-context";
 import { KeyRound, ShieldOff } from "lucide-react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.min.css";
 
 let roleFetchInProgess = false;
 let settingsFetchInProgess = false;
@@ -174,6 +176,18 @@ function App() {
                     </Switch>
                     <Route path="/users/:id" component={UserDetails} />
                   </Page>
+                  <ToastContainer
+                    position={toast.POSITION.BOTTOM_CENTER}
+                    toastStyle={{
+                      backgroundColor: "hsl(240 10% 3.9%)",
+                      color: "#ffffff",
+                      boxShadow: "none",
+                      border: "1px solid #2a2a2a",
+                    }}
+                    closeButton={false}
+                    autoClose={2500}
+                    hideProgressBar
+                  />
                 </div>
               </RolesContext.Provider>
             </EditableFieldsContext.Provider>

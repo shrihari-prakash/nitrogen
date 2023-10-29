@@ -4,6 +4,7 @@ import { TypographyH4 } from "@/components/ui/typography";
 import axiosInstance from "@/service/axios";
 import { User } from "@/types/user";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function AdminSwitches({ user }: { user: User }) {
   const [verified, setVerified] = useState(user.verified);
@@ -11,26 +12,44 @@ export default function AdminSwitches({ user }: { user: User }) {
   const [restricted, setRestricted] = useState(user.isRestricted);
 
   const onVerifyChange = async (state: boolean) => {
-    await axiosInstance.post("/user/admin-api/verify", {
+    const promise = axiosInstance.post("/user/admin-api/verify", {
       target: user._id,
       state: state,
     });
+    toast.promise(promise, {
+      pending: "Submitting...",
+      success: "Update successfull",
+      error: "Update failed!",
+    });
+    await promise;
     return setVerified(state);
   };
 
   const onSuspendChange = async (state: boolean) => {
-    await axiosInstance.post("/user/admin-api/ban", {
+    const promise = axiosInstance.post("/user/admin-api/ban", {
       target: user._id,
       state,
     });
+    toast.promise(promise, {
+      pending: "Submitting...",
+      success: "Update successfull",
+      error: "Update failed!",
+    });
+    await promise;
     return setSuspended(state);
   };
 
   const onRestrictChange = async (state: boolean) => {
-    await axiosInstance.post("/user/admin-api/restrict", {
+    const promise = await axiosInstance.post("/user/admin-api/restrict", {
       target: user._id,
       state,
     });
+    toast.promise(promise, {
+      pending: "Submitting...",
+      success: "Update successfull",
+      error: "Update failed!",
+    });
+    await promise;
     return setRestricted(state);
   };
 
