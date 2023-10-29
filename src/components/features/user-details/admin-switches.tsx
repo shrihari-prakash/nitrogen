@@ -40,7 +40,7 @@ export default function AdminSwitches({ user }: { user: User }) {
   };
 
   const onRestrictChange = async (state: boolean) => {
-    const promise = await axiosInstance.post("/user/admin-api/restrict", {
+    const promise = axiosInstance.post("/user/admin-api/restrict", {
       target: user._id,
       state,
     });
