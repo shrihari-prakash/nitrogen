@@ -10,17 +10,31 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { SheetClose, SheetFooter } from "@/components/ui/sheet";
 import { TypographyH4 } from "@/components/ui/typography";
+import RolesContext from "@/context/roles-context";
 import axiosInstance from "@/service/axios";
 import { User } from "@/types/user";
 import { Copy, Save, XCircle } from "lucide-react";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
 export default function BasicInfoEditor({ user }: { user: User }) {
   const [submitting, setSubmitting] = useState(false);
+
+  const { roles, refreshRoles } = useContext(RolesContext);
+
+  useEffect(() => {
+    if (!roles) refreshRoles();
+  }, [roles, refreshRoles]);
 
   const copyId = async (e: any) => {
     try {
@@ -42,6 +56,7 @@ export default function BasicInfoEditor({ user }: { user: User }) {
     emailVerified: user.emailVerified,
     password: "",
     organization: user.organization,
+    role: user.role,
   };
 
   const form = useForm({
@@ -113,6 +128,50 @@ export default function BasicInfoEditor({ user }: { user: User }) {
                   Must be atleast 8 characters long. Can include alphabets,
                   numbers and underscores.
                 </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormDescription>
+                  Must be atleast 8 characters long. Can include alphabets,
+                  numbers and underscores.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="role"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Role</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a role" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {(roles || []).map((role: any) => (
+                      <SelectItem value={role.name}>
+                        {role.displayName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

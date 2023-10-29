@@ -92,7 +92,7 @@ const UserList = function () {
   });
 
   return (
-    <div className="w-full h-[calc(100%-4rem)] p-2 md:p-8">
+    <div className="w-full h-[calc(100%-4rem)] p-4 md:p-8">
       <div className="flex items-center py-4">
         <Input
           placeholder="Search users..."
