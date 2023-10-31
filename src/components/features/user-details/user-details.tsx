@@ -45,7 +45,7 @@ const UserDetails = function ({ params }: { params: { id: string } }) {
   return (
     <>
       <Sheet defaultOpen={true} onOpenChange={onOpenChange}>
-        <SheetContent className="w-full md:!max-w-[600px] overflow-y-auto">
+        <SheetContent className="w-full md:!max-w-[550px] overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Edit user</SheetTitle>
             <SheetDescription>
