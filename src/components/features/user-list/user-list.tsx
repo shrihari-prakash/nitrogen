@@ -31,6 +31,8 @@ import {
 import { userListColumns } from "./columns";
 import { User } from "@/types/user";
 import axiosInstance from "@/service/axios";
+import { TypographyH4 } from "@/components/ui/typography";
+import MeContext from "@/context/me-context";
 
 const UserList = function () {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -41,6 +43,8 @@ const UserList = function () {
   const [users, setUsers] = React.useState<any[]>([]);
   const [searchResults, setSearchResults] = React.useState<any[] | null>();
   const [loading, setLoading] = React.useState<boolean>(false);
+
+  const { me } = React.useContext(MeContext);
 
   const searchRef = React.useRef();
 
@@ -93,6 +97,7 @@ const UserList = function () {
 
   return (
     <div className="w-full h-[calc(100%-4rem)] p-4 md:p-8">
+      <TypographyH4>Hello, {(me as User).firstName}</TypographyH4>
       <div className="flex items-center py-4">
         <Input
           placeholder="Search users..."

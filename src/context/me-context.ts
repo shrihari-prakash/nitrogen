@@ -1,7 +1,8 @@
+import { User } from "@/types/user";
 import { createContext } from "react";
 
 export type IMeContext = {
-  me: any;
+  me: User | null;
   setMe: any;
 };
 
