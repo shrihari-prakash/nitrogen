@@ -19,7 +19,10 @@ import {
 } from "@/components/ui/select";
 import { SheetClose, SheetFooter } from "@/components/ui/sheet";
 import { TypographyH4 } from "@/components/ui/typography";
+import EditableFieldsContext from "@/context/editable-fields-context";
+import MeContext from "@/context/me-context";
 import RolesContext from "@/context/roles-context";
+import SettingsContext from "@/context/settings-context";
 import axiosInstance from "@/service/axios";
 import { User } from "@/types/user";
 import { Copy, Save, XCircle } from "lucide-react";
@@ -43,13 +46,51 @@ export default function BasicInfoEditor({ user }: { user: User }) {
 
   const [submitting, setSubmitting] = useState(false);
 
+  const { me } = useContext(MeContext);
   const { roles, refreshRoles } = useContext(RolesContext);
+  const { settings, refreshSettings } = useContext(SettingsContext);
+  const { editableFields, refreshEditableFields } = useContext(
+    EditableFieldsContext
+  );
 
   const savedFormRef = useRef(formDefaults);
 
   useEffect(() => {
     if (!roles) refreshRoles();
   }, [roles, refreshRoles]);
+
+  useEffect(() => {
+    if (!settings) refreshSettings();
+  }, [settings, refreshSettings]);
+
+  useEffect(() => {
+    if (!editableFields) refreshEditableFields();
+  }, [editableFields, refreshEditableFields]);
+
+  const shouldAllowFieldEdit = (field: string) => {
+    if (!editableFields || !user) {
+      return false;
+    }
+    if (getRoleRank(me.role) > getRoleRank(user.role as string)) {
+      return false;
+    } else if (getRoleRank(me.role) === getRoleRank(user.role as string)) {
+      if (
+        settings &&
+        !(settings as any)["admin-api.user.profile.can-edit-peer-data"]
+      ) {
+        return false;
+      }
+    }
+    if (editableFields.includes(field)) {
+      return true;
+    }
+  };
+
+  const getRoleRank = (role: string) => {
+    return roles
+      ? (roles as any[]).find((r: any) => r.name === role).rank
+      : 999;
+  };
 
   const copyId = async (e: any) => {
     try {
@@ -126,7 +167,10 @@ export default function BasicInfoEditor({ user }: { user: User }) {
               <FormItem>
                 <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input
+                    {...field}
+                    disabled={!shouldAllowFieldEdit("username")}
+                  />
                 </FormControl>
                 <FormDescription>
                   Must be atleast 8 characters long. Can include alphabets,
@@ -145,6 +189,7 @@ export default function BasicInfoEditor({ user }: { user: User }) {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  disabled={!shouldAllowFieldEdit("role")}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -170,7 +215,10 @@ export default function BasicInfoEditor({ user }: { user: User }) {
               <FormItem>
                 <FormLabel>First Name</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input
+                    {...field}
+                    disabled={!shouldAllowFieldEdit("firstName")}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -183,7 +231,10 @@ export default function BasicInfoEditor({ user }: { user: User }) {
               <FormItem>
                 <FormLabel>Middle Name</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input
+                    {...field}
+                    disabled={!shouldAllowFieldEdit("middleName")}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -196,7 +247,10 @@ export default function BasicInfoEditor({ user }: { user: User }) {
               <FormItem>
                 <FormLabel>Last Name</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input
+                    {...field}
+                    disabled={!shouldAllowFieldEdit("lastName")}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -209,7 +263,7 @@ export default function BasicInfoEditor({ user }: { user: User }) {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={!shouldAllowFieldEdit("email")} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -224,6 +278,7 @@ export default function BasicInfoEditor({ user }: { user: User }) {
                   <Checkbox
                     defaultChecked={field.value}
                     onCheckedChange={field.onChange}
+                    disabled={!shouldAllowFieldEdit("emailVerified")}
                   />
                 </FormControl>
                 <div className="space-y-1 leading-none">
@@ -242,7 +297,10 @@ export default function BasicInfoEditor({ user }: { user: User }) {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input
+                    {...field}
+                    disabled={!shouldAllowFieldEdit("password")}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -255,7 +313,10 @@ export default function BasicInfoEditor({ user }: { user: User }) {
               <FormItem>
                 <FormLabel>Organization</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input
+                    {...field}
+                    disabled={!shouldAllowFieldEdit("organization")}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
