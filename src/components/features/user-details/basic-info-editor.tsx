@@ -71,9 +71,12 @@ export default function BasicInfoEditor({ user }: { user: User }) {
     if (!editableFields || !user) {
       return false;
     }
-    if (getRoleRank(me.role) > getRoleRank(user.role as string)) {
+    if (
+      getRoleRank((me as User).role as string) >
+      getRoleRank(user.role as string)
+    ) {
       return false;
-    } else if (getRoleRank(me.role) === getRoleRank(user.role as string)) {
+    } else if (getRoleRank((me as User).role as string) === getRoleRank(user.role as string)) {
       if (
         settings &&
         !(settings as any)["admin-api.user.profile.can-edit-peer-data"]

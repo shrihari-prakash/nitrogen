@@ -72,7 +72,7 @@ export default function AdminSwitches({ user }: { user: User }) {
           </div>
           <Switch
             checked={suspended}
-            disabled={me._id === user._id}
+            disabled={(me as User)._id as string === user._id}
             onCheckedChange={onSuspendChange}
           />
         </div>
