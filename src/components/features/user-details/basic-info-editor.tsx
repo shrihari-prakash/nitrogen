@@ -23,14 +23,29 @@ import RolesContext from "@/context/roles-context";
 import axiosInstance from "@/service/axios";
 import { User } from "@/types/user";
 import { Copy, Save, XCircle } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
 export default function BasicInfoEditor({ user }: { user: User }) {
+  const formDefaults = {
+    _id: user._id,
+    username: user.username,
+    firstName: user.firstName,
+    middleName: user.middleName,
+    lastName: user.lastName,
+    email: user.email,
+    emailVerified: user.emailVerified,
+    password: "",
+    organization: user.organization,
+    role: user.role,
+  };
+
   const [submitting, setSubmitting] = useState(false);
 
   const { roles, refreshRoles } = useContext(RolesContext);
+
+  const savedFormRef = useRef(formDefaults);
 
   useEffect(() => {
     if (!roles) refreshRoles();
@@ -46,40 +61,28 @@ export default function BasicInfoEditor({ user }: { user: User }) {
     }
   };
 
-  const formDefaults = {
-    _id: user._id,
-    username: user.username,
-    firstName: user.firstName,
-    middleName: user.middleName,
-    lastName: user.lastName,
-    email: user.email,
-    emailVerified: user.emailVerified,
-    password: "",
-    organization: user.organization,
-    role: user.role,
-  };
-
   const form = useForm({
     defaultValues: formDefaults,
   });
 
-  async function onSubmit(values: any) {
+  async function onSubmit(formValues: any) {
     setSubmitting(true);
-    Object.keys(values).forEach((key) => {
-      if (values[key] === (formDefaults as any)[key]) {
-        delete values[key];
+    const savedForm = { ...formDefaults, ...formValues };
+    Object.keys(formValues).forEach((key) => {
+      if (formValues[key] === (savedFormRef.current as any)[key]) {
+        delete formValues[key];
         return;
       }
-      if (values[key] === "") {
-        values[key] = "__unset__";
+      if (formValues[key] === "") {
+        formValues[key] = "__unset__";
       }
     });
-    console.log(values);
+    console.log(formValues);
     let promise;
     try {
       promise = axiosInstance.patch("/user/admin-api/user", {
         target: user._id,
-        ...values,
+        ...formValues,
       });
       toast.promise(promise, {
         pending: "Submitting...",
@@ -87,6 +90,7 @@ export default function BasicInfoEditor({ user }: { user: User }) {
         error: "Update failed!",
       });
       await promise;
+      savedFormRef.current = savedForm;
     } finally {
       setSubmitting(false);
     }
