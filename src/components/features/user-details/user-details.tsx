@@ -13,6 +13,7 @@ import { User } from "@/types/user";
 import Loader from "@/components/ui/loader";
 import AdminSwitches from "./admin-switches";
 import BasicInfoEditor from "./basic-info-editor";
+import ProfileCard from "./profile-card";
 
 const UserDetails = function ({ params }: { params: { id: string } }) {
   const [, setLocation] = useLocation();
@@ -62,6 +63,7 @@ const UserDetails = function ({ params }: { params: { id: string } }) {
             )
           ) : (
             <>
+              <ProfileCard user={user}/>
               <BasicInfoEditor user={user} />
               <AdminSwitches user={user} />
             </>
