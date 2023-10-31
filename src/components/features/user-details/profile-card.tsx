@@ -34,9 +34,9 @@ export default function ProfileCard({ user }: { user: User }) {
         </CardTitle>
         <CardDescription>
           <div className="flex items-center">
-            <UserCheck className="h-4 w-4 mr-2" />
+            <Users className="h-4 w-4 mr-2" />
             {user.followerCount || 0} followers
-            <Users className="h-4 w-4 mx-2" />
+            <UserCheck className="h-4 w-4 mx-2" />
             {user.followingCount || 0} following
           </div>
         </CardDescription>
