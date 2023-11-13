@@ -14,6 +14,19 @@ import Loader from "@/components/ui/loader";
 import AdminSwitches from "./admin-switches";
 import BasicInfoEditor from "./basic-info-editor";
 import ProfileCard from "./profile-card";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { TypographyH4 } from "@/components/ui/typography";
+import ScopeSelector from "@/components/ui/scope-selector";
+import Scopes from "./scopes.json";
 
 const UserDetails = function ({ params }: { params: { id: string } }) {
   const [, setLocation] = useLocation();
@@ -63,7 +76,34 @@ const UserDetails = function ({ params }: { params: { id: string } }) {
             )
           ) : (
             <>
-              <ProfileCard user={user}/>
+              <ProfileCard user={user} />
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div>
+                    <TypographyH4 className="my-4">Permissions</TypographyH4>
+                    <Button variant="outline">Edit Permissions</Button>
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[600px]">
+                  <DialogHeader>
+                    <DialogTitle>Edit permissions</DialogTitle>
+                    <DialogDescription>
+                      Assign permissions to the profile here. Click save when
+                      you're done.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid max-h-[450px] overflow-auto">
+                    <ScopeSelector
+                      user={user}
+                      scopes={Scopes}
+                      onSelect={(selected: string) => console.log(selected)}
+                    />
+                  </div>
+                  <DialogFooter>
+                    <Button type="submit">Save changes</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
               <BasicInfoEditor user={user} />
               <AdminSwitches user={user} />
             </>
