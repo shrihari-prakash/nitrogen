@@ -16,13 +16,17 @@ import MeContext from "./context/me-context";
 import { KeyRound, ShieldOff } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
+import ScopesContext from "./context/scopes-context";
+import { Scope } from "./components/ui/scope-selector";
 
+let scopesFetchInProgess = false;
 let roleFetchInProgess = false;
 let settingsFetchInProgess = false;
 let editableFieldsFetchInProgess = false;
 
 function App() {
   const [authError, setAuthError] = useState(false);
+  const [scopes, setScopes] = useState<any>(null);
   const [me, setMe] = useState(null);
   const [editableFields, setEditableFields] = useState(null);
   const [roles, setRoles] = useState(null);
@@ -45,6 +49,21 @@ function App() {
       .get("/user/admin-api/roles")
       .then((response: any) => setRoles(response.data.data.roles))
       .finally(() => (roleFetchInProgess = false));
+  };
+
+  const refreshScopes = async () => {
+    if (scopesFetchInProgess) return;
+    scopesFetchInProgess = true;
+    axiosInstance
+      .get("/user/scopes")
+      .then((response: any) => {
+        const scopesObject = response.data.data.scopes;
+        const scopes = Object.keys(scopesObject).map(
+          (key) => scopesObject[key]
+        ) as Scope[];
+        setScopes(scopes);
+      })
+      .finally(() => (scopesFetchInProgess = false));
   };
 
   const refreshEditableFields = () => {
@@ -150,48 +169,50 @@ function App() {
         value={{ settings, setSettings, refreshSettings: getSettings }}
       >
         <UsersContext.Provider value={{ users, setUsers }}>
-          <MeContext.Provider value={{ me, setMe }}>
-            <EditableFieldsContext.Provider
-              value={{
-                editableFields,
-                setEditableFields,
-                refreshEditableFields,
-              }}
-            >
-              <RolesContext.Provider value={{ roles, refreshRoles }}>
-                <div className="flex flex-col-reverse md:flex-row h-full w-full">
-                  <SideBar />
-                  <Page>
-                    <Switch>
-                      <Route path="/">
-                        <UserList />
-                      </Route>
-                      <Route path="/users">
-                        <UserList />
-                      </Route>
-                      <Route path="/users/:id">
-                        <UserList />
-                      </Route>
-                      <Route path="/applications">Applications</Route>
-                    </Switch>
-                    <Route path="/users/:id" component={UserDetails} />
-                  </Page>
-                  <ToastContainer
-                    position={toast.POSITION.BOTTOM_CENTER}
-                    toastStyle={{
-                      backgroundColor: "hsl(240 10% 3.9%)",
-                      color: "#ffffff",
-                      boxShadow: "none",
-                      border: "1px solid #2a2a2a",
-                    }}
-                    closeButton={false}
-                    autoClose={2500}
-                    hideProgressBar
-                  />
-                </div>
-              </RolesContext.Provider>
-            </EditableFieldsContext.Provider>
-          </MeContext.Provider>
+          <ScopesContext.Provider value={{ scopes, refreshScopes }}>
+            <MeContext.Provider value={{ me, setMe }}>
+              <EditableFieldsContext.Provider
+                value={{
+                  editableFields,
+                  setEditableFields,
+                  refreshEditableFields,
+                }}
+              >
+                <RolesContext.Provider value={{ roles, refreshRoles }}>
+                  <div className="flex flex-col-reverse md:flex-row h-full w-full">
+                    <SideBar />
+                    <Page>
+                      <Switch>
+                        <Route path="/">
+                          <UserList />
+                        </Route>
+                        <Route path="/users">
+                          <UserList />
+                        </Route>
+                        <Route path="/users/:id">
+                          <UserList />
+                        </Route>
+                        <Route path="/applications">Applications</Route>
+                      </Switch>
+                      <Route path="/users/:id" component={UserDetails} />
+                    </Page>
+                    <ToastContainer
+                      position={toast.POSITION.BOTTOM_CENTER}
+                      toastStyle={{
+                        backgroundColor: "hsl(240 10% 3.9%)",
+                        color: "#ffffff",
+                        boxShadow: "none",
+                        border: "1px solid #2a2a2a",
+                      }}
+                      closeButton={false}
+                      autoClose={2500}
+                      hideProgressBar
+                    />
+                  </div>
+                </RolesContext.Provider>
+              </EditableFieldsContext.Provider>
+            </MeContext.Provider>
+          </ScopesContext.Provider>
         </UsersContext.Provider>
       </SettingsContext.Provider>
     </ThemeProvider>

@@ -2,6 +2,18 @@ import { useContext, useState } from "react";
 import { Label } from "./label";
 import MeContext from "@/context/me-context";
 import { User } from "@/types/user";
+import axiosInstance from "@/service/axios";
+import { Button } from "./button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./dialog";
+import { TypographyH4 } from "./typography";
 
 export interface Scope {
   name: string;
@@ -14,6 +26,9 @@ function isScopeAllowed(
   allowedScopes: string[],
   allScopes: any
 ) {
+  if (!allowedScopes) {
+    allowedScopes = [];
+  }
   const scopeObject = allScopes[scope];
   if (!scopeObject) {
     return false;
@@ -34,10 +49,12 @@ const ScopeSelector = ({
   scopes,
   onSelect = () => null,
   user,
+  type,
 }: {
   scopes: Scope[];
   onSelect: any;
   user: User;
+  type: "user" | "client";
 }) => {
   const scopesObject: { [name: string]: Scope } = scopes.reduce(
     (scopes, scope) => Object.assign(scopes, { [scope.name]: scope }),
@@ -54,6 +71,8 @@ const ScopeSelector = ({
   const [selectedItems, setSelectedItems] = useState<string[]>(
     initialScopes as string[]
   );
+
+  const [submitting, setSubmitting] = useState<boolean>(false);
 
   const { me } = useContext(MeContext);
 
@@ -123,6 +142,30 @@ const ScopeSelector = ({
     return allChildren;
   };
 
+  const onSave = async () => {
+    let newScopeList = [...selectedItems];
+    scopes.forEach((scope) => {
+      if (!scope.parent) {
+        return;
+      }
+      if (newScopeList.includes(scope.parent as string)) {
+        newScopeList = newScopeList.filter((s) => s !== scope.name);
+      }
+    });
+    console.log(newScopeList);
+    setSubmitting(true);
+    try {
+      await axiosInstance.post("/user/admin-api/access", {
+        targets: [user._id],
+        targetType: type,
+        scope: selectedItems,
+        operation: "set",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const renderTree = (items: Scope[], parent = "*") => {
     return items
       .filter((item) => item.parent === parent)
@@ -154,7 +197,32 @@ const ScopeSelector = ({
       ));
   };
 
-  return renderTree(scopes);
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <div>
+          <TypographyH4 className="my-4">Permissions</TypographyH4>
+          <Button variant="outline">Edit Permissions</Button>
+        </div>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[800px]">
+        <DialogHeader>
+          <DialogTitle>Edit permissions</DialogTitle>
+          <DialogDescription>
+            Edit permissions to the profile here. Click save when you're done.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid max-h-[450px] overflow-auto">
+          {scopes && renderTree(scopes)}
+        </div>
+        <DialogFooter>
+          <Button type="submit" disabled={submitting} onClick={onSave}>
+            Save changes
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
 };
 
 export default ScopeSelector;
