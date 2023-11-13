@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from "./dialog";
 import { TypographyH4 } from "./typography";
+import { toast } from "react-toastify";
 
 export interface Scope {
   name: string;
@@ -154,13 +155,20 @@ const ScopeSelector = ({
     });
     console.log(newScopeList);
     setSubmitting(true);
+    let promise;
     try {
-      await axiosInstance.post("/user/admin-api/access", {
+      promise = axiosInstance.post("/user/admin-api/access", {
         targets: [user._id],
         targetType: type,
         scope: selectedItems,
         operation: "set",
       });
+      toast.promise(promise, {
+        pending: "Submitting...",
+        success: "Update successfull",
+        error: "Update failed!",
+      });
+      await promise;
     } finally {
       setSubmitting(false);
     }
