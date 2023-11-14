@@ -74,6 +74,7 @@ const UserDetails = function ({ params }: { params: { id: string } }) {
               {scopes && (
                 <ScopeSelector
                   user={user}
+                  setUser={setUser}
                   scopes={scopes}
                   type="user"
                   onSelect={(selected: string) => console.log(selected)}

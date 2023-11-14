@@ -52,11 +52,13 @@ const ScopeSelector = ({
   scopes,
   onSelect = () => null,
   user,
+  setUser,
   type,
 }: {
   scopes: Scope[];
   onSelect: any;
   user: User;
+  setUser: any;
   type: 'user' | 'client';
 }) => {
   const scopesObject: { [name: string]: Scope } = scopes.reduce(
@@ -178,6 +180,11 @@ const ScopeSelector = ({
       });
       await promise;
       console.log('Permissions granted ' + newScopeList.join(','));
+      const userCopy = { ...user };
+      userCopy.scope = newScopeList;
+      if (setUser) {
+        setUser(userCopy);
+      }
     } finally {
       setSubmitting(false);
     }
