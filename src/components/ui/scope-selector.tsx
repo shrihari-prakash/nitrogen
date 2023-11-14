@@ -16,6 +16,7 @@ import {
 import { TypographyH4 } from './typography';
 import { toast } from 'react-toastify';
 import { Alert, AlertDescription } from './alert';
+import { Checkbox } from './checkbox';
 
 export interface Scope {
   name: string;
@@ -176,7 +177,7 @@ const ScopeSelector = ({
         error: 'Update failed!',
       });
       await promise;
-      console.log("Permissions granted " + newScopeList.join(","));
+      console.log('Permissions granted ' + newScopeList.join(','));
     } finally {
       setSubmitting(false);
     }
@@ -195,9 +196,8 @@ const ScopeSelector = ({
               : ''
           }
         >
-          <Label className='flex items-center my-2'>
-            <input
-              type='checkbox'
+          <Label className='flex items-center my-2 space-x-3 px-3 py-2'>
+            <Checkbox
               disabled={
                 !isScopeAllowed(
                   item.name,
@@ -206,10 +206,10 @@ const ScopeSelector = ({
                 ) || isUserMe()
               }
               checked={selectedScopes.includes(item.name)}
-              onChange={() => handleToggle(item.name)}
+              onCheckedChange={() => handleToggle(item.name)}
             />
             <span className='mx-2'>
-              <div className='mb-2'>{item.name}</div>
+              <div className='mb-2 text-normal'>{item.name}</div>
               <div className='opacity-40 font-normal'>{item.description}</div>
             </span>
           </Label>
@@ -228,7 +228,7 @@ const ScopeSelector = ({
       </DialogTrigger>
       <DialogContent className='sm:max-w-[800px]'>
         <DialogHeader>
-          <DialogTitle>Edit permissions</DialogTitle>
+          <DialogTitle>Editing permissions for {user.firstName}</DialogTitle>
           <DialogDescription>
             {isUserMe() && (
               <Alert className='mt-2'>
