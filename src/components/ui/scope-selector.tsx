@@ -1,9 +1,9 @@
-import { useContext, useState } from "react";
-import { Label } from "./label";
-import MeContext from "@/context/me-context";
-import { User } from "@/types/user";
-import axiosInstance from "@/service/axios";
-import { Button } from "./button";
+import { useContext, useState } from 'react';
+import { Label } from './label';
+import MeContext from '@/context/me-context';
+import { User } from '@/types/user';
+import axiosInstance from '@/service/axios';
+import { Button } from './button';
 import {
   Dialog,
   DialogContent,
@@ -12,9 +12,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./dialog";
-import { TypographyH4 } from "./typography";
-import { toast } from "react-toastify";
+} from './dialog';
+import { TypographyH4 } from './typography';
+import { toast } from 'react-toastify';
+import { Alert, AlertDescription } from './alert';
 
 export interface Scope {
   name: string;
@@ -55,7 +56,7 @@ const ScopeSelector = ({
   scopes: Scope[];
   onSelect: any;
   user: User;
-  type: "user" | "client";
+  type: 'user' | 'client';
 }) => {
   const scopesObject: { [name: string]: Scope } = scopes.reduce(
     (scopes, scope) => Object.assign(scopes, { [scope.name]: scope }),
@@ -69,7 +70,7 @@ const ScopeSelector = ({
     }
   });
 
-  const [selectedItems, setSelectedItems] = useState<string[]>(
+  const [selectedScopes, setSelectedScopes] = useState<string[]>(
     initialScopes as string[]
   );
 
@@ -77,14 +78,21 @@ const ScopeSelector = ({
 
   const { me } = useContext(MeContext);
 
+  const isUserMe = () => {
+    if (!me) {
+      return false;
+    }
+    return me._id === user._id;
+  };
+
   const handleToggle = (itemName: string) => {
-    const isSelected = selectedItems.includes(itemName);
+    const isSelected = selectedScopes.includes(itemName);
     let newSelectedItems: string[];
 
     if (isSelected) {
       // Deselect the item and all its children
       const children = getAllChildren(itemName);
-      newSelectedItems = selectedItems.filter(
+      newSelectedItems = selectedScopes.filter(
         (item) => !children.includes(item) && itemName !== item
       );
 
@@ -105,7 +113,7 @@ const ScopeSelector = ({
     } else {
       // If the item has children, select all children as well
       const children = getAllChildren(itemName);
-      newSelectedItems = [...selectedItems, itemName, ...children];
+      newSelectedItems = [...selectedScopes, itemName, ...children];
 
       // Select all parent levels if their children are deselected
       let parent = getParent(itemName);
@@ -123,8 +131,8 @@ const ScopeSelector = ({
       }
     }
 
-    setSelectedItems(newSelectedItems);
-    onSelect(newSelectedItems.join(", "));
+    setSelectedScopes(newSelectedItems);
+    onSelect(newSelectedItems.join(', '));
   };
 
   const getParent = (itemName: string) => {
@@ -144,63 +152,68 @@ const ScopeSelector = ({
   };
 
   const onSave = async () => {
-    let newScopeList = [...selectedItems];
+    let newScopeList = [...selectedScopes];
     scopes.forEach((scope) => {
       if (!scope.parent) {
         return;
       }
-      if (newScopeList.includes(scope.parent as string)) {
+      if (isScopeAllowed(scope.parent, newScopeList, scopesObject)) {
         newScopeList = newScopeList.filter((s) => s !== scope.name);
       }
     });
-    console.log(newScopeList);
     setSubmitting(true);
     let promise;
     try {
-      promise = axiosInstance.post("/user/admin-api/access", {
+      promise = axiosInstance.post('/user/admin-api/access', {
         targets: [user._id],
         targetType: type,
-        scope: selectedItems,
-        operation: "set",
+        scope: selectedScopes,
+        operation: 'set',
       });
       toast.promise(promise, {
-        pending: "Submitting...",
-        success: "Update successfull",
-        error: "Update failed!",
+        pending: 'Submitting...',
+        success: 'Update successfull',
+        error: 'Update failed!',
       });
       await promise;
+      console.log("Permissions granted " + newScopeList.join(","));
     } finally {
       setSubmitting(false);
     }
   };
 
-  const renderTree = (items: Scope[], parent = "*") => {
+  const renderTree = (items: Scope[], parent = '*') => {
     return items
       .filter((item) => item.parent === parent)
       .map((item) => (
         <div
           key={item.name}
           className={
-            !isScopeAllowed(item.name, me?.scope as string[], scopesObject)
-              ? "opacity-80"
-              : ""
+            !isScopeAllowed(item.name, me?.scope as string[], scopesObject) ||
+            isUserMe()
+              ? 'opacity-80'
+              : ''
           }
         >
-          <Label className="flex items-center my-2">
+          <Label className='flex items-center my-2'>
             <input
-              type="checkbox"
+              type='checkbox'
               disabled={
-                !isScopeAllowed(item.name, me?.scope as string[], scopesObject)
+                !isScopeAllowed(
+                  item.name,
+                  me?.scope as string[],
+                  scopesObject
+                ) || isUserMe()
               }
-              checked={selectedItems.includes(item.name)}
+              checked={selectedScopes.includes(item.name)}
               onChange={() => handleToggle(item.name)}
             />
-            <span className="mx-2">
-              <div className="mb-2">{item.name}</div>
-              <div className="opacity-40 font-normal">{item.description}</div>
+            <span className='mx-2'>
+              <div className='mb-2'>{item.name}</div>
+              <div className='opacity-40 font-normal'>{item.description}</div>
             </span>
           </Label>
-          <div className="mx-8">{renderTree(items, item.name)}</div>
+          <div className='mx-8'>{renderTree(items, item.name)}</div>
         </div>
       ));
   };
@@ -209,22 +222,28 @@ const ScopeSelector = ({
     <Dialog>
       <DialogTrigger asChild>
         <div>
-          <TypographyH4 className="my-4">Permissions</TypographyH4>
-          <Button variant="outline">Edit Permissions</Button>
+          <TypographyH4 className='my-4'>Permissions</TypographyH4>
+          <Button variant='outline'>Edit Permissions</Button>
         </div>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[800px]">
+      <DialogContent className='sm:max-w-[800px]'>
         <DialogHeader>
           <DialogTitle>Edit permissions</DialogTitle>
           <DialogDescription>
-            Edit permissions to the profile here. Click save when you're done.
+            {isUserMe() && (
+              <Alert className='mt-2'>
+                <AlertDescription>
+                  You can't edit your own permissions
+                </AlertDescription>
+              </Alert>
+            )}
           </DialogDescription>
         </DialogHeader>
-        <div className="grid max-h-[450px] overflow-auto">
+        <div className='grid max-h-[450px] overflow-auto'>
           {scopes && renderTree(scopes)}
         </div>
         <DialogFooter>
-          <Button type="submit" disabled={submitting} onClick={onSave}>
+          <Button type='submit' disabled={submitting} onClick={onSave}>
             Save changes
           </Button>
         </DialogFooter>
