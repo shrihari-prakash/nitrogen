@@ -243,7 +243,11 @@ const ScopeSelector = ({
           {scopes && renderTree(scopes)}
         </div>
         <DialogFooter>
-          <Button type='submit' disabled={submitting} onClick={onSave}>
+          <Button
+            type='submit'
+            disabled={submitting || isUserMe()}
+            onClick={onSave}
+          >
             Save changes
           </Button>
         </DialogFooter>
