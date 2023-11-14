@@ -230,12 +230,12 @@ const ScopeSelector = ({
       <DialogTrigger asChild>
         <div>
           <TypographyH4 className='my-4'>Permissions</TypographyH4>
-          <Button variant='outline'>Edit Permissions</Button>
+          <Button variant='outline'>Manage Permissions</Button>
         </div>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[800px]'>
         <DialogHeader>
-          <DialogTitle>Editing permissions for {user.firstName}</DialogTitle>
+          <DialogTitle>Managing permissions for {user.firstName + " " + user.lastName}</DialogTitle>
           <DialogDescription>
             {isUserMe() && (
               <Alert className='mt-2'>
