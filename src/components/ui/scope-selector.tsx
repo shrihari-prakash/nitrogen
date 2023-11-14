@@ -167,7 +167,7 @@ const ScopeSelector = ({
       promise = axiosInstance.post('/user/admin-api/access', {
         targets: [user._id],
         targetType: type,
-        scope: selectedScopes,
+        scope: newScopeList,
         operation: 'set',
       });
       toast.promise(promise, {
