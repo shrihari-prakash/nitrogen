@@ -18,6 +18,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import ScopesContext from "./context/scopes-context";
 import { Scope } from "./components/ui/scope-selector";
+import ApplicationList from "./components/features/application-list/application-list";
 
 let scopesFetchInProgess = false;
 let roleFetchInProgess = false;
@@ -192,7 +193,12 @@ function App() {
                         <Route path="/users/:id">
                           <UserList />
                         </Route>
-                        <Route path="/applications">Applications</Route>
+                        <Route path="/applications">
+                          <ApplicationList />
+                        </Route>
+                        <Route path="/applications/:id">
+                          <ApplicationList />
+                        </Route>
                       </Switch>
                       <Route path="/users/:id" component={UserDetails} />
                     </Page>

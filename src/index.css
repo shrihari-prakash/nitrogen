@@ -79,3 +79,7 @@
     @apply flex;
   }
 }
+
+.password-placeholder:hover + .password-actual {
+  display: block;
+}
