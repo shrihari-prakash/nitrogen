@@ -8,8 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Application } from "@/types/application";
 import { ColumnDef } from "@tanstack/react-table";
-import { Asterisk, EyeIcon, MoreHorizontal, Verified } from "lucide-react";
-import { useState } from "react";
+import { MoreHorizontal, Verified } from "lucide-react";
 import { Link } from "wouter";
 
 export const applicationListColumns: ColumnDef<Application>[] = [
@@ -35,33 +34,6 @@ export const applicationListColumns: ColumnDef<Application>[] = [
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue("displayName")}</div>
     ),
-  },
-  {
-    accessorKey: "secret",
-    header: "Secret",
-    cell: ({ row }) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const [show, setShow] = useState(false);
-      return (
-        <div className="w-40">
-          {show ? (
-            <div
-              onMouseLeave={() => setShow(false)}
-              className="whitespace-nowrap"
-            >
-              {row.getValue("secret")}
-            </div>
-          ) : (
-            <div
-              onMouseEnter={() => setShow(true)}
-              className="flex items-center"
-            >
-              <Asterisk /> <Asterisk /> <Asterisk /> <Asterisk /> <EyeIcon />
-            </div>
-          )}
-        </div>
-      );
-    },
   },
   {
     accessorKey: "role",

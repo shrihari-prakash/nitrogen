@@ -49,7 +49,7 @@ const ApplicationList = function () {
     if (!applications.length) {
       setLoading(true);
       axiosInstance
-        .get("/user/admin-api/client/list", { params: { limit: 50 } })
+        .get("/client/admin-api/list", { params: { limit: 50 } })
         .then((response) => {
           setApplications(response.data.data.clients as Application[]);
         })
