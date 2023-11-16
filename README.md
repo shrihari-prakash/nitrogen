@@ -17,3 +17,16 @@ Read more about the Liquid project [here](https://github.com/shrihari-prakash/li
 - **Admin Controls:** Verify, Ban or restrict users right from your Nitrogen instance.
 - **Permissions Editor:** Nitrogen offers an intuitive permissions editor for granting precise access to Liquid instance administrators.
 - **Highly Responsive:** Nitrogen was designed with mobile first approach making user management possible from anywhere!
+
+### 🔧 Installation:
+
+1. Create a .env file in project root with the following variables:
+
+```bash
+VITE_LIQUID_HOST=https://your.liquid.instance
+VITE_LIQUID_CLIENT_ID=application_client
+```
+
+2. Run `npm run build`.
+3. Host the `dist` folder in a static server.
+4. Add the host of your Nitrogen instance to Liquid CORS settings and Redirect URI of the client from step 1.
