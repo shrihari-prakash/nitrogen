@@ -1,27 +1,17 @@
-# React + TypeScript + Vite
+# Nitrogen: Beautiful admin panel for your Liquid instances.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+What is Liquid?
 
-Currently, two official plugins are available:
+Liquid is a Docker-based open-source authentication server that supercharges your product development by offering out of the box APIs for features like follow-unfollow, blocking, and banning so that you can focus on just your application logic. 🚀
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![Nitrogen Admin Panel](images/banner.png)
 
-## Expanding the ESLint configuration
+Read more about the Liquid project [here](https://github.com/shrihari-prakash/liquid).
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Nitrogen features:
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- **Effortless Integration with Liquid**: Simply build the project with your Liquid hostname and client ID and you are all good to go!
+- **User Info Editor**: Quick and intuitive user info editing.
+- **Admin Controls**: Verify, Ban or restrict users right from your Nitrogen instance.
+- **Permissions Editor**: Nitrogen offers an intuitive permissions editor for granting precise access to Liquid instance administrators.
+- **Highly Responsive**: Nitrogen was designed with mobile first approach making user management possible from anywhere!
