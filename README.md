@@ -1,4 +1,4 @@
-# Nitrogen: Beautiful admin panel for your Liquid instances.
+# ⚙️ Nitrogen: Beautiful admin panel for your Liquid instances.⚙️
 
 ![Nitrogen Admin Panel](images/banner.png)
 
