@@ -41,7 +41,7 @@ const ApplicationList = function () {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [applications, setApplications] = React.useState<any[]>([]);
-  const [loading, setLoading] = React.useState<boolean>(false);
+  const [loading, setLoading] = React.useState<boolean>(true);
 
   const { me } = React.useContext(MeContext);
 
@@ -73,7 +73,7 @@ const ApplicationList = function () {
   });
 
   return (
-    <div className="w-full h-[calc(100%-4rem)] p-4 md:p-8">
+    <div className="w-full h-full p-4 md:p-8">
       <TypographyH4>Hello, {(me as User).firstName}</TypographyH4>
       <div className="flex items-center py-4">
         <DropdownMenu>
@@ -106,7 +106,7 @@ const ApplicationList = function () {
 
       {loading ? (
         <div
-          className={`h-full w-full flex-1 flex items-center justify-center cursor-default relative`}
+          className={`h-[calc(100%-100px)] w-full flex-1 flex items-center justify-center cursor-default relative`}
         >
           <Loader />
         </div>

@@ -42,7 +42,7 @@ const UserList = function () {
     React.useState<VisibilityState>({});
   const [users, setUsers] = React.useState<any[]>([]);
   const [searchResults, setSearchResults] = React.useState<any[] | null>();
-  const [loading, setLoading] = React.useState<boolean>(false);
+  const [loading, setLoading] = React.useState<boolean>(true);
 
   const { me } = React.useContext(MeContext);
 
@@ -96,7 +96,7 @@ const UserList = function () {
   });
 
   return (
-    <div className="w-full h-[calc(100%-4rem)] p-4 md:p-8">
+    <div className="w-full h-full p-4 md:p-8">
       <TypographyH4>Hello, {(me as User).firstName}</TypographyH4>
       <div className="flex items-center py-4">
         <Input
@@ -142,7 +142,7 @@ const UserList = function () {
 
       {loading ? (
         <div
-          className={`h-full w-full flex-1 flex items-center justify-center cursor-default relative`}
+          className={`h-[calc(100%-100px)] w-full flex-1 flex items-center justify-center cursor-default relative`}
         >
           <Loader />
         </div>
