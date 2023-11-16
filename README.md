@@ -10,8 +10,8 @@ Read more about the Liquid project [here](https://github.com/shrihari-prakash/li
 
 ### ⭐ Nitrogen features:
 
-- **Effortless Integration with Liquid**: Simply build the project with your Liquid hostname and client ID and you are all good to go!
-- **User Info Editor**: Quick and intuitive user info editing.
-- **Admin Controls**: Verify, Ban or restrict users right from your Nitrogen instance.
-- **Permissions Editor**: Nitrogen offers an intuitive permissions editor for granting precise access to Liquid instance administrators.
-- **Highly Responsive**: Nitrogen was designed with mobile first approach making user management possible from anywhere!
+- **Effortless Integration with Liquid:** Simply build the project with your Liquid hostname and client ID and you are all good to go!
+- **User Info Editor:** Quick and intuitive user info editing.
+- **Admin Controls:** Verify, Ban or restrict users right from your Nitrogen instance.
+- **Permissions Editor:** Nitrogen offers an intuitive permissions editor for granting precise access to Liquid instance administrators.
+- **Highly Responsive:** Nitrogen was designed with mobile first approach making user management possible from anywhere!
