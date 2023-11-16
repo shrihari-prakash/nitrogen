@@ -24,8 +24,10 @@ export default function ProfileCard({ user }: { user: User }) {
         <CardTitle>
           <TypographyH4>
             <div className="flex items-center">
-              {user.firstName + " " + user.lastName}
-              {user.verified && <Verified className="h-4 w-4 mx-2" />}
+              <span className="mr-2">
+                {user.firstName + " " + user.lastName}
+              </span>
+              {user.verified && <Verified className="h-4 w-4 mr-2" />}
               {user.isBanned && <UserX className="h-4 w-4 mr-2" />}
               {user.isRestricted && <UserMinus className="h-4 w-4 mr-2" />}
             </div>
