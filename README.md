@@ -22,7 +22,7 @@ Read more about the Liquid project [here](https://github.com/shrihari-prakash/li
 
 1. Create a .env file in project root with the following variables:
 
-```bash
+```sh
 VITE_LIQUID_HOST=https://your.liquid.instance
 VITE_LIQUID_CLIENT_ID=application_client
 ```
