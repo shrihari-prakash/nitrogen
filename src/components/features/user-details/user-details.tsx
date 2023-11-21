@@ -16,11 +16,14 @@ import BasicInfoEditor from "./basic-info-editor";
 import ProfileCard from "./profile-card";
 import ScopeSelector from "@/components/ui/scope-selector";
 import ScopesContext from "@/context/scopes-context";
+import usePermissions from "@/hooks/use-permissions";
 
 const UserDetails = function ({ params }: { params: { id: string } }) {
   const [, setLocation] = useLocation();
   const [user, setUser] = useState<any | User>();
   const [loadError, setLoadError] = useState(false);
+
+  const isPermissionAllowed = usePermissions();
 
   const { scopes, refreshScopes } = useContext(ScopesContext);
 
@@ -48,6 +51,10 @@ const UserDetails = function ({ params }: { params: { id: string } }) {
         setLoadError(true);
       });
   }, [params.id, setUser]);
+
+  if (!isPermissionAllowed("admin:profile:read")) {
+    return null;
+  }
 
   return (
     <>

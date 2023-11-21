@@ -33,6 +33,7 @@ import { User } from "@/types/user";
 import axiosInstance from "@/service/axios";
 import { TypographyH4 } from "@/components/ui/typography";
 import MeContext from "@/context/me-context";
+import usePermissions from "@/hooks/use-permissions";
 
 const UserList = function () {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -45,6 +46,8 @@ const UserList = function () {
   const [loading, setLoading] = React.useState<boolean>(true);
 
   const { me } = React.useContext(MeContext);
+
+  const isPermissionAllowed = usePermissions();
 
   const searchRef = React.useRef();
 
@@ -99,19 +102,23 @@ const UserList = function () {
     <div className="w-full h-full p-4 md:p-8">
       <TypographyH4>Hello, {(me as User).firstName}</TypographyH4>
       <div className="flex items-center py-4">
-        <Input
-          placeholder="Search users..."
-          className="max-w-sm"
-          onChange={onSearchChange}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              onSearch();
-            }
-          }}
-        />
-        <Button variant="outline" className="mx-2" onClick={onSearch}>
-          <Search className="h-4 w-4" />
-        </Button>
+        {isPermissionAllowed("delegated:profile:search") && (
+          <>
+            <Input
+              placeholder="Search users..."
+              className="max-w-sm"
+              onChange={onSearchChange}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  onSearch();
+                }
+              }}
+            />
+            <Button variant="outline" className="mx-2" onClick={onSearch}>
+              <Search className="h-4 w-4" />
+            </Button>
+          </>
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

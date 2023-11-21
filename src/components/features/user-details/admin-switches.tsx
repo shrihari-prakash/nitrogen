@@ -2,6 +2,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { TypographyH4 } from "@/components/ui/typography";
 import MeContext from "@/context/me-context";
+import usePermissions from "@/hooks/use-permissions";
 import axiosInstance from "@/service/axios";
 import { User } from "@/types/user";
 import { useContext, useState } from "react";
@@ -13,6 +14,8 @@ export default function AdminSwitches({ user }: { user: User }) {
   const [restricted, setRestricted] = useState(user.isRestricted);
 
   const { me } = useContext(MeContext);
+
+  const isPermissionAllowed = usePermissions();
 
   const onVerifyChange = async (state: boolean) => {
     const promise = axiosInstance.post("/user/admin-api/verify", {
@@ -64,7 +67,11 @@ export default function AdminSwitches({ user }: { user: User }) {
           <div className="space-y-0.5">
             <Label className="text-right">Verified</Label>
           </div>
-          <Switch checked={verified} onCheckedChange={onVerifyChange} />
+          <Switch
+            checked={verified}
+            onCheckedChange={onVerifyChange}
+            disabled={!isPermissionAllowed("admin:profile:verifications:write")}
+          />
         </div>
         <div className="flex flex-row items-center justify-between rounded-lg border p-4">
           <div className="space-y-0.5">
@@ -72,7 +79,10 @@ export default function AdminSwitches({ user }: { user: User }) {
           </div>
           <Switch
             checked={suspended}
-            disabled={(me as User)._id as string === user._id}
+            disabled={
+              ((me as User)._id as string) === user._id ||
+              !isPermissionAllowed("admin:profile:ban:write")
+            }
             onCheckedChange={onSuspendChange}
           />
         </div>
@@ -80,7 +90,11 @@ export default function AdminSwitches({ user }: { user: User }) {
           <div className="space-y-0.5">
             <Label className="text-right">Restricted</Label>
           </div>
-          <Switch checked={restricted} onCheckedChange={onRestrictChange} />
+          <Switch
+            checked={restricted}
+            onCheckedChange={onRestrictChange}
+            disabled={!isPermissionAllowed("admin:profile:restrict:write")}
+          />
         </div>
       </div>
     </>

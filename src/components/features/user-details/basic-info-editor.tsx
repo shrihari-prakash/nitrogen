@@ -23,6 +23,7 @@ import EditableFieldsContext from "@/context/editable-fields-context";
 import MeContext from "@/context/me-context";
 import RolesContext from "@/context/roles-context";
 import SettingsContext from "@/context/settings-context";
+import usePermissions from "@/hooks/use-permissions";
 import axiosInstance from "@/service/axios";
 import { User } from "@/types/user";
 import { Copy, Save, XCircle } from "lucide-react";
@@ -53,6 +54,8 @@ export default function BasicInfoEditor({ user }: { user: User }) {
     EditableFieldsContext
   );
 
+  const isPermissionAllowed = usePermissions();
+
   const savedFormRef = useRef(formDefaults);
 
   useEffect(() => {
@@ -68,6 +71,9 @@ export default function BasicInfoEditor({ user }: { user: User }) {
   }, [editableFields, refreshEditableFields]);
 
   const shouldAllowFieldEdit = (field: string) => {
+    if (!isPermissionAllowed("admin:profile:write")) {
+      return false;
+    }
     if (!editableFields || !user) {
       return false;
     }
@@ -76,7 +82,10 @@ export default function BasicInfoEditor({ user }: { user: User }) {
       getRoleRank(user.role as string)
     ) {
       return false;
-    } else if (getRoleRank((me as User).role as string) === getRoleRank(user.role as string)) {
+    } else if (
+      getRoleRank((me as User).role as string) ===
+      getRoleRank(user.role as string)
+    ) {
       if (
         settings &&
         !(settings as any)["admin-api.user.profile.can-edit-peer-data"]
@@ -326,7 +335,11 @@ export default function BasicInfoEditor({ user }: { user: User }) {
             )}
           />
           <SheetFooter className="flex-col">
-            <Button type="submit" className="mb-3">
+            <Button
+              type="submit"
+              className="mb-3"
+              disabled={!isPermissionAllowed("admin:profile:write")}
+            >
               <Save className="h-4 w-4 mr-2" />
               {submitting ? "Saving..." : "Save changes"}
             </Button>
