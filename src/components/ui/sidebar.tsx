@@ -1,7 +1,18 @@
-import { BiUser, BiCube } from "react-icons/bi";
+import axiosInstance from "@/service/axios";
+import oauthManager from "@/service/oauth-manager";
+import { BiUser, BiCube, BiLogOut } from "react-icons/bi";
 import { Link } from "wouter";
 
 export default function SideBar() {
+  const onLogout = async () => {
+    try {
+      await axiosInstance.get("/user/logout", { withCredentials: true });
+    } finally {
+      oauthManager.clearCredentials();
+      window.location.reload();
+    }
+  };
+
   return (
     <div
       className="h-16
@@ -26,6 +37,12 @@ export default function SideBar() {
         text="Applications"
         route="/applications"
       />
+      <SideBarIcon
+        icon={<BiLogOut size="22" />}
+        text="Logout"
+        route="#"
+        onActivate={onLogout}
+      />
     </div>
   );
 }
@@ -34,13 +51,15 @@ export const SideBarIcon = ({
   icon,
   text,
   route,
+  onActivate,
 }: {
   icon: any;
   text: string;
   route: string;
+  onActivate?: any;
 }) => {
   return (
-    <Link href={route}>
+    <Link href={route} onClick={onActivate}>
       <div
         className="relative
           flex
