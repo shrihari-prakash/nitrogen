@@ -13,7 +13,7 @@ export default function ProfileCard({ user }: { user: User }) {
   return (
     <Card className="mt-4">
       <CardHeader>
-        <Avatar>
+        <Avatar className={user.profilePictureUrl ? "w-28 h-28" : ""}>
           <AvatarImage src={user.profilePictureUrl} />
           <AvatarFallback>
             {user.firstName
