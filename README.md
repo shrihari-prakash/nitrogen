@@ -28,7 +28,7 @@ VITE_LIQUID_HOST=https://your.liquid.instance
 VITE_LIQUID_CLIENT_ID=application_client
 ```
 
-2. Run `npm install`
+2. Run `npm install`.
 3. Run `npm run build`.
 4. Host the `dist` folder in a static server.
 5. Add the host of your Nitrogen instance to Liquid CORS settings and Redirect URI of the client from step 1.
