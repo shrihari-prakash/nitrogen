@@ -1,4 +1,6 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
+import oauthManager from './oauth-manager';
 
 const baseURL = import.meta.env.VITE_LIQUID_HOST; // Replace with your API endpoint
 
@@ -8,10 +10,17 @@ const axiosInstance = axios.create({
     timeout: 60000, // Adjust the timeout as needed
 });
 
-// axiosInstance.interceptors.request.use((config) => {
-//   // Add authentication headers or any other custom logic
-//   return config;
-// });
+axiosInstance.interceptors.request.use(async (config) => {
+    if (Cookies.get('oauth_access_token') || config?.url?.includes("/oauth")) {
+        return config;
+    }
+    const accessToken = await oauthManager.getAccessToken();
+    axiosInstance.defaults.headers.common[
+        "Authorization"
+    ] = `Bearer ${accessToken}`;
+    config.headers.Authorization = `Bearer ${accessToken}`;
+    return config;
+});
 
 // axiosInstance.interceptors.response.use(
 //   (response) => {
