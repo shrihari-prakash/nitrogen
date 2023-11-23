@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 import { Alert, AlertDescription } from "./alert";
 import { Checkbox } from "./checkbox";
 import usePermissions from "@/hooks/use-permissions";
+import { Application } from "@/types/application";
 
 export interface Scope {
   name: string;
@@ -55,12 +56,14 @@ const ScopeSelector = ({
   user,
   setUser,
   type,
+  title = true,
 }: {
   scopes: Scope[];
   onSelect: any;
-  user: User;
+  user: User | Application;
   setUser: any;
   type: "user" | "client";
+  title?: boolean;
 }) => {
   const scopesObject: { [name: string]: Scope } = scopes.reduce(
     (scopes, scope) => Object.assign(scopes, { [scope.name]: scope }),
@@ -236,14 +239,17 @@ const ScopeSelector = ({
     <Dialog>
       <DialogTrigger asChild>
         <div>
-          <TypographyH4 className="my-4">Permissions</TypographyH4>
+          {title && <TypographyH4 className="my-4">Permissions</TypographyH4>}
           <Button variant="outline">Manage Permissions</Button>
         </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[800px]">
         <DialogHeader>
           <DialogTitle>
-            Managing permissions for {user.firstName + " " + user.lastName}
+            Managing permissions for{" "}
+            {user.firstName
+              ? user.firstName + " " + user.lastName
+              : user.displayName}
           </DialogTitle>
           <DialogDescription>
             {isUserMe() && (

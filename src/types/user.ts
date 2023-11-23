@@ -1,5 +1,6 @@
 export type User = {
   _id: string;
+  displayName: string; //dummy
   username: string;
   name?: string;
   firstName: string;

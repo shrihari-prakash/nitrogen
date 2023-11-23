@@ -34,6 +34,7 @@ import { TypographyH4 } from "@/components/ui/typography";
 import MeContext from "@/context/me-context";
 import { Application } from "@/types/application";
 import ApplicationCreator from "./application-creator";
+import ScopesContext from "@/context/scopes-context";
 
 const ApplicationList = function () {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -45,6 +46,11 @@ const ApplicationList = function () {
   const [loading, setLoading] = React.useState<boolean>(true);
 
   const { me } = React.useContext(MeContext);
+  const { scopes, refreshScopes } = React.useContext(ScopesContext);
+
+  React.useEffect(() => {
+    if (!scopes) refreshScopes();
+  }, [scopes, refreshScopes]);
 
   React.useEffect(() => {
     if (!applications.length) {
@@ -64,6 +70,10 @@ const ApplicationList = function () {
     setApplications((apps) => [...apps, application]);
   };
 
+  const onApplicationDelete = (_id: string) => {
+    setApplications((apps) => apps.filter((app) => app._id !== _id));
+  };
+
   const table = useReactTable({
     data: applications,
     columns: applicationListColumns,
@@ -74,6 +84,10 @@ const ApplicationList = function () {
     state: {
       columnFilters,
       columnVisibility,
+    },
+    meta: {
+      scopes,
+      onApplicationDelete
     },
   });
 

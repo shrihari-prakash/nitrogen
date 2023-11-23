@@ -30,6 +30,7 @@ export const userListColumns: ColumnDef<User>[] = [
   {
     accessorKey: "username",
     header: "Username",
+    enableHiding: false,
     cell: ({ row }) => (
       <Link href={`/users/${row.original._id}`} className="flex items-center justify-start">
         {row.getValue("username") || (

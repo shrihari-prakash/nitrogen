@@ -1,20 +1,17 @@
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import ScopeSelector from "@/components/ui/scope-selector";
+import axiosInstance from "@/service/axios";
 import { Application } from "@/types/application";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Verified } from "lucide-react";
+import { Verified } from "lucide-react";
+import { toast } from "react-toastify";
 import { Link } from "wouter";
 
 export const applicationListColumns: ColumnDef<Application>[] = [
   {
     accessorKey: "id",
     header: "ID",
+    enableHiding: false,
     cell: ({ row }) => (
       <Link
         href={`/applications/${row.original.id}`}
@@ -47,24 +44,40 @@ export const applicationListColumns: ColumnDef<Application>[] = [
   {
     id: "actions",
     enableHiding: false,
-    cell: ({ row }) => {
+    cell: ({ row, cell }) => {
+      const meta = cell.getContext().table?.options?.meta as any;
+      const onApplicationDelete = async () => {
+        const promise = axiosInstance.delete("/client/admin-api/delete", {
+          data: {
+            target: row.original._id,
+          },
+        });
+        toast.promise(promise, {
+          pending: "Deleting...",
+          success: "Delete successfull",
+          error: "Delete failed!",
+        });
+        await promise;
+        meta.onApplicationDelete(row.original._id);
+      };
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <Link href={`/applications/${row.original.id}`}>
-              <DropdownMenuItem>
-                Edit
-                <DropdownMenuShortcut>⇧⌘E</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            </Link>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center justify-center">
+          <ScopeSelector
+            user={row.original}
+            setUser={() => null}
+            scopes={meta.scopes || []}
+            type="client"
+            title={false}
+            onSelect={(selected: string) => console.log(selected)}
+          />
+          <Button
+            className="ml-2"
+            variant={"outline"}
+            onClick={onApplicationDelete}
+          >
+            Delete
+          </Button>
+        </div>
       );
     },
   },
