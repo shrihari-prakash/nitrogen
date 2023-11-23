@@ -33,6 +33,7 @@ import axiosInstance from "@/service/axios";
 import { TypographyH4 } from "@/components/ui/typography";
 import MeContext from "@/context/me-context";
 import { Application } from "@/types/application";
+import ApplicationCreator from "./application-creator";
 
 const ApplicationList = function () {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -58,6 +59,10 @@ const ApplicationList = function () {
         });
     }
   }, [applications, setApplications]);
+
+  const onApplicationCreate = (application: Application) => {
+    setApplications((apps) => [...apps, application]);
+  };
 
   const table = useReactTable({
     data: applications,
@@ -102,6 +107,7 @@ const ApplicationList = function () {
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+        <ApplicationCreator onCreate={onApplicationCreate} />
       </div>
 
       {loading ? (
