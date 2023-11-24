@@ -159,6 +159,10 @@ const ScopeSelector = ({
     return allChildren;
   };
 
+  const onOpenChange = () => {
+    setSearch("");
+  };
+
   const onSave = async () => {
     let newScopeList = [...selectedScopes];
     scopes.forEach((scope) => {
@@ -241,7 +245,7 @@ const ScopeSelector = ({
   }
 
   return (
-    <Dialog>
+    <Dialog onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <div>
           <Button variant="outline">Manage Permissions</Button>
@@ -268,6 +272,7 @@ const ScopeSelector = ({
             <Input
               placeholder="Start typing to search"
               onChange={(e) => setSearch(e.target.value)}
+              autoCapitalize="none"
             />
           </div>
         </DialogHeader>
