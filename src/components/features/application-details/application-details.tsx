@@ -91,6 +91,9 @@ export default function ApplicationDetails({
     if (!application) {
       return;
     }
+    if (!formValues.grants.length) {
+      formValues.grants = application.grants;
+    }
     delete formValues._id;
     delete formValues.scope;
     delete formValues.__v;
