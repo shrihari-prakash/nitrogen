@@ -26,6 +26,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import RolesContext from '@/context/roles-context';
+import usePermissions from '@/hooks/use-permissions';
 import axiosInstance from '@/service/axios';
 import { Application } from '@/types/application';
 import { PencilIcon } from 'lucide-react';
@@ -62,6 +63,8 @@ export default function ApplicationDetails({
     if (!roles) refreshRoles();
   }, [roles, refreshRoles]);
 
+  const isPermissionAllowed = usePermissions();
+
   const formDefaults = application || {
     id: undefined,
     displayName: undefined,
@@ -89,6 +92,8 @@ export default function ApplicationDetails({
       return;
     }
     delete formValues._id;
+    delete formValues.scope;
+    delete formValues.__v;
     console.log(redirectUriRef.current);
     const promise = axiosInstance.patch('/client/admin-api/update', {
       target: application._id,
@@ -209,10 +214,24 @@ export default function ApplicationDetails({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent defaultValue='external_client'>
-                        <SelectItem value='internal_client'>
+                        <SelectItem
+                          value='internal_client'
+                          disabled={
+                            !isPermissionAllowed(
+                              'admin:system:internal-client:write'
+                            )
+                          }
+                        >
                           Internal Client
                         </SelectItem>
-                        <SelectItem value='external_client'>
+                        <SelectItem
+                          value='external_client'
+                          disabled={
+                            !isPermissionAllowed(
+                              'admin:system:external-client:write'
+                            )
+                          }
+                        >
                           External Client
                         </SelectItem>
                       </SelectContent>

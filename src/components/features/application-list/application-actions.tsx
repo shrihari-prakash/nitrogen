@@ -20,6 +20,7 @@ import { useState } from 'react';
 import { BiTrash } from 'react-icons/bi';
 import { toast } from 'react-toastify';
 import ApplicationDetails from '../application-details/application-details';
+import { Application } from '@/types/application';
 
 export const ApplicationActions = ({
   row,
@@ -56,6 +57,22 @@ export const ApplicationActions = ({
     setValue(e.target.value);
   };
 
+  const canDelete = (client: Application): boolean => {
+    if (client.role === 'external_client') {
+      return isPermissionAllowed('admin:system:external-client:delete');
+    } else {
+      return isPermissionAllowed('admin:system:internal-client:delete');
+    }
+  };
+
+  const canEdit = (client: Application): boolean => {
+    if (client.role === 'external_client') {
+      return isPermissionAllowed('admin:system:external-client:write');
+    } else {
+      return isPermissionAllowed('admin:system:internal-client:write');
+    }
+  };
+
   return (
     <div className='flex items-center justify-center'>
       {isPermissionAllowed('admin:profile:access:write') && (
@@ -66,10 +83,12 @@ export const ApplicationActions = ({
           type='client'
         />
       )}
-      <ApplicationDetails application={row.original} />
+      {canEdit(row.original) && (
+        <ApplicationDetails application={row.original} />
+      )}
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          {isPermissionAllowed('admin:system:client:delete') && (
+          {canDelete(row.original) && (
             <Button className='ml-2' variant='outline'>
               <BiTrash className='h-4 w-4' />
             </Button>
