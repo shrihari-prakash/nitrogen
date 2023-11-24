@@ -287,13 +287,15 @@ export default function ApplicationDetails({
                       <TagInput
                         placeholder='Type a URL and press enter'
                         tags={redirectUris}
-                        textCase={"lowercase"}
+                        textCase={'lowercase'}
                         className='bg-secondary text-secondary-foreground hover:bg-secondary/80'
                         setTags={(newTags) => setRedirectUris(newTags)}
                       />
                     </FormControl>
                     <FormDescription>
-                      Comma separated list of redirect URIs.
+                      Comma separated list of redirect URIs. Make sure you
+                      update your Liquid CORS settings and restart once you add
+                      a URI.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
