@@ -19,6 +19,7 @@ import { AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 import { BiTrash } from 'react-icons/bi';
 import { toast } from 'react-toastify';
+import ApplicationDetails from '../application-details/application-details';
 
 export const ApplicationActions = ({
   row,
@@ -65,6 +66,7 @@ export const ApplicationActions = ({
           type='client'
         />
       )}
+      <ApplicationDetails application={row.original} />
       <AlertDialog>
         <AlertDialogTrigger asChild>
           {isPermissionAllowed('admin:system:client:delete') && (

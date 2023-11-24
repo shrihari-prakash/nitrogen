@@ -132,7 +132,7 @@ export default function BasicInfoEditor({ user }: { user: User }) {
     console.log(formValues);
     let promise;
     try {
-      promise = axiosInstance.patch("/user/admin-api/user", {
+      promise = axiosInstance.patch("/user/admin-api/update", {
         target: user._id,
         ...formValues,
       });

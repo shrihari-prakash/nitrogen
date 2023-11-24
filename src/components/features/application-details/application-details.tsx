@@ -1,11 +1,11 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -14,32 +14,42 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import RolesContext from "@/context/roles-context";
-import axiosInstance from "@/service/axios";
-import { useContext, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import RolesContext from '@/context/roles-context';
+import axiosInstance from '@/service/axios';
+import { Application } from '@/types/application';
+import { PencilIcon } from 'lucide-react';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 const grants = [
-  { label: "Authorization Code", value: "authorization_code" },
-  { label: "Refresh Token", value: "refresh_token" },
-  { label: "Client Credentials", value: "client_credentials" },
+  { label: 'Authorization Code', value: 'authorization_code' },
+  { label: 'Refresh Token', value: 'refresh_token' },
+  { label: 'Client Credentials', value: 'client_credentials' },
 ];
 
-export default function ApplicationCreate({ onCreate }: { onCreate?: any }) {
+export default function ApplicationDetails({
+  onCreate,
+  application,
+}: {
+  onCreate?: any;
+  application?: Application;
+}) {
   const [open, setOpen] = useState(false);
   const [selectedGrants, setSelectedGrants] = useState<any[]>([]);
+
+  const redirectUriRef = useRef<any>();
 
   const onGrantSelect = (g: any) => {
     console.log(g);
@@ -52,7 +62,7 @@ export default function ApplicationCreate({ onCreate }: { onCreate?: any }) {
     if (!roles) refreshRoles();
   }, [roles, refreshRoles]);
 
-  const formDefaults = {
+  const formDefaults = application || {
     id: undefined,
     displayName: undefined,
     secret: undefined,
@@ -64,47 +74,78 @@ export default function ApplicationCreate({ onCreate }: { onCreate?: any }) {
     defaultValues: formDefaults,
   });
 
+  async function create(formValues: any) {
+    const promise = axiosInstance.post('/client/admin-api/create', formValues);
+    toast.promise(promise, {
+      pending: 'Submitting...',
+      success: 'Creation successfull',
+      error: 'Creation failed!',
+    });
+    return await promise;
+  }
+
+  async function update(formValues: any) {
+    if (!application) {
+      return;
+    }
+    console.log(redirectUriRef.current);
+    const promise = axiosInstance.patch('/client/admin-api/update', {
+      target: application._id,
+      ...formValues,
+    });
+    toast.promise(promise, {
+      pending: 'Submitting...',
+      success: 'Update successfull',
+      error: 'Update failed!',
+    });
+    return await promise;
+  }
+
   async function onSubmit(formValues: any) {
     formValues = {
       ...formValues,
       grants: selectedGrants,
     };
-    formValues.redirectUris = formValues.redirectUris.split(",");
-    console.log(formValues);
-    const promise = axiosInstance.post("/client/admin-api/create", formValues);
-    toast.promise(promise, {
-      pending: "Submitting...",
-      success: "Creation successfull",
-      error: "Creation failed!",
-    });
-    const result = await promise;
-    setOpen(false);
-    if (onCreate) {
-      onCreate(result.data.data.client);
+    if (!Array.isArray(formValues.redirectUris)) {
+      formValues.redirectUris = formValues.redirectUris.split(',');
     }
+    if (!application) {
+      const result = await create(formValues);
+      if (onCreate) {
+        onCreate(result.data.data.client);
+      }
+    } else {
+      await update(formValues);
+    }
+    setOpen(false);
+
     form.reset();
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="ml-2">
-          Create Application
+        <Button variant='outline' className='ml-2'>
+          {application ? (
+            <PencilIcon className='h-4 w-4' />
+          ) : (
+            'Create Application'
+          )}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-full md:max-w-[500px]">
+      <DialogContent className='sm:max-w-full md:max-w-[500px]'>
         <DialogHeader>
           <DialogTitle>Create Application</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <div className='grid gap-4 py-4'>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-2 p-4 max-h-[60vh] overflow-y-auto"
+              className='space-y-2 p-4 max-h-[60vh] overflow-y-auto'
             >
               <FormField
                 control={form.control}
-                name="id"
+                name='id'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Application ID</FormLabel>
@@ -121,7 +162,7 @@ export default function ApplicationCreate({ onCreate }: { onCreate?: any }) {
               />
               <FormField
                 control={form.control}
-                name="displayName"
+                name='displayName'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Display Name</FormLabel>
@@ -134,7 +175,7 @@ export default function ApplicationCreate({ onCreate }: { onCreate?: any }) {
               />
               <FormField
                 control={form.control}
-                name="secret"
+                name='secret'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Application Secret</FormLabel>
@@ -147,7 +188,7 @@ export default function ApplicationCreate({ onCreate }: { onCreate?: any }) {
               />
               <FormField
                 control={form.control}
-                name="role"
+                name='role'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Role</FormLabel>
@@ -157,14 +198,14 @@ export default function ApplicationCreate({ onCreate }: { onCreate?: any }) {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a role" />
+                          <SelectValue placeholder='Select a role' />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent defaultValue="external_client">
-                        <SelectItem value="internal_client">
+                      <SelectContent defaultValue='external_client'>
+                        <SelectItem value='internal_client'>
                           Internal Client
                         </SelectItem>
-                        <SelectItem value="external_client">
+                        <SelectItem value='external_client'>
                           External Client
                         </SelectItem>
                       </SelectContent>
@@ -176,15 +217,15 @@ export default function ApplicationCreate({ onCreate }: { onCreate?: any }) {
               <FormItem>
                 <FormLabel>Grants</FormLabel>
                 <ToggleGroup
-                  size={"sm"}
-                  type="multiple"
+                  size={'sm'}
+                  type='multiple'
                   onValueChange={onGrantSelect}
                 >
                   {grants.map((grant) => (
                     <ToggleGroupItem
                       value={grant.value}
                       aria-label={grant.label}
-                      className="text-xs"
+                      className='text-xs'
                     >
                       {grant.label}
                     </ToggleGroupItem>
@@ -193,12 +234,12 @@ export default function ApplicationCreate({ onCreate }: { onCreate?: any }) {
               </FormItem>
               <FormField
                 control={form.control}
-                name="redirectUris"
+                name='redirectUris'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Redirect URIs</FormLabel>
                     <FormControl>
-                      <Textarea {...field} />
+                      <Textarea {...field} required ref={redirectUriRef} />
                     </FormControl>
                     <FormDescription>
                       Comma separated list of redirect URIs.
@@ -207,7 +248,7 @@ export default function ApplicationCreate({ onCreate }: { onCreate?: any }) {
                   </FormItem>
                 )}
               />
-              <Button type="submit">Save changes</Button>
+              <Button type='submit'>Save changes</Button>
             </form>
           </Form>
         </div>
