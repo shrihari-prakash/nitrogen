@@ -153,7 +153,11 @@ export default function ApplicationDetails({
                   <FormItem>
                     <FormLabel>Application ID</FormLabel>
                     <FormControl>
-                      <Input {...field} minLength={8} disabled={!!application}/>
+                      <Input
+                        {...field}
+                        minLength={8}
+                        disabled={!!application}
+                      />
                     </FormControl>
                     <FormDescription>
                       Must be atleast 8 characters long. Can include alphabets,
@@ -223,6 +227,7 @@ export default function ApplicationDetails({
                   size={'sm'}
                   type='multiple'
                   onValueChange={onGrantSelect}
+                  defaultValue={application && application.grants}
                 >
                   {grants.map((grant) => (
                     <ToggleGroupItem
