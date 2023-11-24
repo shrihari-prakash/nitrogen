@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { User } from '@/types/user';
 import { ColumnDef } from '@tanstack/react-table';
-import { PencilIcon, Verified } from 'lucide-react';
+import { PencilIcon, UserCogIcon, Verified } from 'lucide-react';
 import { Link } from 'wouter';
 
 export const userListColumns: ColumnDef<User>[] = [
@@ -54,6 +54,19 @@ export const userListColumns: ColumnDef<User>[] = [
       <div className='capitalize'>
         {row.getValue('lastName') ||
           ((row.original.name || '') as string).split(' ')[1]}
+      </div>
+    ),
+  },
+  {
+    accessorKey: 'role',
+    header: 'Role',
+    cell: ({ row }) => (
+      <div className='capitalize flex items-center'>
+        {(row.getValue('role') as string).split('_').join(' ')}{' '}
+        {(row.getValue('role') === 'admin' ||
+          row.getValue('role') === 'super_admin') && (
+          <UserCogIcon className='h-4 w-4 ml-2' />
+        )}
       </div>
     ),
   },
