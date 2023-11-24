@@ -204,7 +204,6 @@ export default function ApplicationDetails({
               <FormField
                 control={form.control}
                 name='secret'
-                autoCapitalize="none"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Application Secret</FormLabel>

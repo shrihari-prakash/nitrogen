@@ -213,7 +213,7 @@ const ScopeSelector = ({
                 : ""
             }
           >
-            {search !== "" && !item.name.includes(search) ? null : (
+            {search !== "" && !item.name.toLowerCase().includes(search) ? null : (
               <Label className="flex items-center my-2 space-x-3 px-3 py-2">
                 <Checkbox
                   disabled={
