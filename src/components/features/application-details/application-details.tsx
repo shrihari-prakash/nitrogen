@@ -88,6 +88,7 @@ export default function ApplicationDetails({
     if (!application) {
       return;
     }
+    delete formValues._id;
     console.log(redirectUriRef.current);
     const promise = axiosInstance.patch('/client/admin-api/update', {
       target: application._id,
@@ -135,7 +136,9 @@ export default function ApplicationDetails({
       </DialogTrigger>
       <DialogContent className='sm:max-w-full md:max-w-[500px]'>
         <DialogHeader>
-          <DialogTitle>Create Application</DialogTitle>
+          <DialogTitle>
+            {application ? 'Update Application' : 'Create Application'}
+          </DialogTitle>
         </DialogHeader>
         <div className='grid gap-4 py-4'>
           <Form {...form}>
@@ -150,7 +153,7 @@ export default function ApplicationDetails({
                   <FormItem>
                     <FormLabel>Application ID</FormLabel>
                     <FormControl>
-                      <Input {...field} minLength={8} />
+                      <Input {...field} minLength={8} disabled={!!application}/>
                     </FormControl>
                     <FormDescription>
                       Must be atleast 8 characters long. Can include alphabets,
