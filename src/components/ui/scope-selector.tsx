@@ -1,9 +1,9 @@
-import { useContext, useState } from 'react';
-import { Label } from './label';
-import MeContext from '@/context/me-context';
-import { User } from '@/types/user';
-import axiosInstance from '@/service/axios';
-import { Button } from './button';
+import { useContext, useState } from "react";
+import { Label } from "./label";
+import MeContext from "@/context/me-context";
+import { User } from "@/types/user";
+import axiosInstance from "@/service/axios";
+import { Button } from "./button";
 import {
   Dialog,
   DialogContent,
@@ -12,12 +12,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from './dialog';
-import { toast } from 'react-toastify';
-import { Alert, AlertDescription } from './alert';
-import { Checkbox } from './checkbox';
-import usePermissions from '@/hooks/use-permissions';
-import { Application } from '@/types/application';
+} from "./dialog";
+import { toast } from "react-toastify";
+import { Alert, AlertDescription } from "./alert";
+import { Checkbox } from "./checkbox";
+import usePermissions from "@/hooks/use-permissions";
+import { Application } from "@/types/application";
+import { Input } from "./input";
 
 export interface Scope {
   name: string;
@@ -60,7 +61,7 @@ const ScopeSelector = ({
   onSelect?: any;
   user: User | Application;
   setUser: any;
-  type: 'user' | 'client';
+  type: "user" | "client";
 }) => {
   const scopesObject: { [name: string]: Scope } = scopes.reduce(
     (scopes, scope) => Object.assign(scopes, { [scope.name]: scope }),
@@ -79,6 +80,7 @@ const ScopeSelector = ({
   );
 
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>("");
 
   const { me } = useContext(MeContext);
 
@@ -138,7 +140,7 @@ const ScopeSelector = ({
     }
 
     setSelectedScopes(newSelectedItems);
-    onSelect(newSelectedItems.join(', '));
+    onSelect(newSelectedItems.join(", "));
   };
 
   const getParent = (itemName: string) => {
@@ -170,19 +172,19 @@ const ScopeSelector = ({
     setSubmitting(true);
     let promise;
     try {
-      promise = axiosInstance.post('/user/admin-api/access', {
+      promise = axiosInstance.post("/user/admin-api/access", {
         targets: [user._id],
         targetType: type,
         scope: newScopeList,
-        operation: 'set',
+        operation: "set",
       });
       toast.promise(promise, {
-        pending: 'Submitting...',
-        success: 'Update successfull',
-        error: 'Update failed!',
+        pending: "Submitting...",
+        success: "Update successfull",
+        error: "Update failed!",
       });
       await promise;
-      console.log('Permissions granted ' + newScopeList.join(','));
+      console.log("Permissions granted " + newScopeList.join(","));
       const userCopy = { ...user };
       userCopy.scope = newScopeList;
       if (setUser) {
@@ -193,42 +195,48 @@ const ScopeSelector = ({
     }
   };
 
-  const renderTree = (items: Scope[], parent = '*') => {
+  const renderTree = (items: Scope[], parent = "*") => {
     return items
       .filter((item) => item.parent === parent)
-      .map((item) => (
-        <div
-          key={item.name}
-          className={
-            !isScopeAllowed(item.name, me?.scope as string[], scopesObject) ||
-            isUserMe()
-              ? 'opacity-80'
-              : ''
-          }
-        >
-          <Label className='flex items-center my-2 space-x-3 px-3 py-2'>
-            <Checkbox
-              disabled={
-                !isScopeAllowed(
-                  item.name,
-                  me?.scope as string[],
-                  scopesObject
-                ) || isUserMe()
-              }
-              checked={selectedScopes.includes(item.name)}
-              onCheckedChange={() => handleToggle(item.name)}
-            />
-            <span className='mx-2'>
-              <div className='mb-2 text-normal'>{item.name}</div>
-              <div className='opacity-40 font-normal'>{item.description}</div>
-            </span>
-          </Label>
-          <div className='mx-8'>{renderTree(items, item.name)}</div>
-        </div>
-      ));
+      .map((item) => {
+        return (
+          <div
+            key={item.name}
+            className={
+              !isScopeAllowed(item.name, me?.scope as string[], scopesObject) ||
+              isUserMe()
+                ? "opacity-80"
+                : ""
+            }
+          >
+            {search !== "" && !item.name.includes(search) ? null : (
+              <Label className="flex items-center my-2 space-x-3 px-3 py-2">
+                <Checkbox
+                  disabled={
+                    !isScopeAllowed(
+                      item.name,
+                      me?.scope as string[],
+                      scopesObject
+                    ) || isUserMe()
+                  }
+                  checked={selectedScopes.includes(item.name)}
+                  onCheckedChange={() => handleToggle(item.name)}
+                />
+                <span className="mx-2">
+                  <div className="mb-2 text-normal">{item.name}</div>
+                  <div className="opacity-40 font-normal">
+                    {item.description}
+                  </div>
+                </span>
+              </Label>
+            )}
+            <div className="mx-8">{renderTree(items, item.name)}</div>
+          </div>
+        );
+      });
   };
 
-  if (!isPermissionAllowed('admin:profile:access:write')) {
+  if (!isPermissionAllowed("admin:profile:access:write")) {
     return null;
   }
 
@@ -236,33 +244,39 @@ const ScopeSelector = ({
     <Dialog>
       <DialogTrigger asChild>
         <div>
-          <Button variant='outline'>Manage Permissions</Button>
+          <Button variant="outline">Manage Permissions</Button>
         </div>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-[800px]'>
+      <DialogContent className="sm:max-w-[800px]">
         <DialogHeader>
           <DialogTitle>
-            Managing permissions for{' '}
+            Managing permissions for{" "}
             {user.firstName
-              ? user.firstName + ' ' + user.lastName
+              ? user.firstName + " " + user.lastName
               : user.displayName}
           </DialogTitle>
           <DialogDescription>
             {isUserMe() && (
-              <Alert className='mt-2'>
+              <Alert className="mt-2">
                 <AlertDescription>
                   You can't edit your own permissions
                 </AlertDescription>
               </Alert>
             )}
           </DialogDescription>
+          <div className="p-2">
+            <Input
+              placeholder="Start typing to search"
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
         </DialogHeader>
-        <div className='grid max-h-[450px] overflow-auto'>
+        <div className="grid max-h-[400px] overflow-auto">
           {scopes && renderTree(scopes)}
         </div>
         <DialogFooter>
           <Button
-            type='submit'
+            type="submit"
             disabled={submitting || isUserMe()}
             onClick={onSave}
           >
