@@ -8,18 +8,20 @@ export const applicationListColumns: ColumnDef<Application>[] = [
     accessorKey: 'id',
     header: 'ID',
     enableHiding: false,
-    cell: ({ row }) => row.getValue('id'),
+    cell: ({ row }) => (
+      <div className='flex items-center'>
+        {row.getValue('id')}
+        {row.original.role === 'internal_client' && (
+          <Verified className='h-4 w-4 ml-2' />
+        )}
+      </div>
+    ),
   },
   {
     accessorKey: 'displayName',
     header: 'Display Name',
     cell: ({ row }) => (
-      <div className='capitalize flex items-center'>
-        {row.getValue('displayName')}{' '}
-        {row.original.role === 'internal_client' && (
-          <Verified className='h-4 w-4 ml-2' />
-        )}
-      </div>
+      <div className='capitalize'>{row.getValue('displayName')} </div>
     ),
   },
   {

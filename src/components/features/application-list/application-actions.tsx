@@ -17,6 +17,7 @@ import usePermissions from '@/hooks/use-permissions';
 import axiosInstance from '@/service/axios';
 import { AlertCircle } from 'lucide-react';
 import { useState } from 'react';
+import { BiTrash } from 'react-icons/bi';
 import { toast } from 'react-toastify';
 
 export const ApplicationActions = ({
@@ -67,8 +68,8 @@ export const ApplicationActions = ({
       <AlertDialog>
         <AlertDialogTrigger asChild>
           {isPermissionAllowed('admin:system:client:delete') && (
-            <Button className='ml-2' variant={'outline'}>
-              Delete
+            <Button className='ml-2' variant='outline'>
+              <BiTrash className='h-4 w-4' />
             </Button>
           )}
         </AlertDialogTrigger>
