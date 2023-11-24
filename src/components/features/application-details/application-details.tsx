@@ -125,7 +125,9 @@ export default function ApplicationDetails({
     }
     setOpen(false);
 
-    form.reset();
+    if (!application) {
+      form.reset();
+    }
   }
 
   return (
