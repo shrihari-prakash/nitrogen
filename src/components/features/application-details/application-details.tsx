@@ -23,16 +23,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+import { Tag, TagInput } from '@/components/ui/tag-input';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import RolesContext from '@/context/roles-context';
 import usePermissions from '@/hooks/use-permissions';
 import axiosInstance from '@/service/axios';
 import { Application } from '@/types/application';
 import { PencilIcon } from 'lucide-react';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import { v4 as uuid } from 'uuid';
 
 const grants = [
   { label: 'Authorization Code', value: 'authorization_code' },
@@ -49,8 +50,7 @@ export default function ApplicationDetails({
 }) {
   const [open, setOpen] = useState(false);
   const [selectedGrants, setSelectedGrants] = useState<any[]>([]);
-
-  const redirectUriRef = useRef<any>();
+  const [redirectUris, setRedirectUris] = useState<Tag[]>([]);
 
   const onGrantSelect = (g: any) => {
     console.log(g);
@@ -77,6 +77,16 @@ export default function ApplicationDetails({
     defaultValues: formDefaults,
   });
 
+  useEffect(() => {
+    if (application) {
+      const uris = application.redirectUris.map((uri) => ({
+        id: uuid(),
+        text: uri,
+      }));
+      setRedirectUris(uris);
+    }
+  }, [application, setRedirectUris]);
+
   async function create(formValues: any) {
     const promise = axiosInstance.post('/client/admin-api/create', formValues);
     toast.promise(promise, {
@@ -97,7 +107,6 @@ export default function ApplicationDetails({
     delete formValues._id;
     delete formValues.scope;
     delete formValues.__v;
-    console.log(redirectUriRef.current);
     const promise = axiosInstance.patch('/client/admin-api/update', {
       target: application._id,
       ...formValues,
@@ -113,6 +122,7 @@ export default function ApplicationDetails({
   async function onSubmit(formValues: any) {
     formValues = {
       ...formValues,
+      redirectUris: redirectUris.map((uri) => uri.text),
       grants: selectedGrants,
     };
     if (!Array.isArray(formValues.redirectUris)) {
@@ -249,8 +259,10 @@ export default function ApplicationDetails({
                 <FormLabel>Grants</FormLabel>
                 <ToggleGroup
                   size={'sm'}
+                  className='justify-between'
                   type='multiple'
                   onValueChange={onGrantSelect}
+                  variant='outline'
                   defaultValue={application && application.grants}
                 >
                   {grants.map((grant) => (
@@ -258,6 +270,7 @@ export default function ApplicationDetails({
                       value={grant.value}
                       aria-label={grant.label}
                       className='text-xs'
+                      key={grant.value}
                     >
                       {grant.label}
                     </ToggleGroupItem>
@@ -267,11 +280,17 @@ export default function ApplicationDetails({
               <FormField
                 control={form.control}
                 name='redirectUris'
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel>Redirect URIs</FormLabel>
                     <FormControl>
-                      <Textarea {...field} required ref={redirectUriRef} />
+                      <TagInput
+                        placeholder='Type a URL and press enter'
+                        tags={redirectUris}
+                        textCase={"lowercase"}
+                        className='bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                        setTags={(newTags) => setRedirectUris(newTags)}
+                      />
                     </FormControl>
                     <FormDescription>
                       Comma separated list of redirect URIs.
