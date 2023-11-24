@@ -33,7 +33,7 @@ import axiosInstance from "@/service/axios";
 import { TypographyH4 } from "@/components/ui/typography";
 import MeContext from "@/context/me-context";
 import { Application } from "@/types/application";
-import ApplicationCreator from "./application-creator";
+import ApplicationCreate from "../application-create/application-create";
 import ScopesContext from "@/context/scopes-context";
 
 const ApplicationList = function () {
@@ -121,9 +121,8 @@ const ApplicationList = function () {
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <ApplicationCreator onCreate={onApplicationCreate} />
+        <ApplicationCreate onCreate={onApplicationCreate} />
       </div>
-
       {loading ? (
         <div
           className={`h-[calc(100%-100px)] w-full flex-1 flex items-center justify-center cursor-default relative`}

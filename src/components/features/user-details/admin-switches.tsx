@@ -1,6 +1,5 @@
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { TypographyH4 } from "@/components/ui/typography";
 import MeContext from "@/context/me-context";
 import usePermissions from "@/hooks/use-permissions";
 import axiosInstance from "@/service/axios";
@@ -61,8 +60,7 @@ export default function AdminSwitches({ user }: { user: User }) {
 
   return (
     <>
-      <TypographyH4>Admin Controls</TypographyH4>
-      <div className="space-y-4 mt-4">
+      <div className="space-y-4 my-2">
         <div className="flex flex-row items-center justify-between rounded-lg border p-4">
           <div className="space-y-0.5">
             <Label className="text-right">Verified</Label>

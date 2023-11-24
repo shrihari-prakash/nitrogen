@@ -37,7 +37,7 @@ const grants = [
   { label: "Client Credentials", value: "client_credentials" },
 ];
 
-export default function ApplicationCreator({ onCreate }: { onCreate?: any }) {
+export default function ApplicationCreate({ onCreate }: { onCreate?: any }) {
   const [open, setOpen] = useState(false);
   const [selectedGrants, setSelectedGrants] = useState<any[]>([]);
 
@@ -53,11 +53,11 @@ export default function ApplicationCreator({ onCreate }: { onCreate?: any }) {
   }, [roles, refreshRoles]);
 
   const formDefaults = {
-    id: "",
-    displayName: "",
-    secret: "",
-    role: "",
-    redirectUris: "",
+    id: undefined,
+    displayName: undefined,
+    secret: undefined,
+    role: undefined,
+    redirectUris: undefined,
   };
 
   const form = useForm({

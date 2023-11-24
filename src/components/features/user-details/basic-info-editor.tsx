@@ -18,7 +18,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SheetClose, SheetFooter } from "@/components/ui/sheet";
-import { TypographyH4 } from "@/components/ui/typography";
 import EditableFieldsContext from "@/context/editable-fields-context";
 import MeContext from "@/context/me-context";
 import RolesContext from "@/context/roles-context";
@@ -150,8 +149,7 @@ export default function BasicInfoEditor({ user }: { user: User }) {
   }
 
   return (
-    <div className="grid gap-4 py-4">
-      <TypographyH4>Basic Info</TypographyH4>
+    <div className="grid gap-4 py-2">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
