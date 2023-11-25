@@ -1,4 +1,4 @@
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,18 +9,18 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import ScopeSelector from '@/components/ui/scope-selector';
-import usePermissions from '@/hooks/use-permissions';
-import axiosInstance from '@/service/axios';
-import { AlertCircle } from 'lucide-react';
-import { useState } from 'react';
-import { BiTrash } from 'react-icons/bi';
-import { toast } from 'react-toastify';
-import ApplicationDetails from '../application-details/application-details';
-import { Application } from '@/types/application';
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import ScopeSelector from "@/components/ui/scope-selector";
+import usePermissions from "@/hooks/use-permissions";
+import axiosInstance from "@/service/axios";
+import { AlertCircle } from "lucide-react";
+import { useState } from "react";
+import { BiTrash } from "react-icons/bi";
+import { toast } from "react-toastify";
+import ApplicationDetails from "../application-details/application-details";
+import { Application } from "@/types/application";
 
 export const ApplicationActions = ({
   row,
@@ -30,7 +30,7 @@ export const ApplicationActions = ({
   cell: any;
   table: any;
 }) => {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState("");
 
   const context = cell.getContext();
 
@@ -39,15 +39,15 @@ export const ApplicationActions = ({
   const meta = context.table.options.meta as any;
 
   const onApplicationDelete = async () => {
-    const promise = axiosInstance.delete('/client/admin-api/delete', {
+    const promise = axiosInstance.delete("/client/admin-api/delete", {
       data: {
         target: row.original._id,
       },
     });
     toast.promise(promise, {
-      pending: 'Deleting...',
-      success: 'Delete successfull',
-      error: 'Delete failed!',
+      pending: "Deleting...",
+      success: "Delete successfull",
+      error: "Delete failed!",
     });
     await promise;
     meta.onApplicationDelete(row.original._id);
@@ -58,39 +58,42 @@ export const ApplicationActions = ({
   };
 
   const canDelete = (client: Application): boolean => {
-    if (client.role === 'external_client') {
-      return isPermissionAllowed('admin:system:external-client:delete');
+    if (client.role === "external_client") {
+      return isPermissionAllowed("admin:system:external-client:delete");
     } else {
-      return isPermissionAllowed('admin:system:internal-client:delete');
+      return isPermissionAllowed("admin:system:internal-client:delete");
     }
   };
 
   const canEdit = (client: Application): boolean => {
-    if (client.role === 'external_client') {
-      return isPermissionAllowed('admin:system:external-client:write');
+    if (client.role === "external_client") {
+      return isPermissionAllowed("admin:system:external-client:write");
     } else {
-      return isPermissionAllowed('admin:system:internal-client:write');
+      return isPermissionAllowed("admin:system:internal-client:write");
     }
   };
 
   return (
-    <div className='flex items-center justify-center'>
-      {isPermissionAllowed('admin:profile:access:write') && (
+    <div className="flex items-center justify-center">
+      {isPermissionAllowed("admin:profile:access:write") && (
         <ScopeSelector
           user={row.original}
           setUser={() => null}
           scopes={meta.scopes || []}
-          type='client'
+          type="client"
         />
       )}
       {canEdit(row.original) && (
-        <ApplicationDetails application={row.original} />
+        <ApplicationDetails
+          application={row.original}
+          onUpdate={meta.onApplicationUpdate}
+        />
       )}
       <AlertDialog>
         <AlertDialogTrigger asChild>
           {canDelete(row.original) && (
-            <Button className='ml-2' variant='outline'>
-              <BiTrash className='h-4 w-4' />
+            <Button className="ml-2" variant="outline">
+              <BiTrash className="h-4 w-4" />
             </Button>
           )}
         </AlertDialogTrigger>
@@ -102,19 +105,19 @@ export const ApplicationActions = ({
             <AlertDialogDescription>
               Deleting clients might have unintended consequences in the system.
               This action cannot be undone. Are you sure you want to delete?
-              <div className='input-group mt-4'>
+              <div className="input-group mt-4">
                 Type <strong>{row.original.id}</strong> in the box below to
                 enable the delete button.
                 <Input
-                  className='mt-4'
+                  className="mt-4"
                   value={value}
                   onChange={onValueChange}
                 />
               </div>
-              {row.original.role === 'internal_client' &&
+              {row.original.role === "internal_client" &&
                 value === row.original.id && (
-                  <Alert className='mt-2' variant='destructive'>
-                    <AlertCircle className='h-4 w-4' />
+                  <Alert className="mt-2" variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
                       <strong>
                         You are deleting an internal client. This might break

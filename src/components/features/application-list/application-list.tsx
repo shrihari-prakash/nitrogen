@@ -87,7 +87,14 @@ const ApplicationList = function () {
     },
     meta: {
       scopes,
-      onApplicationDelete
+      onApplicationDelete,
+      onApplicationUpdate: (application: Application) => {
+        console.log("on up[date.");
+        const newApplications = applications.map((app: Application) =>
+          app.id === application.id ? { ...app, ...application } : app
+        );
+        setApplications(() => newApplications);
+      },
     },
   });
 
