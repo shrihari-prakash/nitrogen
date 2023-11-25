@@ -9,7 +9,9 @@ import oauthManager from "./service/oauth-manager";
 import axiosInstance from "./service/axios";
 
 import EditableFieldsContext from "./context/editable-fields-context";
-import UsersContext from "./context/users-context";
+import UsersContext, {
+  UsersSearchResultsContext,
+} from "./context/users-context";
 import RolesContext from "./context/roles-context";
 import SettingsContext from "./context/settings-context";
 import MeContext from "./context/me-context";
@@ -32,7 +34,8 @@ function App() {
   const [editableFields, setEditableFields] = useState(null);
   const [roles, setRoles] = useState(null);
   const [settings, setSettings] = useState(null);
-  const [users, setUsers] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [usersSearchResults, setUsersSearchResults] = useState(null);
 
   const getSettings = () => {
     if (settingsFetchInProgess) return;
@@ -170,55 +173,59 @@ function App() {
         value={{ settings, setSettings, refreshSettings: getSettings }}
       >
         <UsersContext.Provider value={{ users, setUsers }}>
-          <ScopesContext.Provider value={{ scopes, refreshScopes }}>
-            <MeContext.Provider value={{ me, setMe }}>
-              <EditableFieldsContext.Provider
-                value={{
-                  editableFields,
-                  setEditableFields,
-                  refreshEditableFields,
-                }}
-              >
-                <RolesContext.Provider value={{ roles, refreshRoles }}>
-                  <div className="flex flex-col-reverse md:flex-row h-full w-full">
-                    <SideBar />
-                    <Page>
-                      <Switch>
-                        <Route path="/">
-                          <UserList />
-                        </Route>
-                        <Route path="/users">
-                          <UserList />
-                        </Route>
-                        <Route path="/users/:id">
-                          <UserList />
-                        </Route>
-                        <Route path="/applications">
-                          <ApplicationList />
-                        </Route>
-                        <Route path="/applications/:id">
-                          <ApplicationList />
-                        </Route>
-                      </Switch>
-                      <Route path="/users/:id" component={UserDetails} />
-                    </Page>
-                    <ToastContainer
-                      position={toast.POSITION.BOTTOM_CENTER}
-                      toastStyle={{
-                        backgroundColor: "hsl(240 10% 3.9%)",
-                        color: "#ffffff",
-                        boxShadow: "none",
-                        border: "1px solid #2a2a2a",
-                      }}
-                      closeButton={false}
-                      autoClose={2500}
-                      hideProgressBar
-                    />
-                  </div>
-                </RolesContext.Provider>
-              </EditableFieldsContext.Provider>
-            </MeContext.Provider>
-          </ScopesContext.Provider>
+          <UsersSearchResultsContext.Provider
+            value={{ usersSearchResults, setUsersSearchResults }}
+          >
+            <ScopesContext.Provider value={{ scopes, refreshScopes }}>
+              <MeContext.Provider value={{ me, setMe }}>
+                <EditableFieldsContext.Provider
+                  value={{
+                    editableFields,
+                    setEditableFields,
+                    refreshEditableFields,
+                  }}
+                >
+                  <RolesContext.Provider value={{ roles, refreshRoles }}>
+                    <div className="flex flex-col-reverse md:flex-row h-full w-full">
+                      <SideBar />
+                      <Page>
+                        <Switch>
+                          <Route path="/">
+                            <UserList />
+                          </Route>
+                          <Route path="/users">
+                            <UserList />
+                          </Route>
+                          <Route path="/users/:id">
+                            <UserList />
+                          </Route>
+                          <Route path="/applications">
+                            <ApplicationList />
+                          </Route>
+                          <Route path="/applications/:id">
+                            <ApplicationList />
+                          </Route>
+                        </Switch>
+                        <Route path="/users/:id" component={UserDetails} />
+                      </Page>
+                      <ToastContainer
+                        position={toast.POSITION.BOTTOM_CENTER}
+                        toastStyle={{
+                          backgroundColor: "hsl(240 10% 3.9%)",
+                          color: "#ffffff",
+                          boxShadow: "none",
+                          border: "1px solid #2a2a2a",
+                        }}
+                        closeButton={false}
+                        autoClose={2500}
+                        hideProgressBar
+                      />
+                    </div>
+                  </RolesContext.Provider>
+                </EditableFieldsContext.Provider>
+              </MeContext.Provider>
+            </ScopesContext.Provider>
+          </UsersSearchResultsContext.Provider>
         </UsersContext.Provider>
       </SettingsContext.Provider>
     </ThemeProvider>

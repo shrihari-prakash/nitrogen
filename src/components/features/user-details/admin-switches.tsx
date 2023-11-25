@@ -1,6 +1,9 @@
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import MeContext from "@/context/me-context";
+import UsersContext, {
+  UsersSearchResultsContext,
+} from "@/context/users-context";
 import usePermissions from "@/hooks/use-permissions";
 import axiosInstance from "@/service/axios";
 import { User } from "@/types/user";
@@ -13,8 +16,21 @@ export default function AdminSwitches({ user }: { user: User }) {
   const [restricted, setRestricted] = useState(user.isRestricted);
 
   const { me } = useContext(MeContext);
+  const { setUsers } = useContext(UsersContext);
+  const { setUsersSearchResults } = useContext(UsersSearchResultsContext);
 
   const isPermissionAllowed = usePermissions();
+
+  const setUserFlag = (setter: any, flag: string, state: boolean) => {
+    setter((users: User[]) => {
+      if (!users) return users;
+      return users.map((iterationUser) =>
+        user._id === iterationUser._id
+          ? { ...user, [flag]: state }
+          : iterationUser
+      );
+    });
+  };
 
   const onVerifyChange = async (state: boolean) => {
     const promise = axiosInstance.post("/user/admin-api/verify", {
@@ -27,6 +43,8 @@ export default function AdminSwitches({ user }: { user: User }) {
       error: "Update failed!",
     });
     await promise;
+    setUserFlag(setUsers, "verified", state);
+    setUserFlag(setUsersSearchResults, "verified", state);
     return setVerified(state);
   };
 
@@ -41,6 +59,8 @@ export default function AdminSwitches({ user }: { user: User }) {
       error: "Update failed!",
     });
     await promise;
+    setUserFlag(setUsers, "isBanned", state);
+    setUserFlag(setUsersSearchResults, "isBanned", state);
     return setSuspended(state);
   };
 
@@ -55,6 +75,8 @@ export default function AdminSwitches({ user }: { user: User }) {
       error: "Update failed!",
     });
     await promise;
+    setUserFlag(setUsers, "isRestricted", state);
+    setUserFlag(setUsersSearchResults, "isRestricted", state);
     return setRestricted(state);
   };
 

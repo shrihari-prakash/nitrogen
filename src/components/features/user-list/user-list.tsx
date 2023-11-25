@@ -34,18 +34,25 @@ import axiosInstance from "@/service/axios";
 import { TypographyH4 } from "@/components/ui/typography";
 import MeContext from "@/context/me-context";
 import usePermissions from "@/hooks/use-permissions";
+import UsersContext, {
+  UsersSearchResultsContext,
+} from "@/context/users-context";
 
 const UserList = function () {
+  const { me } = React.useContext(MeContext);
+  const { users, setUsers } = React.useContext(UsersContext);
+  const { usersSearchResults, setUsersSearchResults } = React.useContext(
+    UsersSearchResultsContext
+  );
+
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  const [users, setUsers] = React.useState<any[]>([]);
-  const [searchResults, setSearchResults] = React.useState<any[] | null>();
-  const [loading, setLoading] = React.useState<boolean>(true);
-
-  const { me } = React.useContext(MeContext);
+  const [loading, setLoading] = React.useState<boolean>(
+    users.length ? false : true
+  );
 
   const isPermissionAllowed = usePermissions();
 
@@ -62,8 +69,14 @@ const UserList = function () {
         .finally(() => {
           setLoading(false);
         });
+    } else {
+      setLoading(false);
     }
   }, [users, setUsers]);
+
+  React.useEffect(() => {
+    return () => setUsersSearchResults(null);
+  }, [setUsersSearchResults]);
 
   const onSearchChange = (e: any) => {
     searchRef.current = e.target.value;
@@ -76,17 +89,17 @@ const UserList = function () {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
       if (!query || query.length === 0) {
-        return setSearchResults(null);
+        return setUsersSearchResults(null);
       }
       const response = await axiosInstance.post("/user/search", { query });
-      setSearchResults(response.data.data.results);
+      setUsersSearchResults(response.data.data.results);
     } finally {
       setLoading(false);
     }
   };
 
   const table = useReactTable({
-    data: searchResults || users,
+    data: usersSearchResults || users,
     columns: userListColumns,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),

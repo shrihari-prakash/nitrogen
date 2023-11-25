@@ -22,6 +22,9 @@ import EditableFieldsContext from "@/context/editable-fields-context";
 import MeContext from "@/context/me-context";
 import RolesContext from "@/context/roles-context";
 import SettingsContext from "@/context/settings-context";
+import UsersContext, {
+  UsersSearchResultsContext,
+} from "@/context/users-context";
 import usePermissions from "@/hooks/use-permissions";
 import axiosInstance from "@/service/axios";
 import { User } from "@/types/user";
@@ -52,6 +55,8 @@ export default function BasicInfoEditor({ user }: { user: User }) {
   const { editableFields, refreshEditableFields } = useContext(
     EditableFieldsContext
   );
+  const { setUsers } = useContext(UsersContext);
+  const { setUsersSearchResults } = useContext(UsersSearchResultsContext);
 
   const isPermissionAllowed = usePermissions();
 
@@ -143,6 +148,16 @@ export default function BasicInfoEditor({ user }: { user: User }) {
       });
       await promise;
       savedFormRef.current = savedForm;
+      const cb = (users: User[]) => {
+        if (!users) return users;
+        return users.map((iterationUser) =>
+          user._id === iterationUser._id
+            ? { ...user, ...formValues }
+            : iterationUser
+        );
+      };
+      setUsers(cb);
+      setUsersSearchResults(cb);
     } finally {
       setSubmitting(false);
     }
@@ -160,7 +175,7 @@ export default function BasicInfoEditor({ user }: { user: User }) {
                 <FormLabel>ID</FormLabel>
                 <div className="flex">
                   <FormControl>
-                    <Input disabled defaultValue={user._id} {...field} />
+                    <Input disabled {...field} />
                   </FormControl>
                   <Button onClick={copyId} className="ml-2" variant="outline">
                     <Copy className="h-4 w-4" />
@@ -208,7 +223,7 @@ export default function BasicInfoEditor({ user }: { user: User }) {
                   </FormControl>
                   <SelectContent defaultValue={user.role}>
                     {(roles || []).map((role: any) => (
-                      <SelectItem value={role.name}>
+                      <SelectItem value={role.name} key={role.name}>
                         {role.displayName}
                       </SelectItem>
                     ))}
