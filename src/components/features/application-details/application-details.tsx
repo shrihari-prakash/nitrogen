@@ -75,6 +75,8 @@ export default function ApplicationDetails({
     redirectUris: undefined,
   };
 
+  formDefaults.secret = "";
+
   const form = useForm({
     defaultValues: formDefaults,
   });
