@@ -217,6 +217,10 @@ export default function ApplicationDetails({
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
+                    <FormDescription>
+                      For security reasons, this secret will never be shown
+                      again.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
