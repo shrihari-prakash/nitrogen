@@ -54,7 +54,9 @@ const UserList = function () {
   const [loading, setLoading] = React.useState<boolean>(
     users.length ? false : true
   );
-  const [totalUsers, setTotalUsers] = React.useState<number>(0);
+  const [totalUsers, setTotalUsers] = React.useState<number>(
+    parseInt(localStorage.getItem("liquid_nitrogen_total_users") || "0")
+  );
 
   const isPermissionAllowed = usePermissions();
 
@@ -66,8 +68,10 @@ const UserList = function () {
       axiosInstance
         .get("/user/admin-api/list", { params: { limit: 50 } })
         .then((response) => {
-          setUsers(response.data.data.users as User[]);
-          setTotalUsers(response.data.data.totalUsers);
+          const data = response.data.data;
+          setUsers(data.users as User[]);
+          setTotalUsers(data.totalUsers);
+          localStorage.setItem("liquid_nitrogen_total_users", data.totalUsers);
         })
         .finally(() => {
           setLoading(false);
