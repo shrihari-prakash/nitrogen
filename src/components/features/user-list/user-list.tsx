@@ -37,6 +37,7 @@ import usePermissions from "@/hooks/use-permissions";
 import UsersContext, {
   UsersSearchResultsContext,
 } from "@/context/users-context";
+import { Badge } from "@/components/ui/badge";
 
 const UserList = function () {
   const { me } = React.useContext(MeContext);
@@ -53,6 +54,7 @@ const UserList = function () {
   const [loading, setLoading] = React.useState<boolean>(
     users.length ? false : true
   );
+  const [totalUsers, setTotalUsers] = React.useState<number>(0);
 
   const isPermissionAllowed = usePermissions();
 
@@ -65,6 +67,7 @@ const UserList = function () {
         .get("/user/admin-api/list", { params: { limit: 50 } })
         .then((response) => {
           setUsers(response.data.data.users as User[]);
+          setTotalUsers(response.data.data.totalUsers);
         })
         .finally(() => {
           setLoading(false);
@@ -159,7 +162,12 @@ const UserList = function () {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-
+      <div className="flex mb-4 font-medium">
+        Total users:{" "}
+        <Badge variant="secondary" className="ml-2 font-medium">
+          {totalUsers}
+        </Badge>
+      </div>
       {loading ? (
         <div
           className={`h-[calc(100%-100px)] w-full flex-1 flex items-center justify-center cursor-default relative`}
@@ -167,53 +175,55 @@ const UserList = function () {
           <Loader />
         </div>
       ) : (
-        <div className="rounded-md border">
-          <Table className="overflow-y-auto">
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
+        <>
+          <div className="rounded-md border">
+            <Table className="overflow-y-auto">
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead key={header.id}>
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </TableHead>
+                      );
+                    })}
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={userListColumns.length}
-                    className="h-24 text-center"
-                  >
-                    Nothing to show.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow key={row.id}>
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={userListColumns.length}
+                      className="h-24 text-center"
+                    >
+                      Nothing to show.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </>
       )}
     </div>
   );
