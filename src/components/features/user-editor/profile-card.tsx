@@ -1,11 +1,6 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardDescription, CardHeader } from "@/components/ui/card";
 import { TypographyH4 } from "@/components/ui/typography";
 import { User } from "@/types/user";
 import { UserCheck, UserMinus, UserX, Users, Verified } from "lucide-react";
