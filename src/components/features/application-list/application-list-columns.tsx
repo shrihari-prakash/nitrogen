@@ -9,7 +9,7 @@ export const applicationListColumns: ColumnDef<Application>[] = [
     header: 'ID',
     enableHiding: false,
     cell: ({ row }) => (
-      <div className='flex items-center'>
+      <div className='flex items-center flex-nowrap whitespace-nowrap'>
         {row.getValue('id')}
         {row.original.role === 'internal_client' && (
           <Verified className='h-4 w-4 ml-2' />
@@ -28,7 +28,7 @@ export const applicationListColumns: ColumnDef<Application>[] = [
     accessorKey: 'role',
     header: 'Role',
     cell: ({ row }) => (
-      <div className='capitalize'>
+      <div className='capitalize whitespace-nowrap'>
         {(row.getValue('role') as string).split('_').join(' ')}
       </div>
     ),

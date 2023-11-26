@@ -19,6 +19,7 @@ import { Checkbox } from "./checkbox";
 import usePermissions from "@/hooks/use-permissions";
 import { Application } from "@/types/application";
 import { Input } from "./input";
+import { KeyRound } from "lucide-react";
 
 export interface Scope {
   name: string;
@@ -213,7 +214,8 @@ const ScopeSelector = ({
                 : ""
             }
           >
-            {search !== "" && !item.name.includes(search.toLowerCase()) ? null : (
+            {search !== "" &&
+            !item.name.includes(search.toLowerCase()) ? null : (
               <Label className="flex items-center my-2 space-x-3 px-3 py-2">
                 <Checkbox
                   disabled={
@@ -248,7 +250,10 @@ const ScopeSelector = ({
     <Dialog onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <div>
-          <Button variant="outline">Manage Permissions</Button>
+          <Button variant="outline" className="whitespace-nowrap">
+            <KeyRound className="h-4 w-4 mr-2" />
+            Manage Permissions
+          </Button>
         </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[800px]">

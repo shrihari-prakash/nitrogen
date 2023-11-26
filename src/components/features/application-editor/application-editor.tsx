@@ -29,7 +29,7 @@ import RolesContext from "@/context/roles-context";
 import usePermissions from "@/hooks/use-permissions";
 import axiosInstance from "@/service/axios";
 import { Application } from "@/types/application";
-import { PencilIcon } from "lucide-react";
+import { PencilIcon, PlusCircle } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -157,7 +157,10 @@ export default function ApplicationEditor({
           {application ? (
             <PencilIcon className="h-4 w-4" />
           ) : (
-            "Create Application"
+            <>
+              <PlusCircle className="h-4 w-4 mr-2" />
+              Create Application
+            </>
           )}
         </Button>
       </DialogTrigger>

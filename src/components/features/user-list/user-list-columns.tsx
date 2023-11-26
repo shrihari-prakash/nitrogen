@@ -27,7 +27,7 @@ export const userListColumns: ColumnDef<User>[] = [
     cell: ({ row }) => (
       <Link
         href={`/users/${row.original._id}`}
-        className='flex items-center justify-start'
+        className='flex items-center justify-start flex-nowrap whitespace-nowrap'
       >
         {row.getValue('username') || (
           <i className='opacity-50'>Not available</i>
@@ -61,7 +61,7 @@ export const userListColumns: ColumnDef<User>[] = [
     accessorKey: 'role',
     header: 'Role',
     cell: ({ row }) => (
-      <div className='capitalize flex items-center'>
+      <div className='capitalize flex items-center flex-nowrap whitespace-nowrap'>
         {(row.getValue('role') as string).split('_').join(' ')}{' '}
         {(row.getValue('role') === 'admin' ||
           row.getValue('role') === 'super_admin') && (
