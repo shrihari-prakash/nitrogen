@@ -28,7 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { userListColumns } from "./columns";
+import { userListColumns } from "./user-list-columns";
 import { User } from "@/types/user";
 import axiosInstance from "@/service/axios";
 import { TypographyH4 } from "@/components/ui/typography";
