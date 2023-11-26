@@ -171,7 +171,7 @@ export default function BasicInfoEditor({ user }: { user: User }) {
   }
 
   return (
-    <div className="grid gap-4 py-2">
+    <div className="grid gap-4">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
@@ -388,11 +388,10 @@ export default function BasicInfoEditor({ user }: { user: User }) {
           <SheetFooter className="flex-col">
             <Button
               type="submit"
-              className="mb-3"
               disabled={!isPermissionAllowed("admin:profile:write")}
             >
               <Save className="h-4 w-4 mr-2" />
-              {submitting ? "Saving..." : "Save changes"}
+              {submitting ? "Saving..." : "Save Basic Info"}
             </Button>
             <SheetClose asChild>
               <Button variant="outline">

@@ -22,18 +22,21 @@ import ScopesContext from "./context/scopes-context";
 import { Scope } from "./components/ui/scope-selector";
 import ApplicationList from "./components/features/application-list/application-list";
 import CountriesContext from "./context/countries-context";
+import SubscriptionTiersContext from "./context/subscription-tiers-context";
 
 let scopesFetchInProgess = false;
 let countriesFetchInProgess = false;
 let roleFetchInProgess = false;
 let settingsFetchInProgess = false;
 let editableFieldsFetchInProgess = false;
+let subscriptionTiersFetchInProgess = false;
 
 function App() {
   const [authError, setAuthError] = useState(false);
   const [scopes, setScopes] = useState<any>(null);
   const [me, setMe] = useState(null);
   const [editableFields, setEditableFields] = useState(null);
+  const [subscriptionTiers, setSubscriptionTiers] = useState(null);
   const [countries, setCountries] = useState(null);
   const [roles, setRoles] = useState(null);
   const [settings, setSettings] = useState(null);
@@ -91,6 +94,17 @@ function App() {
         setEditableFields(response.data.data.editableFields)
       )
       .finally(() => (editableFieldsFetchInProgess = false));
+  };
+
+  const refreshSubscriptionTiers = () => {
+    if (subscriptionTiersFetchInProgess) return;
+    subscriptionTiersFetchInProgess = true;
+    axiosInstance
+      .get("/user/admin-api/subscription-tiers")
+      .then((response: any) =>
+        setSubscriptionTiers(response.data.data.subscriptionTiers)
+      )
+      .finally(() => (subscriptionTiersFetchInProgess = false));
   };
 
   const redirectToLogin = () => {
@@ -190,53 +204,57 @@ function App() {
               value={{ usersSearchResults, setUsersSearchResults }}
             >
               <ScopesContext.Provider value={{ scopes, refreshScopes }}>
-                <MeContext.Provider value={{ me, setMe }}>
-                  <EditableFieldsContext.Provider
-                    value={{
-                      editableFields,
-                      setEditableFields,
-                      refreshEditableFields,
-                    }}
-                  >
-                    <RolesContext.Provider value={{ roles, refreshRoles }}>
-                      <div className="flex flex-col-reverse md:flex-row h-full w-full">
-                        <SideBar />
-                        <Page>
-                          <Switch>
-                            <Route path="/">
-                              <UserList />
-                            </Route>
-                            <Route path="/users">
-                              <UserList />
-                            </Route>
-                            <Route path="/users/:id">
-                              <UserList />
-                            </Route>
-                            <Route path="/applications">
-                              <ApplicationList />
-                            </Route>
-                            <Route path="/applications/:id">
-                              <ApplicationList />
-                            </Route>
-                          </Switch>
-                          <Route path="/users/:id" component={UserEditor} />
-                        </Page>
-                        <ToastContainer
-                          position={toast.POSITION.BOTTOM_CENTER}
-                          toastStyle={{
-                            backgroundColor: "hsl(240 10% 3.9%)",
-                            color: "#ffffff",
-                            boxShadow: "none",
-                            border: "1px solid #2a2a2a",
-                          }}
-                          closeButton={false}
-                          autoClose={2500}
-                          hideProgressBar
-                        />
-                      </div>
-                    </RolesContext.Provider>
-                  </EditableFieldsContext.Provider>
-                </MeContext.Provider>
+                <SubscriptionTiersContext.Provider
+                  value={{ subscriptionTiers, refreshSubscriptionTiers }}
+                >
+                  <MeContext.Provider value={{ me, setMe }}>
+                    <EditableFieldsContext.Provider
+                      value={{
+                        editableFields,
+                        setEditableFields,
+                        refreshEditableFields,
+                      }}
+                    >
+                      <RolesContext.Provider value={{ roles, refreshRoles }}>
+                        <div className="flex flex-col-reverse md:flex-row h-full w-full">
+                          <SideBar />
+                          <Page>
+                            <Switch>
+                              <Route path="/">
+                                <UserList />
+                              </Route>
+                              <Route path="/users">
+                                <UserList />
+                              </Route>
+                              <Route path="/users/:id">
+                                <UserList />
+                              </Route>
+                              <Route path="/applications">
+                                <ApplicationList />
+                              </Route>
+                              <Route path="/applications/:id">
+                                <ApplicationList />
+                              </Route>
+                            </Switch>
+                            <Route path="/users/:id" component={UserEditor} />
+                          </Page>
+                          <ToastContainer
+                            position={toast.POSITION.BOTTOM_CENTER}
+                            toastStyle={{
+                              backgroundColor: "hsl(240 10% 3.9%)",
+                              color: "#ffffff",
+                              boxShadow: "none",
+                              border: "1px solid #2a2a2a",
+                            }}
+                            closeButton={false}
+                            autoClose={2500}
+                            hideProgressBar
+                          />
+                        </div>
+                      </RolesContext.Provider>
+                    </EditableFieldsContext.Provider>
+                  </MeContext.Provider>
+                </SubscriptionTiersContext.Provider>
               </ScopesContext.Provider>
             </UsersSearchResultsContext.Provider>
           </UsersContext.Provider>
