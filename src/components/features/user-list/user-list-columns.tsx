@@ -1,14 +1,15 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { User } from '@/types/user';
-import { ColumnDef } from '@tanstack/react-table';
-import { PencilIcon, UserCogIcon, Verified } from 'lucide-react';
-import { Link } from 'wouter';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { User } from "@/types/user";
+import { ColumnDef } from "@tanstack/react-table";
+import { PencilIcon, UserCogIcon, Verified } from "lucide-react";
+import { Link } from "wouter";
 
 export const userListColumns: ColumnDef<User>[] = [
   {
-    accessorKey: 'ProfilePicture',
-    header: '',
+    accessorKey: "ProfilePicture",
+    header: "",
     cell: ({ row }) => (
       <Avatar>
         <AvatarImage src={row.original.profilePictureUrl} />
@@ -21,68 +22,73 @@ export const userListColumns: ColumnDef<User>[] = [
     ),
   },
   {
-    accessorKey: 'username',
-    header: 'Username',
+    accessorKey: "username",
+    header: "Username",
     enableHiding: false,
     cell: ({ row }) => (
       <Link
         href={`/users/${row.original._id}`}
-        className='flex items-center justify-start flex-nowrap whitespace-nowrap'
+        className="flex items-center justify-start flex-nowrap whitespace-nowrap"
       >
-        {row.getValue('username') || (
-          <i className='opacity-50'>Not available</i>
+        {row.getValue("username") || (
+          <i className="opacity-50">Not available</i>
         )}
         &nbsp;
-        {row.original.verified && <Verified className='h-4 w-4' />}
+        {row.original.isSubscribed && (
+          <Badge className="mr-2 capitalize" variant="outline">
+            {row.original.subscriptionTier}
+          </Badge>
+        )}
+        {row.original.verified && <Verified className="h-4 w-4" />}
       </Link>
     ),
   },
   {
-    accessorKey: 'firstName',
-    header: 'First Name',
+    accessorKey: "firstName",
+    header: "First Name",
     cell: ({ row }) => (
-      <div className='capitalize'>
-        {row.getValue('firstName') ||
-          ((row.original.name || '') as string).split(' ')[0]}
+      <div className="capitalize">
+        {row.getValue("firstName") ||
+          ((row.original.name || "") as string).split(" ")[0]}
       </div>
     ),
   },
   {
-    accessorKey: 'lastName',
-    header: 'Last Name',
+    accessorKey: "lastName",
+    header: "Last Name",
     cell: ({ row }) => (
-      <div className='capitalize'>
-        {row.getValue('lastName') ||
-          ((row.original.name || '') as string).split(' ')[1]}
+      <div className="capitalize">
+        {row.getValue("lastName") ||
+          ((row.original.name || "") as string).split(" ")[1]}
       </div>
     ),
   },
   {
-    accessorKey: 'role',
-    header: 'Role',
+    accessorKey: "role",
+    header: "Role",
     cell: ({ row }) => (
-      <div className='capitalize flex items-center flex-nowrap whitespace-nowrap'>
-        {(row.getValue('role') as string).split('_').join(' ')}{' '}
-        {(row.getValue('role') === 'admin' ||
-          row.getValue('role') === 'super_admin') && (
-          <UserCogIcon className='h-4 w-4 ml-2' />
+      <div className="capitalize flex items-center flex-nowrap whitespace-nowrap">
+        {(row.getValue("role") as string).split("_").join(" ")}{" "}
+        {(row.getValue("role") === "admin" ||
+          row.getValue("role") === "super_admin") && (
+          <UserCogIcon className="h-4 w-4 ml-2" />
         )}
       </div>
     ),
   },
   {
-    accessorKey: 'email',
-    header: 'Email',
-    cell: ({ row }) => <div className='lowercase'>{row.getValue('email')}</div>,
+    accessorKey: "email",
+    header: "Email",
+    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
   },
   {
-    id: 'actions',
+    id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
       return (
         <Link href={`/users/${row.original._id}`}>
-          <Button variant='outline'>
-            <PencilIcon className='h-4 w-4' />
+          <Button variant="outline">
+            <PencilIcon className="h-4 w-4" />
           </Button>
         </Link>
       );

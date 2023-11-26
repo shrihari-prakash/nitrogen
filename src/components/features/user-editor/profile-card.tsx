@@ -1,4 +1,5 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardDescription,
@@ -27,6 +28,11 @@ export default function ProfileCard({ user }: { user: User }) {
               <span className="mr-2">
                 {user.firstName + " " + user.lastName}
               </span>
+              {user.isSubscribed && (
+                <Badge className="mr-2 capitalize" variant="outline">
+                  {user.subscriptionTier}
+                </Badge>
+              )}
               {user.verified && <Verified className="h-4 w-4 mr-2" />}
               {user.isBanned && <UserX className="h-4 w-4 mr-2" />}
               {user.isRestricted && <UserMinus className="h-4 w-4 mr-2" />}
