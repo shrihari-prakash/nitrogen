@@ -10,7 +10,13 @@ import { User } from "@/types/user";
 import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 
-export default function AdminSwitches({ user }: { user: User }) {
+export default function AdminSwitches({
+  user,
+  setUser,
+}: {
+  user: User;
+  setUser?: any;
+}) {
   const [verified, setVerified] = useState(user.verified);
   const [suspended, setSuspended] = useState(user.isBanned);
   const [restricted, setRestricted] = useState(user.isRestricted);
@@ -21,7 +27,7 @@ export default function AdminSwitches({ user }: { user: User }) {
 
   const isPermissionAllowed = usePermissions();
 
-  const setUserFlag = (setter: any, flag: string, state: boolean) => {
+  const updateUserInMemory = (setter: any, flag: string, state: boolean) => {
     setter((users: User[]) => {
       if (!users) return users;
       return users.map((iterationUser) =>
@@ -30,6 +36,10 @@ export default function AdminSwitches({ user }: { user: User }) {
           : iterationUser
       );
     });
+    setUser &&
+      setUser((user: User) => {
+        return { ...user, [flag]: state };
+      });
   };
 
   const onVerifyChange = async (state: boolean) => {
@@ -43,8 +53,8 @@ export default function AdminSwitches({ user }: { user: User }) {
       error: "Update failed!",
     });
     await promise;
-    setUserFlag(setUsers, "verified", state);
-    setUserFlag(setUsersSearchResults, "verified", state);
+    updateUserInMemory(setUsers, "verified", state);
+    updateUserInMemory(setUsersSearchResults, "verified", state);
     return setVerified(state);
   };
 
@@ -59,8 +69,8 @@ export default function AdminSwitches({ user }: { user: User }) {
       error: "Update failed!",
     });
     await promise;
-    setUserFlag(setUsers, "isBanned", state);
-    setUserFlag(setUsersSearchResults, "isBanned", state);
+    updateUserInMemory(setUsers, "isBanned", state);
+    updateUserInMemory(setUsersSearchResults, "isBanned", state);
     return setSuspended(state);
   };
 
@@ -75,8 +85,8 @@ export default function AdminSwitches({ user }: { user: User }) {
       error: "Update failed!",
     });
     await promise;
-    setUserFlag(setUsers, "isRestricted", state);
-    setUserFlag(setUsersSearchResults, "isRestricted", state);
+    updateUserInMemory(setUsers, "isRestricted", state);
+    updateUserInMemory(setUsersSearchResults, "isRestricted", state);
     return setRestricted(state);
   };
 

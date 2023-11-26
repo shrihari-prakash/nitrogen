@@ -22,32 +22,26 @@ export default function ProfileCard({ user }: { user: User }) {
               : user.name && user.name.charAt(0)}
           </AvatarFallback>
         </Avatar>
-        <CardTitle>
-          <TypographyH4>
-            <div className="flex items-center">
-              <span className="mr-2">
-                {user.firstName + " " + user.lastName}
-              </span>
-              {user.isSubscribed && (
-                <Badge className="mr-2 capitalize" variant="outline">
-                  {user.subscriptionTier}
-                </Badge>
-              )}
-              {user.verified && <Verified className="h-4 w-4 mr-2" />}
-              {user.isBanned && <UserX className="h-4 w-4 mr-2" />}
-              {user.isRestricted && <UserMinus className="h-4 w-4 mr-2" />}
-            </div>
-          </TypographyH4>
-          <CardDescription>{user.username}</CardDescription>
-        </CardTitle>
-        <CardDescription>
+        <TypographyH4 className="text-2xl font-semibold leading-none tracking-tight">
           <div className="flex items-center">
-            <Users className="h-4 w-4 mr-2" />
-            {user.followerCount || 0} followers
-            <UserCheck className="h-4 w-4 mx-2" />
-            {user.followingCount || 0} following
+            <span className="mr-2">{user.firstName + " " + user.lastName}</span>
+            {user.isSubscribed && (
+              <Badge className="mr-2 capitalize" variant="outline">
+                {user.subscriptionTier}
+              </Badge>
+            )}
+            {user.verified && <Verified className="h-4 w-4 mr-2" />}
+            {user.isBanned && <UserX className="h-4 w-4 mr-2" />}
+            {user.isRestricted && <UserMinus className="h-4 w-4 mr-2" />}
           </div>
-        </CardDescription>
+        </TypographyH4>
+        <CardDescription>{user.username}</CardDescription>
+        <div className="flex items-center text-sm text-muted-foreground">
+          <Users className="h-4 w-4 mr-2" />
+          {user.followerCount || 0} followers
+          <UserCheck className="h-4 w-4 mx-2" />
+          {user.followingCount || 0} following
+        </div>
       </CardHeader>
     </Card>
   );

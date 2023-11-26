@@ -34,19 +34,25 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
-export default function BasicInfoEditor({ user }: { user: User }) {
+export default function BasicInfoEditor({
+  user,
+  setUser,
+}: {
+  user: User;
+  setUser: any;
+}) {
   const formDefaults = {
     _id: user._id,
     username: user.username,
     firstName: user.firstName,
-    middleName: user.middleName,
+    middleName: user.middleName || "",
     lastName: user.lastName,
     email: user.email,
     emailVerified: user.emailVerified,
     password: "",
     organization: user.organization,
-    country: user.country,
-    role: user.role,
+    country: user.country || "",
+    role: user.role || "",
   };
 
   const [submitting, setSubmitting] = useState(false);
@@ -165,6 +171,7 @@ export default function BasicInfoEditor({ user }: { user: User }) {
       };
       setUsers(cb);
       setUsersSearchResults(cb);
+      setUser((user: User) => ({ ...user, ...formValues }));
     } finally {
       setSubmitting(false);
     }

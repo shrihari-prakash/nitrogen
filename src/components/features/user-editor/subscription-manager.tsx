@@ -32,7 +32,13 @@ import UsersContext, {
 } from "@/context/users-context";
 import { toast } from "react-toastify";
 
-export default function SubscriptionManager({ user }: { user: User }) {
+export default function SubscriptionManager({
+  user,
+  setUser,
+}: {
+  user: User;
+  setUser?: any;
+}) {
   const [submitting, setSubmitting] = useState(false);
 
   const { subscriptionTiers, refreshSubscriptionTiers } = useContext(
@@ -41,7 +47,7 @@ export default function SubscriptionManager({ user }: { user: User }) {
   const { setUsers } = useContext(UsersContext);
   const { setUsersSearchResults } = useContext(UsersSearchResultsContext);
 
-  const setUserSubscription = (
+  const updateUserInMemory = (
     setter: any,
     tier: string,
     isSubscribed: boolean
@@ -54,6 +60,12 @@ export default function SubscriptionManager({ user }: { user: User }) {
           : iterationUser
       );
     });
+    setUser &&
+      setUser((user: User) => ({
+        ...user,
+        subscriptionTier: tier,
+        isSubscribed,
+      }));
   };
 
   const form = useForm({
@@ -97,8 +109,8 @@ export default function SubscriptionManager({ user }: { user: User }) {
       const isSubscribed =
         !targetSubscription.isBaseTier &&
         !(new Date(formValues.expiry) < new Date());
-      setUserSubscription(setUsers, formValues.tier, isSubscribed);
-      setUserSubscription(setUsersSearchResults, formValues.tier, isSubscribed);
+      updateUserInMemory(setUsers, formValues.tier, isSubscribed);
+      updateUserInMemory(setUsersSearchResults, formValues.tier, isSubscribed);
     } finally {
       setSubmitting(false);
     }

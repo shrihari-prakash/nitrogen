@@ -93,13 +93,13 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
                 </>
               )}
               <TypographyH4 className="my-4">Basic Info</TypographyH4>
-              <BasicInfoEditor user={user} />
+              <BasicInfoEditor user={user} setUser={setUser} />
               <TypographyH4 className="my-4">Admin Controls</TypographyH4>
-              <AdminSwitches user={user} />
+              <AdminSwitches user={user} setUser={setUser} />
               {isPermissionAllowed("admin:profile:subscriptions:write") && (
                 <>
                   <TypographyH4 className="my-4">Subscription</TypographyH4>
-                  <SubscriptionManager user={user} />
+                  <SubscriptionManager user={user} setUser={setUser} />
                 </>
               )}
             </>
