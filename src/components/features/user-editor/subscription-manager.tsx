@@ -4,8 +4,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarIcon, Save, XCircle } from "lucide-react";
-import { useContext, useEffect } from "react";
+import { CalendarIcon, Check, Loader2 } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { User } from "@/types/user";
@@ -18,13 +18,11 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { SelectValue } from "@radix-ui/react-select";
-import { SheetClose, SheetFooter } from "@/components/ui/sheet";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
@@ -35,10 +33,11 @@ import UsersContext, {
 import { toast } from "react-toastify";
 
 export default function SubscriptionManager({ user }: { user: User }) {
+  const [submitting, setSubmitting] = useState(false);
+
   const { subscriptionTiers, refreshSubscriptionTiers } = useContext(
     SubscriptionTiersContext
   );
-
   const { setUsers } = useContext(UsersContext);
   const { setUsersSearchResults } = useContext(UsersSearchResultsContext);
 
@@ -75,27 +74,32 @@ export default function SubscriptionManager({ user }: { user: User }) {
   }
 
   const onSubmit = async (formValues: any) => {
-    if (typeof formValues.expiry !== "string") {
-      formValues.expiry = formValues.expiry.toISOString();
+    setSubmitting(true);
+    try {
+      if (typeof formValues.expiry !== "string") {
+        formValues.expiry = formValues.expiry.toISOString();
+      }
+      formValues.state = true;
+      formValues.target = user._id;
+      const promise = axiosInstance.post(
+        "/user/admin-api/subscription",
+        formValues
+      );
+      toast.promise(promise, {
+        pending: "Submitting...",
+        success: "Update successfull",
+        error: "Update failed!",
+      });
+      await promise;
+      const targetSubscription = subscriptionTiers.find(
+        (subscription) => subscription.name === formValues.tier
+      );
+      const isSubscribed = !targetSubscription.isBaseTier;
+      setUserSubscription(setUsers, formValues.tier, isSubscribed);
+      setUserSubscription(setUsersSearchResults, formValues.tier, isSubscribed);
+    } finally {
+      setSubmitting(false);
     }
-    formValues.state = true;
-    formValues.target = user._id;
-    const promise = axiosInstance.post(
-      "/user/admin-api/subscription",
-      formValues
-    );
-    toast.promise(promise, {
-      pending: "Submitting...",
-      success: "Update successfull",
-      error: "Update failed!",
-    });
-    await promise;
-    const targetSubscription = subscriptionTiers.find(
-      (subscription) => subscription.name === formValues.tier
-    );
-    const isSubscribed = !targetSubscription.isBaseTier;
-    setUserSubscription(setUsers, formValues.tier, isSubscribed);
-    setUserSubscription(setUsersSearchResults, formValues.tier, isSubscribed);
   };
 
   return (
@@ -108,7 +112,6 @@ export default function SubscriptionManager({ user }: { user: User }) {
               name="tier"
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full md:w-1/2 mr-0 mb-2 md:mr-2 md:mb-0">
-                  <FormLabel>Subscription Tier</FormLabel>
                   <Select
                     defaultValue={field.value}
                     onValueChange={field.onChange}
@@ -139,8 +142,7 @@ export default function SubscriptionManager({ user }: { user: User }) {
               control={form.control}
               name="expiry"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full md:w-1/2">
-                  <FormLabel>Date of birth</FormLabel>
+                <FormItem className="flex flex-col w-full md:w-1/2 mr-0 mb-2 md:mr-2 md:mb-0">
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -176,18 +178,19 @@ export default function SubscriptionManager({ user }: { user: User }) {
                 </FormItem>
               )}
             />
-          </div>
-          <SheetFooter className="flex-col mt-8">
-            <Button type="submit">
-              <Save className="h-4 w-4 mr-2" />
-              Save Subscription
+            <Button
+              type="submit"
+              variant="outline"
+              className="w-full md:w-fit"
+              disabled={submitting}
+            >
+              {submitting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Check className="h-4 w-4" />
+              )}
             </Button>
-            <SheetClose asChild>
-              <Button variant="outline">
-                <XCircle className="h-4 w-4 mr-2" /> Close
-              </Button>
-            </SheetClose>
-          </SheetFooter>
+          </div>
         </form>
       </Form>
     </>

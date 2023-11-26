@@ -389,6 +389,7 @@ export default function BasicInfoEditor({ user }: { user: User }) {
             <Button
               type="submit"
               disabled={!isPermissionAllowed("admin:profile:write")}
+              className="mb-2 md:mb-0"
             >
               <Save className="h-4 w-4 mr-2" />
               {submitting ? "Saving..." : "Save Basic Info"}
