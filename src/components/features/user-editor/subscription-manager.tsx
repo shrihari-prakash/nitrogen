@@ -94,7 +94,9 @@ export default function SubscriptionManager({ user }: { user: User }) {
       const targetSubscription = subscriptionTiers.find(
         (subscription) => subscription.name === formValues.tier
       );
-      const isSubscribed = !targetSubscription.isBaseTier;
+      const isSubscribed =
+        !targetSubscription.isBaseTier &&
+        !(new Date(formValues.expiry) < new Date());
       setUserSubscription(setUsers, formValues.tier, isSubscribed);
       setUserSubscription(setUsersSearchResults, formValues.tier, isSubscribed);
     } finally {
