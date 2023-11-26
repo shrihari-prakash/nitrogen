@@ -90,8 +90,12 @@ export default function SubscriptionManager({ user }: { user: User }) {
       error: "Update failed!",
     });
     await promise;
-    setUserSubscription(setUsers, formValues.tier, true);
-    setUserSubscription(setUsersSearchResults, formValues.tier, true);
+    const targetSubscription = subscriptionTiers.find(
+      (subscription) => subscription.name === formValues.tier
+    );
+    const isSubscribed = !targetSubscription.isBaseTier;
+    setUserSubscription(setUsers, formValues.tier, isSubscribed);
+    setUserSubscription(setUsersSearchResults, formValues.tier, isSubscribed);
   };
 
   return (
