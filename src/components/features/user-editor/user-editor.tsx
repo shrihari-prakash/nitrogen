@@ -19,7 +19,7 @@ import ScopesContext from '@/context/scopes-context';
 import usePermissions from '@/hooks/use-permissions';
 import { TypographyH4 } from '@/components/ui/typography';
 
-const UserDetails = function ({ params }: { params: { id: string } }) {
+const UserEditor = function ({ params }: { params: { id: string } }) {
   const [, setLocation] = useLocation();
   const [user, setUser] = useState<any | User>();
   const [loadError, setLoadError] = useState(false);
@@ -103,4 +103,4 @@ const UserDetails = function ({ params }: { params: { id: string } }) {
   );
 };
 
-export default UserDetails;
+export default UserEditor;

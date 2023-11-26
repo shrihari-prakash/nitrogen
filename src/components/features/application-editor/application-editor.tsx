@@ -41,7 +41,7 @@ const grants = [
   { label: "Client Credentials", value: "client_credentials" },
 ];
 
-export default function ApplicationDetails({
+export default function ApplicationEditor({
   onCreate,
   application,
   onUpdate,

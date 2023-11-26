@@ -3,7 +3,7 @@ import SideBar from "./components/ui/sidebar";
 import Page from "./components/ui/page";
 import UserList from "./components/features/user-list/user-list";
 import { Route, Switch } from "wouter";
-import UserDetails from "./components/features/user-details/user-details";
+import UserEditor from "./components/features/user-editor/user-editor";
 import { useEffect, useState } from "react";
 import oauthManager from "./service/oauth-manager";
 import axiosInstance from "./service/axios";
@@ -206,7 +206,7 @@ function App() {
                             <ApplicationList />
                           </Route>
                         </Switch>
-                        <Route path="/users/:id" component={UserDetails} />
+                        <Route path="/users/:id" component={UserEditor} />
                       </Page>
                       <ToastContainer
                         position={toast.POSITION.BOTTOM_CENTER}

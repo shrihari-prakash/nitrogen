@@ -1,7 +1,7 @@
 import { Application } from '@/types/application';
 import { ColumnDef } from '@tanstack/react-table';
 import { Verified } from 'lucide-react';
-import { ApplicationActions } from './application-actions';
+import { ApplicationListActions } from './application-list-actions';
 
 export const applicationListColumns: ColumnDef<Application>[] = [
   {
@@ -36,6 +36,6 @@ export const applicationListColumns: ColumnDef<Application>[] = [
   {
     id: 'actions',
     enableHiding: false,
-    cell: ApplicationActions,
+    cell: ApplicationListActions,
   },
 ];

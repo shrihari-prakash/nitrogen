@@ -27,13 +27,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { applicationListColumns } from "./columns";
+import { applicationListColumns } from "./application-list-columns";
 import { User } from "@/types/user";
 import axiosInstance from "@/service/axios";
 import { TypographyH4 } from "@/components/ui/typography";
 import MeContext from "@/context/me-context";
 import { Application } from "@/types/application";
-import ApplicationDetails from "../application-details/application-details";
+import ApplicationEditor from "../application-editor/application-editor";
 import ScopesContext from "@/context/scopes-context";
 
 const ApplicationList = function () {
@@ -128,7 +128,7 @@ const ApplicationList = function () {
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <ApplicationDetails onCreate={onApplicationCreate} />
+        <ApplicationEditor onCreate={onApplicationCreate} />
       </div>
       {loading ? (
         <div
