@@ -29,11 +29,33 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import axiosInstance from "@/service/axios";
+import UsersContext, {
+  UsersSearchResultsContext,
+} from "@/context/users-context";
+import { toast } from "react-toastify";
 
 export default function SubscriptionManager({ user }: { user: User }) {
   const { subscriptionTiers, refreshSubscriptionTiers } = useContext(
     SubscriptionTiersContext
   );
+
+  const { setUsers } = useContext(UsersContext);
+  const { setUsersSearchResults } = useContext(UsersSearchResultsContext);
+
+  const setUserSubscription = (
+    setter: any,
+    tier: string,
+    isSubscribed: boolean
+  ) => {
+    setter((users: User[]) => {
+      if (!users) return users;
+      return users.map((iterationUser) =>
+        user._id === iterationUser._id
+          ? { ...user, subscriptionTier: tier, isSubscribed }
+          : iterationUser
+      );
+    });
+  };
 
   const form = useForm({
     defaultValues: {
@@ -52,13 +74,24 @@ export default function SubscriptionManager({ user }: { user: User }) {
     return null;
   }
 
-  const onSubmit = (formValues: any) => {
+  const onSubmit = async (formValues: any) => {
     if (typeof formValues.expiry !== "string") {
       formValues.expiry = formValues.expiry.toISOString();
     }
     formValues.state = true;
     formValues.target = user._id;
-    axiosInstance.post("/user/admin-api/subscription", formValues);
+    const promise = axiosInstance.post(
+      "/user/admin-api/subscription",
+      formValues
+    );
+    toast.promise(promise, {
+      pending: "Submitting...",
+      success: "Update successfull",
+      error: "Update failed!",
+    });
+    await promise;
+    setUserSubscription(setUsers, formValues.tier, true);
+    setUserSubscription(setUsersSearchResults, formValues.tier, true);
   };
 
   return (
@@ -128,7 +161,9 @@ export default function SubscriptionManager({ user }: { user: User }) {
                         mode="single"
                         selected={field.value}
                         onSelect={field.onChange}
-                        disabled={(date) => date < new Date()}
+                        disabled={(date) =>
+                          date < new Date(Date.now() - 86400000)
+                        }
                         initialFocus
                       />
                     </PopoverContent>
