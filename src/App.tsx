@@ -21,8 +21,10 @@ import "react-toastify/dist/ReactToastify.min.css";
 import ScopesContext from "./context/scopes-context";
 import { Scope } from "./components/ui/scope-selector";
 import ApplicationList from "./components/features/application-list/application-list";
+import CountriesContext from "./context/countries-context";
 
 let scopesFetchInProgess = false;
+let countriesFetchInProgess = false;
 let roleFetchInProgess = false;
 let settingsFetchInProgess = false;
 let editableFieldsFetchInProgess = false;
@@ -32,6 +34,7 @@ function App() {
   const [scopes, setScopes] = useState<any>(null);
   const [me, setMe] = useState(null);
   const [editableFields, setEditableFields] = useState(null);
+  const [countries, setCountries] = useState(null);
   const [roles, setRoles] = useState(null);
   const [settings, setSettings] = useState(null);
   const [users, setUsers] = useState([]);
@@ -44,6 +47,15 @@ function App() {
       .get("/system/settings")
       .then((response: any) => setSettings(response.data.data.settings))
       .finally(() => (settingsFetchInProgess = false));
+  };
+
+  const refreshCountries = async () => {
+    if (countriesFetchInProgess) return;
+    countriesFetchInProgess = true;
+    axiosInstance
+      .get("/system/countries-insecure")
+      .then((response: any) => setCountries(response.data.data.countries))
+      .finally(() => (countriesFetchInProgess = false));
   };
 
   const refreshRoles = async () => {
@@ -172,61 +184,63 @@ function App() {
       <SettingsContext.Provider
         value={{ settings, setSettings, refreshSettings: getSettings }}
       >
-        <UsersContext.Provider value={{ users, setUsers }}>
-          <UsersSearchResultsContext.Provider
-            value={{ usersSearchResults, setUsersSearchResults }}
-          >
-            <ScopesContext.Provider value={{ scopes, refreshScopes }}>
-              <MeContext.Provider value={{ me, setMe }}>
-                <EditableFieldsContext.Provider
-                  value={{
-                    editableFields,
-                    setEditableFields,
-                    refreshEditableFields,
-                  }}
-                >
-                  <RolesContext.Provider value={{ roles, refreshRoles }}>
-                    <div className="flex flex-col-reverse md:flex-row h-full w-full">
-                      <SideBar />
-                      <Page>
-                        <Switch>
-                          <Route path="/">
-                            <UserList />
-                          </Route>
-                          <Route path="/users">
-                            <UserList />
-                          </Route>
-                          <Route path="/users/:id">
-                            <UserList />
-                          </Route>
-                          <Route path="/applications">
-                            <ApplicationList />
-                          </Route>
-                          <Route path="/applications/:id">
-                            <ApplicationList />
-                          </Route>
-                        </Switch>
-                        <Route path="/users/:id" component={UserEditor} />
-                      </Page>
-                      <ToastContainer
-                        position={toast.POSITION.BOTTOM_CENTER}
-                        toastStyle={{
-                          backgroundColor: "hsl(240 10% 3.9%)",
-                          color: "#ffffff",
-                          boxShadow: "none",
-                          border: "1px solid #2a2a2a",
-                        }}
-                        closeButton={false}
-                        autoClose={2500}
-                        hideProgressBar
-                      />
-                    </div>
-                  </RolesContext.Provider>
-                </EditableFieldsContext.Provider>
-              </MeContext.Provider>
-            </ScopesContext.Provider>
-          </UsersSearchResultsContext.Provider>
-        </UsersContext.Provider>
+        <CountriesContext.Provider value={{ countries, refreshCountries }}>
+          <UsersContext.Provider value={{ users, setUsers }}>
+            <UsersSearchResultsContext.Provider
+              value={{ usersSearchResults, setUsersSearchResults }}
+            >
+              <ScopesContext.Provider value={{ scopes, refreshScopes }}>
+                <MeContext.Provider value={{ me, setMe }}>
+                  <EditableFieldsContext.Provider
+                    value={{
+                      editableFields,
+                      setEditableFields,
+                      refreshEditableFields,
+                    }}
+                  >
+                    <RolesContext.Provider value={{ roles, refreshRoles }}>
+                      <div className="flex flex-col-reverse md:flex-row h-full w-full">
+                        <SideBar />
+                        <Page>
+                          <Switch>
+                            <Route path="/">
+                              <UserList />
+                            </Route>
+                            <Route path="/users">
+                              <UserList />
+                            </Route>
+                            <Route path="/users/:id">
+                              <UserList />
+                            </Route>
+                            <Route path="/applications">
+                              <ApplicationList />
+                            </Route>
+                            <Route path="/applications/:id">
+                              <ApplicationList />
+                            </Route>
+                          </Switch>
+                          <Route path="/users/:id" component={UserEditor} />
+                        </Page>
+                        <ToastContainer
+                          position={toast.POSITION.BOTTOM_CENTER}
+                          toastStyle={{
+                            backgroundColor: "hsl(240 10% 3.9%)",
+                            color: "#ffffff",
+                            boxShadow: "none",
+                            border: "1px solid #2a2a2a",
+                          }}
+                          closeButton={false}
+                          autoClose={2500}
+                          hideProgressBar
+                        />
+                      </div>
+                    </RolesContext.Provider>
+                  </EditableFieldsContext.Provider>
+                </MeContext.Provider>
+              </ScopesContext.Provider>
+            </UsersSearchResultsContext.Provider>
+          </UsersContext.Provider>
+        </CountriesContext.Provider>
       </SettingsContext.Provider>
     </ThemeProvider>
   );

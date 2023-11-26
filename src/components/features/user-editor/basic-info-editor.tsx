@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SheetClose, SheetFooter } from "@/components/ui/sheet";
+import CountriesContext from "@/context/countries-context";
 import EditableFieldsContext from "@/context/editable-fields-context";
 import MeContext from "@/context/me-context";
 import RolesContext from "@/context/roles-context";
@@ -44,12 +45,14 @@ export default function BasicInfoEditor({ user }: { user: User }) {
     emailVerified: user.emailVerified,
     password: "",
     organization: user.organization,
+    country: user.country,
     role: user.role,
   };
 
   const [submitting, setSubmitting] = useState(false);
 
   const { me } = useContext(MeContext);
+  const { countries, refreshCountries } = useContext(CountriesContext);
   const { roles, refreshRoles } = useContext(RolesContext);
   const { settings, refreshSettings } = useContext(SettingsContext);
   const { editableFields, refreshEditableFields } = useContext(
@@ -73,6 +76,10 @@ export default function BasicInfoEditor({ user }: { user: User }) {
   useEffect(() => {
     if (!editableFields) refreshEditableFields();
   }, [editableFields, refreshEditableFields]);
+
+  useEffect(() => {
+    if (!countries) refreshCountries();
+  }, [countries, refreshCountries]);
 
   const shouldAllowFieldEdit = (field: string) => {
     if (!isPermissionAllowed("admin:profile:write")) {
@@ -327,6 +334,37 @@ export default function BasicInfoEditor({ user }: { user: User }) {
                     disabled={!shouldAllowFieldEdit("password")}
                   />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="country"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Country</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={!shouldAllowFieldEdit("country")}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a Country" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent
+                    defaultValue={user.country}
+                    className="overflow-y-auto max-h-[40vh]"
+                  >
+                    {(countries || []).map((role: any) => (
+                      <SelectItem value={role.iso} key={role.iso}>
+                        {role.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

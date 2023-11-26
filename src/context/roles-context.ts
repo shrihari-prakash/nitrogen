@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-export type IMeContext = {
+export type IRolesContext = {
   roles: string[] | null;
   refreshRoles: any;
 };
