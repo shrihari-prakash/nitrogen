@@ -2,7 +2,6 @@ import { useContext, useEffect, useRef, useState } from "react";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
@@ -64,9 +63,6 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
         <SheetContent className="w-full md:!max-w-[550px] overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Edit user</SheetTitle>
-            <SheetDescription>
-              Make changes to the profile here. Click save when you're done.
-            </SheetDescription>
           </SheetHeader>
           {!user ? (
             loadError ? (
@@ -75,7 +71,7 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
                 Error loading user
               </div>
             ) : (
-              <Loader />
+              <Loader className="!h-[calc(100%-28px)]"/>
             )
           ) : (
             <>
