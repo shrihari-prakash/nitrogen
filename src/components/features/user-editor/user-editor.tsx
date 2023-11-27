@@ -71,7 +71,7 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
                 Error loading user
               </div>
             ) : (
-              <Loader className="h-[calc(100%-28px)]"/>
+              <Loader className="!h-[calc(100%-28px)]"/>
             )
           ) : (
             <>
