@@ -174,7 +174,7 @@ const UserList = function () {
       </div>
       {loading ? (
         <div
-          className={`h-[calc(100%-100px)] w-full flex-1 flex items-center justify-center cursor-default relative`}
+          className={`h-[calc(100%-124px)] w-full flex-1 flex items-center justify-center cursor-default relative`}
         >
           <Loader />
         </div>
