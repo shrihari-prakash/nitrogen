@@ -7,6 +7,7 @@ RUN echo "VITE_LIQUID_CLIENT_ID=__liquid_client_id__" >> ./.env.production
 RUN npm ci && npm run build
 
 FROM nginx:alpine
+COPY ./.nginx/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=base /var/app/dist /usr/share/nginx/html
 COPY ["startup.sh", "/docker-entrypoint.d/startup.sh"]
 RUN sed -i 's/\r$//' /docker-entrypoint.d/startup.sh  && \  
