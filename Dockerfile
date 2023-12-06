@@ -12,3 +12,4 @@ COPY ["startup.sh", "/docker-entrypoint.d/startup.sh"]
 RUN sed -i 's/\r$//' /docker-entrypoint.d/startup.sh  && \  
     chmod +x /docker-entrypoint.d/startup.sh
 EXPOSE 80
+EXPOSE 443
