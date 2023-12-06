@@ -1,0 +1,21 @@
+name: Docker Image CI
+on:
+  push:
+    branches: [release, main]
+  workflow_dispatch:
+jobs:
+  build:
+    name: "Build & Publish"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set Version
+        run: |
+          CI_VERSION=$(cat ./src/VERSION)
+          echo "CI_VERSION=$CI_VERSION" >> $GITHUB_ENV
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile -t shrihariprakash/nitrogen:$CI_VERSION -t "shrihariprakash/nitrogen:latest" -t ghcr.io/shrihari-prakash/liquid:$CI_VERSION -t "ghcr.io/shrihari-prakash/liquid:latest"
+      - name: Docker Hub Login
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Docker Hub Push
+        run: docker push shrihariprakash/liquid --all-tags
