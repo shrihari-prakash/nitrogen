@@ -18,4 +18,4 @@ jobs:
       - name: Docker Hub Login
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Docker Hub Push
-        run: docker push shrihariprakash/liquid --all-tags
+        run: docker push shrihariprakash/nitrogen --all-tags
