@@ -111,6 +111,11 @@ export default function ApplicationEditor({
     delete formValues._id;
     delete formValues.scope;
     delete formValues.__v;
+    for (const field in formValues) {
+      if(!formValues[field]) {
+        delete formValues[field];
+      }
+    }
     const promise = axiosInstance.patch("/client/admin-api/update", {
       target: application._id,
       ...formValues,
