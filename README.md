@@ -21,6 +21,9 @@ Read more about the Liquid project [here](https://github.com/shrihari-prakash/li
 
 ### 🔧 Installation:
 
+> [!IMPORTANT]
+> Before preparing for the installation, make sure the host of your nitrogen instance is present in your Liquid CORS settings (`cors.allowed-origins`). For instance, local host of Nitrogen after running the docker image would be http://localhost:2001.
+
 #### Manual Build:
 1. Create a .env file in project root with the following variables:
 
