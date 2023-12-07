@@ -21,6 +21,7 @@ Read more about the Liquid project [here](https://github.com/shrihari-prakash/li
 
 ### 🔧 Installation:
 
+#### Manual Build:
 1. Create a .env file in project root with the following variables:
 
 ```properties
@@ -32,3 +33,10 @@ VITE_LIQUID_CLIENT_ID=application_client
 3. Run `npm run build`.
 4. Host the `dist` folder in a static server.
 5. Add the host of your Nitrogen instance to Liquid CORS settings and Redirect URI of the client from step 1.
+
+#### Docker:
+1. Run the following command
+```
+docker run -e LIQUID_HOST=https://your.liquid.instance -e LIQUID_CLIENT_ID=application_client -p 2001:80 shrihariprakash/nitrogen:latest
+```
+2. Open https://localhost:2001 to see the admin panel.
