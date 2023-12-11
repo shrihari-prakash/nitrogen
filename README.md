@@ -1,8 +1,5 @@
 # ⚙️ Nitrogen: Beautiful admin panel for your Liquid instances.⚙️
 
-> [!IMPORTANT]
-> This project is still under active development. Expect little bugs and issues until this becomes stable.
-
 ![Nitrogen Admin Panel](images/banner.png)
 
 ### What is Liquid?
