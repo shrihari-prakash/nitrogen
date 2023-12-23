@@ -1,11 +1,11 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -14,31 +14,32 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Tag, TagInput } from "@/components/ui/tag-input";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import RolesContext from "@/context/roles-context";
-import usePermissions from "@/hooks/use-permissions";
-import axiosInstance from "@/service/axios";
-import { Application } from "@/types/application";
-import { PencilIcon, PlusCircle } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { v4 as uuid } from "uuid";
+} from '@/components/ui/select';
+import { Tag, TagInput } from '@/components/ui/tag-input';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import RolesContext from '@/context/roles-context';
+import usePermissions from '@/hooks/use-permissions';
+import axiosInstance from '@/service/axios';
+import { Application } from '@/types/application';
+import { camelCaseToWords } from '@/utils/string';
+import { PencilIcon, PlusCircle } from 'lucide-react';
+import { useContext, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { v4 as uuid } from 'uuid';
 
 const grants = [
-  { label: "Authorization Code", value: "authorization_code" },
-  { label: "Refresh Token", value: "refresh_token" },
-  { label: "Client Credentials", value: "client_credentials" },
+  { label: 'Authorization Code', value: 'authorization_code' },
+  { label: 'Refresh Token', value: 'refresh_token' },
+  { label: 'Client Credentials', value: 'client_credentials' },
 ];
 
 export default function ApplicationEditor({
@@ -75,7 +76,7 @@ export default function ApplicationEditor({
     redirectUris: undefined,
   };
 
-  formDefaults.secret = "";
+  formDefaults.secret = '';
 
   const form = useForm({
     defaultValues: formDefaults,
@@ -92,11 +93,18 @@ export default function ApplicationEditor({
   }, [application, setRedirectUris]);
 
   async function create(formValues: any) {
-    const promise = axiosInstance.post("/client/admin-api/create", formValues);
+    const promise = axiosInstance.post('/client/admin-api/create', formValues);
     toast.promise(promise, {
-      loading: "Submitting...",
-      success: "Creation successfull",
-      error: "Creation failed!",
+      loading: 'Submitting...',
+      success: 'Creation successfull',
+      error: (data: any) => {
+        console.log(data);
+        const errors = data?.response?.data?.additionalInfo?.errors;
+        if (errors) {
+          return 'Invalid ' + camelCaseToWords(errors[0].param);
+        }
+        return 'Creation failed!';
+      },
     });
     return await promise;
   }
@@ -112,18 +120,25 @@ export default function ApplicationEditor({
     delete formValues.scope;
     delete formValues.__v;
     for (const field in formValues) {
-      if(!formValues[field]) {
+      if (!formValues[field]) {
         delete formValues[field];
       }
     }
-    const promise = axiosInstance.patch("/client/admin-api/update", {
+    const promise = axiosInstance.patch('/client/admin-api/update', {
       target: application._id,
       ...formValues,
     });
     toast.promise(promise, {
-      loading: "Submitting...",
-      success: "Update successfull",
-      error: "Update failed!",
+      loading: 'Submitting...',
+      success: 'Update successfull',
+      error: (data: any) => {
+        console.log(data);
+        const errors = data?.response?.data?.additionalInfo?.errors;
+        if (errors) {
+          return 'Invalid ' + camelCaseToWords(errors[0].param);
+        }
+        return 'Update failed!';
+      },
     });
     await promise;
     if (onUpdate) {
@@ -138,7 +153,7 @@ export default function ApplicationEditor({
       grants: selectedGrants,
     };
     if (!Array.isArray(formValues.redirectUris)) {
-      formValues.redirectUris = formValues.redirectUris.split(",");
+      formValues.redirectUris = formValues.redirectUris.split(',');
     }
     if (!application) {
       const result = await create(formValues);
@@ -158,39 +173,39 @@ export default function ApplicationEditor({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="ml-2">
+        <Button variant='outline' className='ml-2'>
           {application ? (
-            <PencilIcon className="h-4 w-4" />
+            <PencilIcon className='h-4 w-4' />
           ) : (
             <>
-              <PlusCircle className="h-4 w-4 mr-2" />
+              <PlusCircle className='h-4 w-4 mr-2' />
               Create Application
             </>
           )}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-full md:max-w-[500px]">
+      <DialogContent className='sm:max-w-full md:max-w-[500px]'>
         <DialogHeader>
           <DialogTitle>
-            {application ? "Update Application" : "Create Application"}
+            {application ? 'Update Application' : 'Create Application'}
           </DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <div className='grid gap-4 py-4'>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-2 p-4 max-h-[60vh] overflow-y-auto"
+              className='space-y-2 p-4 max-h-[60vh] overflow-y-auto'
             >
               <FormField
                 control={form.control}
-                name="id"
+                name='id'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Application ID</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        autoCapitalize="none"
+                        autoCapitalize='none'
                         minLength={8}
                         disabled={!!application}
                       />
@@ -205,7 +220,7 @@ export default function ApplicationEditor({
               />
               <FormField
                 control={form.control}
-                name="displayName"
+                name='displayName'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Display Name</FormLabel>
@@ -218,7 +233,7 @@ export default function ApplicationEditor({
               />
               <FormField
                 control={form.control}
-                name="secret"
+                name='secret'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Application Secret</FormLabel>
@@ -235,7 +250,7 @@ export default function ApplicationEditor({
               />
               <FormField
                 control={form.control}
-                name="role"
+                name='role'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Role</FormLabel>
@@ -245,25 +260,25 @@ export default function ApplicationEditor({
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a role" />
+                          <SelectValue placeholder='Select a role' />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent defaultValue="external_client">
+                      <SelectContent defaultValue='external_client'>
                         <SelectItem
-                          value="internal_client"
+                          value='internal_client'
                           disabled={
                             !isPermissionAllowed(
-                              "admin:system:internal-client:write"
+                              'admin:system:internal-client:write'
                             )
                           }
                         >
                           Internal Client
                         </SelectItem>
                         <SelectItem
-                          value="external_client"
+                          value='external_client'
                           disabled={
                             !isPermissionAllowed(
-                              "admin:system:external-client:write"
+                              'admin:system:external-client:write'
                             )
                           }
                         >
@@ -278,18 +293,18 @@ export default function ApplicationEditor({
               <FormItem>
                 <FormLabel>Grants</FormLabel>
                 <ToggleGroup
-                  size={"sm"}
-                  className="justify-between"
-                  type="multiple"
+                  size={'sm'}
+                  className='justify-between'
+                  type='multiple'
                   onValueChange={onGrantSelect}
-                  variant="outline"
+                  variant='outline'
                   defaultValue={application && application.grants}
                 >
                   {grants.map((grant) => (
                     <ToggleGroupItem
                       value={grant.value}
                       aria-label={grant.label}
-                      className="text-xs"
+                      className='text-xs'
                       key={grant.value}
                     >
                       {grant.label}
@@ -299,16 +314,16 @@ export default function ApplicationEditor({
               </FormItem>
               <FormField
                 control={form.control}
-                name="redirectUris"
+                name='redirectUris'
                 render={() => (
                   <FormItem>
                     <FormLabel>Redirect URIs</FormLabel>
                     <FormControl>
                       <TagInput
-                        placeholder="Type a URL and press enter"
+                        placeholder='Type a URL and press enter'
                         tags={redirectUris}
-                        textCase={"lowercase"}
-                        className="bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                        textCase={'lowercase'}
+                        className='bg-secondary text-secondary-foreground hover:bg-secondary/80'
                         setTags={(newTags) => setRedirectUris(newTags)}
                       />
                     </FormControl>
@@ -321,7 +336,7 @@ export default function ApplicationEditor({
                   </FormItem>
                 )}
               />
-              <Button type="submit">Save changes</Button>
+              <Button type='submit'>Save changes</Button>
             </form>
           </Form>
         </div>
