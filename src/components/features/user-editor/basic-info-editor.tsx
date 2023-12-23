@@ -156,8 +156,8 @@ export default function BasicInfoEditor({
         ...formValues,
       });
       toast.promise(promise, {
-        loading: 'Submitting...',
-        success: 'Update successfull',
+        loading: 'Processing changes...',
+        success: 'Update complete',
         error: (data: any) => {
           console.log(data);
           const errors = data?.response?.data?.additionalInfo?.errors;

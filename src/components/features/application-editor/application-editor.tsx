@@ -95,8 +95,8 @@ export default function ApplicationEditor({
   async function create(formValues: any) {
     const promise = axiosInstance.post('/client/admin-api/create', formValues);
     toast.promise(promise, {
-      loading: 'Submitting...',
-      success: 'Creation successfull',
+      loading: 'Processing creation...',
+      success: 'Application created',
       error: (data: any) => {
         console.log(data);
         const errors = data?.response?.data?.additionalInfo?.errors;
@@ -129,13 +129,13 @@ export default function ApplicationEditor({
       ...formValues,
     });
     toast.promise(promise, {
-      loading: 'Submitting...',
-      success: 'Update successfull',
+      loading: 'Processing changes...',
+      success: 'Update complete',
       error: (data: any) => {
         console.log(data);
         const errors = data?.response?.data?.additionalInfo?.errors;
         if (errors) {
-          return 'Invalid ' + camelCaseToWords(errors[0].param);
+          return `Invalid ${camelCaseToWords(errors[0].param)}`;
         }
         return 'Update failed!';
       },

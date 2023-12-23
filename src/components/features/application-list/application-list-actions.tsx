@@ -45,8 +45,8 @@ export const ApplicationListActions = ({
       },
     });
     toast.promise(promise, {
-      loading: "Deleting...",
-      success: "Delete successfull",
+      loading: `Deleting ${row.original.displayName}...`,
+      success: `${row.original.displayName} deleted`,
       error: "Delete failed!",
     });
     await promise;

@@ -184,8 +184,8 @@ const ScopeSelector = ({
         operation: "set",
       });
       toast.promise(promise, {
-        loading: "Submitting...",
-        success: "Update successfull",
+        loading: "Updating permissions...",
+        success: "Permissions updated",
         error: "Update failed!",
       });
       await promise;

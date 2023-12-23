@@ -48,8 +48,8 @@ export default function AdminSwitches({
       state: state,
     });
     toast.promise(promise, {
-      loading: "Submitting...",
-      success: "Update successfull",
+      loading: "Updating verification status...",
+      success: state ? "User verified" : "User un-verified",
       error: "Update failed!",
     });
     await promise;
@@ -64,8 +64,8 @@ export default function AdminSwitches({
       state,
     });
     toast.promise(promise, {
-      loading: "Submitting...",
-      success: "Update successfull",
+      loading: state ? "Suspending..." : "Restoring...",
+      success: state ? "User suspended" : "User restored",
       error: "Update failed!",
     });
     await promise;
@@ -80,8 +80,8 @@ export default function AdminSwitches({
       state,
     });
     toast.promise(promise, {
-      loading: "Submitting...",
-      success: "Update successfull",
+      loading: state ? "Restricting..." : "Un-restricting...",
+      success: state ? "User restricted" : "User un-restricted",
       error: "Update failed!",
     });
     await promise;
