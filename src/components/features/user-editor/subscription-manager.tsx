@@ -30,7 +30,7 @@ import axiosInstance from "@/service/axios";
 import UsersContext, {
   UsersSearchResultsContext,
 } from "@/context/users-context";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 export default function SubscriptionManager({
   user,
@@ -98,7 +98,7 @@ export default function SubscriptionManager({
         formValues
       );
       toast.promise(promise, {
-        pending: "Submitting...",
+        loading: "Submitting...",
         success: "Update successfull",
         error: "Update failed!",
       });

@@ -8,7 +8,7 @@ import usePermissions from "@/hooks/use-permissions";
 import axiosInstance from "@/service/axios";
 import { User } from "@/types/user";
 import { useContext, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 export default function AdminSwitches({
   user,
@@ -48,7 +48,7 @@ export default function AdminSwitches({
       state: state,
     });
     toast.promise(promise, {
-      pending: "Submitting...",
+      loading: "Submitting...",
       success: "Update successfull",
       error: "Update failed!",
     });
@@ -64,7 +64,7 @@ export default function AdminSwitches({
       state,
     });
     toast.promise(promise, {
-      pending: "Submitting...",
+      loading: "Submitting...",
       success: "Update successfull",
       error: "Update failed!",
     });
@@ -80,7 +80,7 @@ export default function AdminSwitches({
       state,
     });
     toast.promise(promise, {
-      pending: "Submitting...",
+      loading: "Submitting...",
       success: "Update successfull",
       error: "Update failed!",
     });

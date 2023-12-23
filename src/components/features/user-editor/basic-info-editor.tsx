@@ -32,7 +32,7 @@ import { User } from "@/types/user";
 import { Copy, Save, XCircle } from "lucide-react";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 export default function BasicInfoEditor({
   user,
@@ -155,7 +155,7 @@ export default function BasicInfoEditor({
         ...formValues,
       });
       toast.promise(promise, {
-        pending: "Submitting...",
+        loading: "Submitting...",
         success: "Update successfull",
         error: "Update failed!",
       });

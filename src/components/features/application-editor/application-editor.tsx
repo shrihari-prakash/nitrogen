@@ -32,7 +32,7 @@ import { Application } from "@/types/application";
 import { PencilIcon, PlusCircle } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 
 const grants = [
@@ -94,7 +94,7 @@ export default function ApplicationEditor({
   async function create(formValues: any) {
     const promise = axiosInstance.post("/client/admin-api/create", formValues);
     toast.promise(promise, {
-      pending: "Submitting...",
+      loading: "Submitting...",
       success: "Creation successfull",
       error: "Creation failed!",
     });
@@ -121,7 +121,7 @@ export default function ApplicationEditor({
       ...formValues,
     });
     toast.promise(promise, {
-      pending: "Submitting...",
+      loading: "Submitting...",
       success: "Update successfull",
       error: "Update failed!",
     });
