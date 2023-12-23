@@ -16,7 +16,7 @@ export default function ProfileCard({ user }: { user: User }) {
   return (
     <Card className='mt-4'>
       <div className='flex flex-col items-start md:flex-row justify-start space-x-4 m-2 md:m-4'>
-        <Avatar className={user.profilePictureUrl ? 'w-28 h-28 ml-4' : 'ml-4'}>
+        <Avatar className={user.profilePictureUrl ? 'w-28 h-28 ml-4 mb-2' : 'ml-4 mb-2'}>
           <AvatarImage src={user.profilePictureUrl} />
           <AvatarFallback>
             {user.firstName
