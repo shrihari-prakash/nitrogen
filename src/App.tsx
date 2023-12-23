@@ -16,7 +16,6 @@ import RolesContext from "./context/roles-context";
 import SettingsContext from "./context/settings-context";
 import MeContext from "./context/me-context";
 import { KeyRound, ShieldOff } from "lucide-react";
-import "react-toastify/dist/ReactToastify.min.css";
 import ScopesContext from "./context/scopes-context";
 import { Scope } from "./components/ui/scope-selector";
 import ApplicationList from "./components/features/application-list/application-list";
