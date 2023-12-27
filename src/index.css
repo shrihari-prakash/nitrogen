@@ -70,6 +70,9 @@
   * {
     @apply border-border;
   }
+  body {
+    overscroll-behavior-y: none;
+  }
   html,
   body,
   #root {
