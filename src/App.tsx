@@ -16,13 +16,12 @@ import RolesContext from "./context/roles-context";
 import SettingsContext from "./context/settings-context";
 import MeContext from "./context/me-context";
 import { KeyRound, ShieldOff } from "lucide-react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.min.css";
 import ScopesContext from "./context/scopes-context";
 import { Scope } from "./components/ui/scope-selector";
 import ApplicationList from "./components/features/application-list/application-list";
 import CountriesContext from "./context/countries-context";
 import SubscriptionTiersContext from "./context/subscription-tiers-context";
+import { Toaster } from "./components/ui/sonner";
 
 let scopesFetchInProgess = false;
 let countriesFetchInProgess = false;
@@ -238,18 +237,7 @@ function App() {
                             </Switch>
                             <Route path="/users/:id" component={UserEditor} />
                           </Page>
-                          <ToastContainer
-                            position={toast.POSITION.BOTTOM_CENTER}
-                            toastStyle={{
-                              backgroundColor: "hsl(240 10% 3.9%)",
-                              color: "#ffffff",
-                              boxShadow: "none",
-                              border: "1px solid #2a2a2a",
-                            }}
-                            closeButton={false}
-                            autoClose={2500}
-                            hideProgressBar
-                          />
+                          <Toaster position="bottom-center" />
                         </div>
                       </RolesContext.Provider>
                     </EditableFieldsContext.Provider>

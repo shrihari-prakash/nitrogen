@@ -18,7 +18,7 @@ import axiosInstance from "@/service/axios";
 import { AlertCircle } from "lucide-react";
 import { useState } from "react";
 import { BiTrash } from "react-icons/bi";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import ApplicationEditor from "../application-editor/application-editor";
 import { Application } from "@/types/application";
 
@@ -45,8 +45,8 @@ export const ApplicationListActions = ({
       },
     });
     toast.promise(promise, {
-      pending: "Deleting...",
-      success: "Delete successfull",
+      loading: `Deleting ${row.original.displayName}...`,
+      success: `${row.original.displayName} deleted`,
       error: "Delete failed!",
     });
     await promise;

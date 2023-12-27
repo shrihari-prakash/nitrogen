@@ -12,7 +12,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { v4 as uuid } from 'uuid';
 
 const tagVariants = cva(
@@ -177,9 +177,7 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(
       (props.minTags !== undefined && props.minTags < 0)
     ) {
       console.warn('maxTags and minTags cannot be less than 0');
-      toast('maxTags and minTags cannot be less than 0', {
-        type: 'error',
-      });
+      toast.error('maxTags and minTags cannot be less than 0');
       return null;
     }
 
@@ -204,17 +202,13 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(
 
         if (minLength && newTagText.length < minLength) {
           console.warn('Tag is too short');
-          toast('Tag is too short', {
-            type: 'error',
-          });
+          toast.error('Tag is too short');
           return;
         }
 
         // Validate maxLength
         if (maxLength && newTagText.length > maxLength) {
-          toast('Tag is too long', {
-            type: 'error',
-          });
+          toast.error('Tag is too long');
           console.warn('Tag is too long');
           return;
         }

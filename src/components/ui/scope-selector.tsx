@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./dialog";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { Alert, AlertDescription } from "./alert";
 import { Checkbox } from "./checkbox";
 import usePermissions from "@/hooks/use-permissions";
@@ -184,8 +184,8 @@ const ScopeSelector = ({
         operation: "set",
       });
       toast.promise(promise, {
-        pending: "Submitting...",
-        success: "Update successfull",
+        loading: "Updating permissions...",
+        success: "Permissions updated",
         error: "Update failed!",
       });
       await promise;

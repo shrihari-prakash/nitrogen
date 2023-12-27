@@ -53,7 +53,7 @@ export type User = {
   deleted?: boolean;
   deletedDate?: Date;
   creationIp?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string;
+  updatedAt?: string;
   requested?: boolean;
 };
