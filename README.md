@@ -27,7 +27,7 @@ Read more about the Liquid project [here](https://github.com/shrihari-prakash/li
 docker run -e LIQUID_HOST=https://your.liquid.instance -e LIQUID_CLIENT_ID=application_client -p 2001:80 --name nitrogen shrihariprakash/nitrogen:latest
 ```
 2. Open https://localhost:2001 to see the admin panel.
-3. The docker version uses nginx to serve the pages and uses a very minimal configuration without https. If you'd like to customize the nginx config, mount your config file to `/etc/nginx/conf.d/default.conf` of the docker image.
+3. The docker version uses nginx to serve pages and uses a very minimal configuration without https by default. If you'd like to customize the nginx config, mount your config file to `/etc/nginx/conf.d/default.conf` of the docker image.
 
 #### Manual Build:
 1. Create a .env file in project root with the following variables:
