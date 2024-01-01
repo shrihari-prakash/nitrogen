@@ -99,7 +99,7 @@ export default function SubscriptionManager({
       );
       toast.promise(promise, {
         loading: "Submitting...",
-        success: "Update successfull",
+        success: "Update complete",
         error: "Update failed!",
       });
       await promise;
