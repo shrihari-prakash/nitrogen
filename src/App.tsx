@@ -237,7 +237,7 @@ function App() {
                             </Switch>
                             <Route path="/users/:id" component={UserEditor} />
                           </Page>
-                          <Toaster position="bottom-center" />
+                          <Toaster position="bottom-center" closeButton />
                         </div>
                       </RolesContext.Provider>
                     </EditableFieldsContext.Provider>
