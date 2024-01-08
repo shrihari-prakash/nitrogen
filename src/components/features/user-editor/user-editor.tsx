@@ -77,7 +77,7 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
           ) : (
             <>
               <ProfileCard user={user} />
-              {scopes && (
+              {scopes && isPermissionAllowed("admin:profile:access:write") && (
                 <>
                   <TypographyH4 className="my-4">Permissions</TypographyH4>
                   <ScopeSelector
