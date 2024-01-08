@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -8,32 +8,32 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { SheetClose, SheetFooter } from '@/components/ui/sheet';
-import CountriesContext from '@/context/countries-context';
-import EditableFieldsContext from '@/context/editable-fields-context';
-import MeContext from '@/context/me-context';
-import RolesContext from '@/context/roles-context';
-import SettingsContext from '@/context/settings-context';
+} from "@/components/ui/select";
+import { SheetFooter } from "@/components/ui/sheet";
+import CountriesContext from "@/context/countries-context";
+import EditableFieldsContext from "@/context/editable-fields-context";
+import MeContext from "@/context/me-context";
+import RolesContext from "@/context/roles-context";
+import SettingsContext from "@/context/settings-context";
 import UsersContext, {
   UsersSearchResultsContext,
-} from '@/context/users-context';
-import usePermissions from '@/hooks/use-permissions';
-import axiosInstance from '@/service/axios';
-import { User } from '@/types/user';
-import { camelCaseToWords } from '@/utils/string';
-import { Copy, Save, XCircle } from 'lucide-react';
-import { useContext, useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
+} from "@/context/users-context";
+import usePermissions from "@/hooks/use-permissions";
+import axiosInstance from "@/service/axios";
+import { User } from "@/types/user";
+import { camelCaseToWords } from "@/utils/string";
+import { Copy, Save } from "lucide-react";
+import { useContext, useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function BasicInfoEditor({
   user,
@@ -46,14 +46,14 @@ export default function BasicInfoEditor({
     _id: user._id,
     username: user.username,
     firstName: user.firstName,
-    middleName: user.middleName || '',
+    middleName: user.middleName || "",
     lastName: user.lastName,
     email: user.email,
     emailVerified: user.emailVerified,
-    password: '',
+    password: "",
     organization: user.organization,
-    country: user.country || '',
-    role: user.role || '',
+    country: user.country || "",
+    role: user.role || "",
   };
 
   const [submitting, setSubmitting] = useState(false);
@@ -89,7 +89,7 @@ export default function BasicInfoEditor({
   }, [countries, refreshCountries]);
 
   const shouldAllowFieldEdit = (field: string) => {
-    if (!isPermissionAllowed('admin:profile:write')) {
+    if (!isPermissionAllowed("admin:profile:write")) {
       return false;
     }
     if (!editableFields || !user) {
@@ -106,7 +106,7 @@ export default function BasicInfoEditor({
     ) {
       if (
         settings &&
-        !(settings as any)['admin-api.user.profile.can-edit-peer-data']
+        !(settings as any)["admin-api.user.profile.can-edit-peer-data"]
       ) {
         return false;
       }
@@ -126,9 +126,9 @@ export default function BasicInfoEditor({
     try {
       e.preventDefault();
       await navigator.clipboard.writeText(user._id);
-      toast('Copied!');
+      toast("Copied!");
     } catch (err) {
-      toast('Copy failed!');
+      toast("Copy failed!");
     }
   };
 
@@ -144,27 +144,27 @@ export default function BasicInfoEditor({
         delete formValues[key];
         return;
       }
-      if (formValues[key] === '') {
-        formValues[key] = '__unset__';
+      if (formValues[key] === "") {
+        formValues[key] = "__unset__";
       }
     });
     console.log(formValues);
     let promise;
     try {
-      promise = axiosInstance.patch('/user/admin-api/update', {
+      promise = axiosInstance.patch("/user/admin-api/update", {
         target: user._id,
         ...formValues,
       });
       toast.promise(promise, {
-        loading: 'Processing changes...',
-        success: 'Update complete',
+        loading: "Processing changes...",
+        success: "Update complete",
         error: (data: any) => {
           console.log(data);
           const errors = data?.response?.data?.additionalInfo?.errors;
           if (errors) {
-            return 'Invalid ' + camelCaseToWords(errors[0].param);
+            return "Invalid " + camelCaseToWords(errors[0].param);
           }
-          return 'Update failed!';
+          return "Update failed!";
         },
       });
       await promise;
@@ -186,21 +186,21 @@ export default function BasicInfoEditor({
   }
 
   return (
-    <div className='grid gap-4'>
+    <div className="grid gap-4">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
-            name='_id'
+            name="_id"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>ID</FormLabel>
-                <div className='flex'>
+                <div className="flex">
                   <FormControl>
                     <Input disabled {...field} />
                   </FormControl>
-                  <Button onClick={copyId} className='ml-2' variant='outline'>
-                    <Copy className='h-4 w-4' />
+                  <Button onClick={copyId} className="ml-2" variant="outline">
+                    <Copy className="h-4 w-4" />
                   </Button>
                 </div>
                 <FormMessage />
@@ -209,14 +209,14 @@ export default function BasicInfoEditor({
           />
           <FormField
             control={form.control}
-            name='username'
+            name="username"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Username</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    disabled={!shouldAllowFieldEdit('username')}
+                    disabled={!shouldAllowFieldEdit("username")}
                   />
                 </FormControl>
                 <FormDescription>
@@ -229,18 +229,18 @@ export default function BasicInfoEditor({
           />
           <FormField
             control={form.control}
-            name='role'
+            name="role"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Role</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
-                  disabled={!shouldAllowFieldEdit('role')}
+                  disabled={!shouldAllowFieldEdit("role")}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder='Select a role' />
+                      <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent defaultValue={user.role}>
@@ -257,14 +257,14 @@ export default function BasicInfoEditor({
           />
           <FormField
             control={form.control}
-            name='firstName'
+            name="firstName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>First Name</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    disabled={!shouldAllowFieldEdit('firstName')}
+                    disabled={!shouldAllowFieldEdit("firstName")}
                   />
                 </FormControl>
                 <FormMessage />
@@ -273,14 +273,14 @@ export default function BasicInfoEditor({
           />
           <FormField
             control={form.control}
-            name='middleName'
+            name="middleName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Middle Name</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    disabled={!shouldAllowFieldEdit('middleName')}
+                    disabled={!shouldAllowFieldEdit("middleName")}
                   />
                 </FormControl>
                 <FormMessage />
@@ -289,14 +289,14 @@ export default function BasicInfoEditor({
           />
           <FormField
             control={form.control}
-            name='lastName'
+            name="lastName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Last Name</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    disabled={!shouldAllowFieldEdit('lastName')}
+                    disabled={!shouldAllowFieldEdit("lastName")}
                   />
                 </FormControl>
                 <FormMessage />
@@ -305,12 +305,12 @@ export default function BasicInfoEditor({
           />
           <FormField
             control={form.control}
-            name='email'
+            name="email"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input {...field} disabled={!shouldAllowFieldEdit('email')} />
+                  <Input {...field} disabled={!shouldAllowFieldEdit("email")} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -318,17 +318,17 @@ export default function BasicInfoEditor({
           />
           <FormField
             control={form.control}
-            name='emailVerified'
+            name="emailVerified"
             render={({ field }) => (
-              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                 <FormControl>
                   <Checkbox
                     defaultChecked={field.value}
                     onCheckedChange={field.onChange}
-                    disabled={!shouldAllowFieldEdit('emailVerified')}
+                    disabled={!shouldAllowFieldEdit("emailVerified")}
                   />
                 </FormControl>
-                <div className='space-y-1 leading-none'>
+                <div className="space-y-1 leading-none">
                   <FormLabel>Email Verified</FormLabel>
                   <FormDescription>
                     Unverified users cannot login.
@@ -339,14 +339,14 @@ export default function BasicInfoEditor({
           />
           <FormField
             control={form.control}
-            name='password'
+            name="password"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    disabled={!shouldAllowFieldEdit('password')}
+                    disabled={!shouldAllowFieldEdit("password")}
                   />
                 </FormControl>
                 <FormMessage />
@@ -355,23 +355,23 @@ export default function BasicInfoEditor({
           />
           <FormField
             control={form.control}
-            name='country'
+            name="country"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Country</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
-                  disabled={!shouldAllowFieldEdit('country')}
+                  disabled={!shouldAllowFieldEdit("country")}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder='Select a Country' />
+                      <SelectValue placeholder="Select a Country" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent
                     defaultValue={user.country}
-                    className='overflow-y-auto max-h-[40vh]'
+                    className="overflow-y-auto max-h-[40vh]"
                   >
                     {(countries || []).map((role: any) => (
                       <SelectItem value={role.iso} key={role.iso}>
@@ -386,34 +386,30 @@ export default function BasicInfoEditor({
           />
           <FormField
             control={form.control}
-            name='organization'
+            name="organization"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Organization</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    disabled={!shouldAllowFieldEdit('organization')}
+                    disabled={!shouldAllowFieldEdit("organization")}
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <SheetFooter className='flex-col'>
+          <SheetFooter className="flex-col">
             <Button
-              type='submit'
-              disabled={!isPermissionAllowed('admin:profile:write')}
-              className='mb-2 md:mb-0'
+              type="submit"
+              disabled={!isPermissionAllowed("admin:profile:write")}
+              className="mb-2 md:mb-0"
+              variant="outline"
             >
-              <Save className='h-4 w-4 mr-2' />
-              {submitting ? 'Saving...' : 'Save Basic Info'}
+              <Save className="h-4 w-4 mr-2" />
+              {submitting ? "Saving..." : "Save Basic Info"}
             </Button>
-            <SheetClose asChild>
-              <Button variant='outline'>
-                <XCircle className='h-4 w-4 mr-2' /> Close
-              </Button>
-            </SheetClose>
           </SheetFooter>
         </form>
       </Form>

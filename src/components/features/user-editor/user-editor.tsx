@@ -18,6 +18,7 @@ import ScopesContext from "@/context/scopes-context";
 import usePermissions from "@/hooks/use-permissions";
 import { TypographyH4 } from "@/components/ui/typography";
 import SubscriptionManager from "./subscription-manager";
+import CustomDataEditor from "./custom-data-editor";
 
 const UserEditor = function ({ params }: { params: { id: string } }) {
   const [, setLocation] = useLocation();
@@ -71,12 +72,12 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
                 Error loading user
               </div>
             ) : (
-              <Loader className="!h-[calc(100%-28px)]"/>
+              <Loader className="!h-[calc(100%-28px)]" />
             )
           ) : (
             <>
               <ProfileCard user={user} />
-              {scopes && (
+              {scopes && isPermissionAllowed("admin:profile:access:write") && (
                 <>
                   <TypographyH4 className="my-4">Permissions</TypographyH4>
                   <ScopeSelector
@@ -96,6 +97,12 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
                 <>
                   <TypographyH4 className="my-4">Subscription</TypographyH4>
                   <SubscriptionManager user={user} setUser={setUser} />
+                </>
+              )}
+              {isPermissionAllowed("admin:profile:custom-data:write") && (
+                <>
+                  <TypographyH4 className="my-4">Custom Data</TypographyH4>
+                  <CustomDataEditor user={user}></CustomDataEditor>
                 </>
               )}
             </>

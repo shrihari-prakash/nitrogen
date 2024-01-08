@@ -94,6 +94,13 @@ const ScopeSelector = ({
     return me._id === user._id;
   };
 
+  const isUserSuperAdmin = () => {
+    if (!user) {
+      return false;
+    }
+    return user.role === "super_admin";
+  };
+
   const handleToggle = (itemName: string) => {
     const isSelected = selectedScopes.includes(itemName);
     let newSelectedItems: string[];
@@ -204,27 +211,19 @@ const ScopeSelector = ({
     return items
       .filter((item) => item.parent === parent)
       .map((item) => {
+        const scopeAllowed = isScopeAllowed(
+          item.name,
+          me?.scope as string[],
+          scopesObject
+        );
         return (
-          <div
-            key={item.name}
-            className={
-              !isScopeAllowed(item.name, me?.scope as string[], scopesObject) ||
-              isUserMe()
-                ? "opacity-80"
-                : ""
-            }
-          >
+          <div key={item.name}>
             {search !== "" &&
             !item.name.includes(search.toLowerCase()) ? null : (
               <Label className="flex items-center my-2 space-x-3 px-3 py-2">
                 <Checkbox
-                  disabled={
-                    !isScopeAllowed(
-                      item.name,
-                      me?.scope as string[],
-                      scopesObject
-                    ) || isUserMe()
-                  }
+                  disabled={!scopeAllowed || isUserMe() || isUserSuperAdmin()}
+                  className={!scopeAllowed ? "invisible" : ""}
                   checked={selectedScopes.includes(item.name)}
                   onCheckedChange={() => handleToggle(item.name)}
                 />
@@ -265,12 +264,20 @@ const ScopeSelector = ({
               : user.displayName}
           </DialogTitle>
           <DialogDescription>
-            {isUserMe() && (
+            {isUserMe() ? (
               <Alert className="mt-2">
                 <AlertDescription>
                   You can't edit your own permissions
                 </AlertDescription>
               </Alert>
+            ) : (
+              isUserSuperAdmin() && (
+                <Alert className="mt-2">
+                  <AlertDescription>
+                    You can't edit permissions of Super Admin
+                  </AlertDescription>
+                </Alert>
+              )
             )}
           </DialogDescription>
           <div className="p-2">
@@ -281,13 +288,18 @@ const ScopeSelector = ({
             />
           </div>
         </DialogHeader>
-        <div className="grid max-h-[400px] overflow-auto">
+        <div
+          className={
+            "grid max-h-[400px] overflow-auto " +
+            (isUserMe() || isUserSuperAdmin() ? "opacity-50" : "")
+          }
+        >
           {scopes && renderTree(scopes)}
         </div>
         <DialogFooter>
           <Button
             type="submit"
-            disabled={submitting || isUserMe()}
+            disabled={submitting || isUserMe() || isUserSuperAdmin()}
             onClick={onSave}
           >
             Save changes
