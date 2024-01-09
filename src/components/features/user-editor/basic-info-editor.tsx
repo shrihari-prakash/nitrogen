@@ -400,7 +400,7 @@ export default function BasicInfoEditor({
               </FormItem>
             )}
           />
-          <SheetFooter className="flex-col">
+          <SheetFooter className="flex-col sm:justify-center">
             <Button
               type="submit"
               disabled={!isPermissionAllowed("admin:profile:write")}

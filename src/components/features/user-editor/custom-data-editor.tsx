@@ -58,9 +58,9 @@ const CustomDataEditor = ({ user }: { user: User }) => {
         onValueChange={(code) => setCustomData(code)}
         highlight={(code) => highlight(code, languages.json)}
         padding={10}
-        className="text-sm font-mono"
+        className="text-sm font-mono rounded-lg [&>*]:rounded-lg border overflow-hidden"
       />
-      <div className="flex sm:flex-row sm:justify-end sm:space-x-2 flex-col mt-4">
+      <div className="flex sm:flex-row sm:justify-center sm:space-x-2 flex-col mt-4">
         <Button
           type="submit"
           className="mb-2 md:mb-0"
