@@ -199,7 +199,12 @@ export default function BasicInfoEditor({
                   <FormControl>
                     <Input disabled {...field} />
                   </FormControl>
-                  <Button onClick={copyId} className="ml-2" variant="outline">
+                  <Button
+                    onClick={copyId}
+                    type="button"
+                    className="ml-2"
+                    variant="outline"
+                  >
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
