@@ -40,17 +40,31 @@ const ApplicationList = function () {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  let savedColumnVisibilityState = localStorage.getItem(
+    "nitrogen.application-list.column-visibility"
+  );
+  if (savedColumnVisibilityState) {
+    savedColumnVisibilityState = JSON.parse(savedColumnVisibilityState);
+  }
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>(
+      (savedColumnVisibilityState as unknown as VisibilityState) || {}
+    );
   const [applications, setApplications] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
-
   const { me } = React.useContext(MeContext);
   const { scopes, refreshScopes } = React.useContext(ScopesContext);
 
   React.useEffect(() => {
     if (!scopes) refreshScopes();
   }, [scopes, refreshScopes]);
+
+  React.useEffect(() => {
+    localStorage.setItem(
+      "nitrogen.application-list.column-visibility",
+      JSON.stringify(columnVisibility)
+    );
+  }, [columnVisibility]);
 
   React.useEffect(() => {
     if (!applications.length) {

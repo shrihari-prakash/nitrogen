@@ -45,12 +45,23 @@ const UserList = function () {
   const { usersSearchResults, setUsersSearchResults } = React.useContext(
     UsersSearchResultsContext
   );
-
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  let savedColumnVisibilityState = localStorage.getItem(
+    "nitrogen.user-list.column-visibility"
+  );
+  if (savedColumnVisibilityState) {
+    savedColumnVisibilityState = JSON.parse(savedColumnVisibilityState);
+  }
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>(
+      (savedColumnVisibilityState as unknown as VisibilityState) || {
+        followingCount: false,
+        followerCount: false,
+        credits: false,
+      }
+    );
   const [loading, setLoading] = React.useState<boolean>(
     users.length ? false : true
   );
@@ -80,6 +91,13 @@ const UserList = function () {
       setLoading(false);
     }
   }, [users, setUsers]);
+
+  React.useEffect(() => {
+    localStorage.setItem(
+      "nitrogen.user-list.column-visibility",
+      JSON.stringify(columnVisibility)
+    );
+  }, [columnVisibility]);
 
   React.useEffect(() => {
     return () => setUsersSearchResults(null);

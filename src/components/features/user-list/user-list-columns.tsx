@@ -82,6 +82,26 @@ export const userListColumns: ColumnDef<User>[] = [
     cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
   },
   {
+    accessorKey: "organization",
+    header: "Organization",
+    cell: ({ row }) => row.getValue("organization"),
+  },
+  {
+    accessorKey: "followerCount",
+    header: "Followers",
+    cell: ({ row }) => row.getValue("followerCount"),
+  },
+  {
+    accessorKey: "followingCount",
+    header: "Following",
+    cell: ({ row }) => row.getValue("followingCount"),
+  },
+  {
+    accessorKey: "credits",
+    header: "Credits",
+    cell: ({ row }) => row.getValue("credits"),
+  },
+  {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
