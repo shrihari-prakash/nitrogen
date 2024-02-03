@@ -29,6 +29,13 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
 
   const { scopes, refreshScopes } = useContext(ScopesContext);
 
+  const isUserSuperAdmin = () => {
+    if (!user) {
+      return false;
+    }
+    return user.role === "super_admin";
+  };
+
   useEffect(() => {
     if (!scopes) refreshScopes();
   }, [scopes, refreshScopes]);
@@ -77,18 +84,20 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
           ) : (
             <>
               <ProfileCard user={user} />
-              {scopes && isPermissionAllowed("admin:profile:access:write") && (
-                <>
-                  <TypographyH4 className="my-4">Permissions</TypographyH4>
-                  <ScopeSelector
-                    user={user}
-                    setUser={setUser}
-                    scopes={scopes}
-                    type="user"
-                    onSelect={(selected: string) => console.log(selected)}
-                  />
-                </>
-              )}
+              {scopes &&
+                isPermissionAllowed("admin:profile:access:write") &&
+                !isUserSuperAdmin() && (
+                  <>
+                    <TypographyH4 className="my-4">Permissions</TypographyH4>
+                    <ScopeSelector
+                      user={user}
+                      setUser={setUser}
+                      scopes={scopes}
+                      type="user"
+                      onSelect={(selected: string) => console.log(selected)}
+                    />
+                  </>
+                )}
               <TypographyH4 className="my-4">Basic Info</TypographyH4>
               <BasicInfoEditor user={user} setUser={setUser} />
               <TypographyH4 className="my-4">Admin Controls</TypographyH4>

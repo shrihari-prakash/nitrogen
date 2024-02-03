@@ -114,7 +114,7 @@ const ApplicationList = function () {
 
   return (
     <div className="w-full h-full p-4 md:p-8">
-      <TypographyH4>Hello, {(me as User).firstName}</TypographyH4>
+      <TypographyH4 className="capitalize">Hello, {(me as User).firstName}</TypographyH4>
       <div className="flex items-center py-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

@@ -39,6 +39,9 @@ function usePermissions() {
     if (!me || !scopes) {
       return false;
     }
+    if (me.role === "super_admin") {
+      return true;
+    }
     const scopesObject: { [name: string]: Scope } = (scopes as Scope[]).reduce(
       (scopes, scope) => Object.assign(scopes, { [scope.name]: scope }),
       {}

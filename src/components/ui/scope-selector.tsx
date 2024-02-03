@@ -94,13 +94,6 @@ const ScopeSelector = ({
     return me._id === user._id;
   };
 
-  const isUserSuperAdmin = () => {
-    if (!user) {
-      return false;
-    }
-    return user.role === "super_admin";
-  };
-
   const handleToggle = (itemName: string) => {
     const isSelected = selectedScopes.includes(itemName);
     let newSelectedItems: string[];
@@ -222,7 +215,7 @@ const ScopeSelector = ({
             !item.name.includes(search.toLowerCase()) ? null : (
               <Label className="flex items-center my-2 space-x-3 px-3 py-2">
                 <Checkbox
-                  disabled={!scopeAllowed || isUserMe() || isUserSuperAdmin()}
+                  disabled={!scopeAllowed || isUserMe()}
                   className={!scopeAllowed ? "invisible" : ""}
                   checked={selectedScopes.includes(item.name)}
                   onCheckedChange={() => handleToggle(item.name)}
@@ -264,20 +257,12 @@ const ScopeSelector = ({
               : user.displayName}
           </DialogTitle>
           <DialogDescription>
-            {isUserMe() ? (
+            {isUserMe() && (
               <Alert className="mt-2">
                 <AlertDescription>
                   You can't edit your own permissions
                 </AlertDescription>
               </Alert>
-            ) : (
-              isUserSuperAdmin() && (
-                <Alert className="mt-2">
-                  <AlertDescription>
-                    You can't edit permissions of Super Admin
-                  </AlertDescription>
-                </Alert>
-              )
             )}
           </DialogDescription>
           <div className="p-2">
@@ -291,7 +276,7 @@ const ScopeSelector = ({
         <div
           className={
             "grid max-h-[400px] overflow-auto " +
-            (isUserMe() || isUserSuperAdmin() ? "opacity-50" : "")
+            (isUserMe() ? "opacity-50" : "")
           }
         >
           {scopes && renderTree(scopes)}
@@ -299,7 +284,7 @@ const ScopeSelector = ({
         <DialogFooter>
           <Button
             type="submit"
-            disabled={submitting || isUserMe() || isUserSuperAdmin()}
+            disabled={submitting || isUserMe()}
             onClick={onSave}
           >
             Save changes
