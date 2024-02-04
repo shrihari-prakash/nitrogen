@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -15,7 +16,7 @@ export function LoginHistoryDialog({ user }: { user: User }) {
       <DialogTrigger asChild>
         <Button variant="outline">Audit Logins</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[90%] overflow-auto">
         <DialogHeader>
           <DialogTitle>Audit Logins</DialogTitle>
         </DialogHeader>
