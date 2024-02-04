@@ -19,6 +19,7 @@ import usePermissions from "@/hooks/use-permissions";
 import { TypographyH4 } from "@/components/ui/typography";
 import SubscriptionManager from "./subscription-manager";
 import CustomDataEditor from "./custom-data-editor";
+import { LoginHistoryDialog } from "./login-history-dialog";
 
 const UserEditor = function ({ params }: { params: { id: string } }) {
   const [, setLocation] = useLocation();
@@ -84,6 +85,13 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
           ) : (
             <>
               <ProfileCard user={user} />
+              {scopes &&
+                isPermissionAllowed("admin:profile:login-history:read") && (
+                  <>
+                    <TypographyH4 className="my-4">Security</TypographyH4>
+                    <LoginHistoryDialog user={user} />
+                  </>
+                )}
               {scopes &&
                 isPermissionAllowed("admin:profile:access:write") &&
                 !isUserSuperAdmin() && (
