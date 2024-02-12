@@ -23,6 +23,7 @@ import { KeyRound } from "lucide-react";
 
 export interface Scope {
   name: string;
+  adminDescription?: string;
   description: string;
   parent?: string;
 }
@@ -223,7 +224,7 @@ const ScopeSelector = ({
                 <span className="mx-2">
                   <div className="mb-2 text-normal">{item.name}</div>
                   <div className="opacity-40 font-normal">
-                    {item.description}
+                    {item.adminDescription || item.description}
                   </div>
                 </span>
               </Label>
