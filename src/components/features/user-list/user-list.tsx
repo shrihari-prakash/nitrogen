@@ -116,7 +116,7 @@ const UserList = function () {
       if (!query || query.length === 0) {
         return setUsersSearchResults(null);
       }
-      const response = await axiosInstance.post("/user/search", { query });
+      const response = await axiosInstance.post("/user/admin-api/search", { query });
       setUsersSearchResults(response.data.data.results);
     } finally {
       setLoading(false);
