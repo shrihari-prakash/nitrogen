@@ -77,7 +77,7 @@ const UserList = function () {
     if (!users.length) {
       setLoading(true);
       axiosInstance
-        .get("/user/admin-api/list", { params: { limit: 50 } })
+        .get("/user/admin-api/list", { params: { limit: 100 } })
         .then((response) => {
           const data = response.data.data;
           setUsers(data.users as User[]);
