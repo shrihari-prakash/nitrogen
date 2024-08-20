@@ -159,7 +159,7 @@ const UserCreate = () => {
             <SheetFooter className="flex-col sm:justify-center">
               <Button type="submit" className="mb-2 md:mb-0" variant="outline">
                 <Save className="h-4 w-4 mr-2" />
-                {submitting ? "Saving..." : "Save Basic Info"}
+                {submitting ? "Creating..." : "Create"}
               </Button>
             </SheetFooter>
           </form>
