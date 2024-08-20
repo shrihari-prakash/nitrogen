@@ -20,7 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { BiUserPlus } from "react-icons/bi";
-import { Save } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import { camelCaseToWords } from "@/utils/string";
 import { toast } from "sonner";
 import axiosInstance from "@/service/axios";
@@ -158,7 +158,7 @@ const UserCreate = () => {
             />
             <SheetFooter className="flex-col sm:justify-center">
               <Button type="submit" className="mb-2 md:mb-0" variant="outline">
-                <Save className="h-4 w-4 mr-2" />
+                <UserPlus className="h-4 w-4 mr-2" />
                 {submitting ? "Creating..." : "Create"}
               </Button>
             </SheetFooter>
