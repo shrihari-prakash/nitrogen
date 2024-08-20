@@ -38,6 +38,7 @@ import UsersContext, {
   UsersSearchResultsContext,
 } from "@/context/users-context";
 import { Badge } from "@/components/ui/badge";
+import UserCreate from "../user-editor/user-create";
 
 const UserList = function () {
   const { me } = React.useContext(MeContext);
@@ -74,6 +75,7 @@ const UserList = function () {
   const searchRef = React.useRef();
 
   React.useEffect(() => {
+    console.log("UserList mounted", users);
     if (!users.length) {
       setLoading(true);
       axiosInstance
@@ -116,7 +118,9 @@ const UserList = function () {
       if (!query || query.length === 0) {
         return setUsersSearchResults(null);
       }
-      const response = await axiosInstance.post("/user/admin-api/search", { query });
+      const response = await axiosInstance.post("/user/admin-api/search", {
+        query,
+      });
       setUsersSearchResults(response.data.data.results);
     } finally {
       setLoading(false);
@@ -138,7 +142,9 @@ const UserList = function () {
 
   return (
     <div className="w-full h-full p-4 md:p-8">
-      <TypographyH4 className="capitalize">Hello, {(me as User).firstName}</TypographyH4>
+      <TypographyH4 className="capitalize">
+        Hello, {(me as User).firstName}
+      </TypographyH4>
       <div className="flex items-center py-4">
         {isPermissionAllowed("delegated:profile:search") && (
           <>
@@ -157,34 +163,37 @@ const UserList = function () {
             </Button>
           </>
         )}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex justify-between items-center my-4 ml-auto gap-2">
+          <UserCreate />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columns <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
-      <div className="flex mb-4 font-medium">
+      <div className="flex font-medium mb-4">
         Total users:{" "}
         <Badge variant="secondary" className="ml-2 font-medium">
           {totalUsers}
