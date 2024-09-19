@@ -27,12 +27,14 @@ import axiosInstance from "@/service/axios";
 import UsersContext, {
   UsersSearchResultsContext,
 } from "@/context/users-context";
+import usePermissions from "@/hooks/use-permissions";
 
 const UserCreate = () => {
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const { setUsers } = useContext(UsersContext);
   const { setUsersSearchResults } = useContext(UsersSearchResultsContext);
+  const isPermissionAllowed = usePermissions();
 
   const formDefaults = useMemo(
     () => ({
@@ -78,6 +80,10 @@ const UserCreate = () => {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (!isPermissionAllowed("admin:profile:create:write")) {
+    return null;
   }
 
   return (
@@ -156,7 +162,11 @@ const UserCreate = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input autoComplete="hjadsfiioq" type="password" {...field} />
+                    <Input
+                      autoComplete="hjadsfiioq"
+                      type="password"
+                      {...field}
+                    />
                   </FormControl>
                   <FormDescription>
                     Must be atleast 8 characters long.
