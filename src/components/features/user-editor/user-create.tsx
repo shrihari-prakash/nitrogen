@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -24,7 +24,9 @@ import { UserPlus } from "lucide-react";
 import { camelCaseToWords } from "@/utils/string";
 import { toast } from "sonner";
 import axiosInstance from "@/service/axios";
-import UsersContext, { UsersSearchResultsContext } from "@/context/users-context";
+import UsersContext, {
+  UsersSearchResultsContext,
+} from "@/context/users-context";
 
 const UserCreate = () => {
   const [open, setOpen] = useState(false);
@@ -32,15 +34,22 @@ const UserCreate = () => {
   const { setUsers } = useContext(UsersContext);
   const { setUsersSearchResults } = useContext(UsersSearchResultsContext);
 
-  const formDefaults = {
-    username: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  };
+  const formDefaults = useMemo(
+    () => ({
+      username: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+    }),
+    []
+  );
 
   const form = useForm({ defaultValues: formDefaults });
+
+  useEffect(() => {
+    form.reset(formDefaults);
+  }, [open, form, formDefaults]);
 
   async function onSubmit(formValues: any) {
     setSubmitting(true);
@@ -91,7 +100,7 @@ const UserCreate = () => {
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input autoComplete="hjadsfiioq" {...field} />
                   </FormControl>
                   <FormDescription>
                     Must be atleast 8 characters long. Can include alphabets,
@@ -108,7 +117,7 @@ const UserCreate = () => {
                 <FormItem>
                   <FormLabel>First Name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input autoComplete="hjadsfiioq" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -121,7 +130,7 @@ const UserCreate = () => {
                 <FormItem>
                   <FormLabel>Last Name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input autoComplete="hjadsfiioq" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -134,7 +143,7 @@ const UserCreate = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input autoComplete="hjadsfiioq" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -147,7 +156,7 @@ const UserCreate = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <Input autoComplete="hjadsfiioq" type="password" {...field} />
                   </FormControl>
                   <FormDescription>
                     Must be atleast 8 characters long.
