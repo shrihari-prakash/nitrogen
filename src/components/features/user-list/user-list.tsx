@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import {
   ColumnFiltersState,
   VisibilityState,
@@ -41,11 +42,13 @@ import { Badge } from "@/components/ui/badge";
 import UserCreate from "../user-editor/user-create";
 
 const UserList = function () {
+  const [search, setSearch] = React.useState(null);
   const { me } = React.useContext(MeContext);
   const { users, setUsers } = React.useContext(UsersContext);
   const { usersSearchResults, setUsersSearchResults } = React.useContext(
     UsersSearchResultsContext
   );
+  const [hasMore, setHasMore] = React.useState(true);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -72,27 +75,35 @@ const UserList = function () {
 
   const isPermissionAllowed = usePermissions();
 
-  const searchRef = React.useRef();
+  const getData = React.useCallback(async () => {
+    console.log("called getdata");
+    const limit = 100;
+    const offset = users.length ? users[users.length - 1]._id : null;
+    axiosInstance
+      .get("/user/admin-api/list", { params: { limit: limit, offset: offset } })
+      .then((response) => {
+        const data = response.data.data;
+        setUsers([...users, ...data.users] as User[]);
+        setTotalUsers(data.totalUsers);
+        console.log(data.totalUsers, users.length);
+        if (data.totalUsers === users.length) {
+          setHasMore(false);
+        }
+        localStorage.setItem("liquid_nitrogen_total_users", data.totalUsers);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [setUsers, users]);
 
   React.useEffect(() => {
-    console.log("UserList mounted", users);
     if (!users.length) {
       setLoading(true);
-      axiosInstance
-        .get("/user/admin-api/list", { params: { limit: 250 } })
-        .then((response) => {
-          const data = response.data.data;
-          setUsers(data.users as User[]);
-          setTotalUsers(data.totalUsers);
-          localStorage.setItem("liquid_nitrogen_total_users", data.totalUsers);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+      getData();
     } else {
       setLoading(false);
     }
-  }, [users, setUsers]);
+  }, [users, setUsers, getData]);
 
   React.useEffect(() => {
     localStorage.setItem(
@@ -106,13 +117,13 @@ const UserList = function () {
   }, [setUsersSearchResults]);
 
   const onSearchChange = (e: any) => {
-    searchRef.current = e.target.value;
+    setSearch(e.target.value);
   };
 
   const onSearch = async () => {
     try {
       setLoading(true);
-      const query = searchRef.current;
+      const query = search;
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
       if (!query || query.length === 0) {
@@ -126,6 +137,14 @@ const UserList = function () {
       setLoading(false);
     }
   };
+
+  React.useEffect(() => {
+    if (search) {
+      setHasMore(false);
+    } else {
+      setHasMore(users.length < totalUsers);
+    }
+  }, [search, totalUsers, users.length]);
 
   const table = useReactTable({
     data: usersSearchResults || users,
@@ -207,53 +226,65 @@ const UserList = function () {
         </div>
       ) : (
         <>
-          <div className="rounded-md border">
-            <Table className="overflow-y-auto">
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => {
-                      return (
-                        <TableHead key={header.id}>
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                        </TableHead>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
+          <InfiniteScroll
+            dataLength={users.length}
+            next={getData}
+            scrollableTarget="page"
+            hasMore={hasMore}
+            loader={
+              <div className="h-20">
+                <Loader />
+              </div>
+            }
+          >
+            <div className="rounded-md border">
+              <Table className="overflow-y-auto">
+                <TableHeader>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => {
+                        return (
+                          <TableHead key={header.id}>
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                          </TableHead>
+                        );
+                      })}
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={userListColumns.length}
-                      className="h-24 text-center"
-                    >
-                      Nothing to show.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                  ))}
+                </TableHeader>
+                <TableBody>
+                  {table.getRowModel().rows?.length ? (
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow key={row.id}>
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={userListColumns.length}
+                        className="h-24 text-center"
+                      >
+                        Nothing to show.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </InfiniteScroll>
         </>
       )}
     </div>
