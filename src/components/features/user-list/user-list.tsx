@@ -237,7 +237,7 @@ const UserList = function () {
               </div>
             }
           >
-            <div className="rounded-md border mb-8">
+            <div className="rounded-md border">
               <Table className="overflow-y-auto">
                 <TableHeader>
                   {table.getHeaderGroups().map((headerGroup) => (
