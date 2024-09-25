@@ -3,7 +3,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { User } from "@/types/user";
 import { ColumnDef } from "@tanstack/react-table";
-import { PencilIcon, UserCogIcon, Verified } from "lucide-react";
+import {
+  PencilIcon,
+  UserCogIcon,
+  UserMinus,
+  UserX,
+  Verified,
+} from "lucide-react";
+import { HiSparkles } from "react-icons/hi";
 import { Link } from "wouter";
 
 export const userListColumns: ColumnDef<User>[] = [
@@ -36,7 +43,8 @@ export const userListColumns: ColumnDef<User>[] = [
         &nbsp;
         {row.original.isSubscribed && (
           <Badge className="mr-2 capitalize" variant="outline">
-            {row.original.subscriptionTier}
+            <HiSparkles />
+            &nbsp;{row.original.subscriptionTier}
           </Badge>
         )}
         {row.original.verified && <Verified className="h-4 w-4" />}
@@ -80,6 +88,29 @@ export const userListColumns: ColumnDef<User>[] = [
     accessorKey: "email",
     header: "Email",
     cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+  },
+  {
+    header: "Restrictions",
+    cell: ({ row }) => {
+      const restricted = row.original.isRestricted;
+      const banned = row.original.isBanned;
+      return (
+        <div className="flex gap-2">
+          {restricted ? (
+            <Badge variant={"secondary"} className="flex gap-1">
+              <UserMinus className="h-4 w-4" />
+              Restricted
+            </Badge>
+          ) : null}
+          {banned ? (
+            <Badge variant="destructive" className="flex gap-1">
+              <UserX className="h-4 w-4 " />
+              Banned
+            </Badge>
+          ) : null}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "organization",
