@@ -77,6 +77,8 @@ const UserCreate = () => {
       await promise;
       setUsers(() => []);
       setUsersSearchResults(null);
+      form.reset(formDefaults);
+      setOpen(false);
     } finally {
       setSubmitting(false);
     }
