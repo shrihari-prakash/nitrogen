@@ -68,7 +68,7 @@ export default function BasicInfoEditor({
   const { setUsers } = useContext(UsersContext);
   const { setUsersSearchResults } = useContext(UsersSearchResultsContext);
 
-  const isPermissionAllowed = usePermissions();
+  const { isPermissionAllowed } = usePermissions();
 
   const savedFormRef = useRef(formDefaults);
 

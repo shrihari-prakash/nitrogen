@@ -26,7 +26,7 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
   const [user, setUser] = useState<any | User>();
   const [loadError, setLoadError] = useState(false);
 
-  const isPermissionAllowed = usePermissions();
+  const { isPermissionAllowed } = usePermissions();
 
   const { scopes, refreshScopes } = useContext(ScopesContext);
 
@@ -103,6 +103,7 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
                       scopes={scopes}
                       type="user"
                       onSelect={(selected: string) => console.log(selected)}
+                      role={user.role}
                     />
                   </>
                 )}

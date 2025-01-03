@@ -34,7 +34,7 @@ export const ApplicationListActions = ({
 
   const context = cell.getContext();
 
-  const isPermissionAllowed = usePermissions();
+  const { isPermissionAllowed } = usePermissions();
 
   const meta = context.table.options.meta as any;
 

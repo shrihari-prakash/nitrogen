@@ -66,7 +66,7 @@ export default function ApplicationEditor({
     if (!roles) refreshRoles();
   }, [roles, refreshRoles]);
 
-  const isPermissionAllowed = usePermissions();
+  const { isPermissionAllowed } = usePermissions();
 
   const formDefaults = application || {
     id: undefined,

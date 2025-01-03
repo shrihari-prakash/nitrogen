@@ -1,6 +1,8 @@
 import { Application } from "@/types/application";
 import { ColumnDef } from "@tanstack/react-table";
 import { RoleListActions } from "./role-list-actions";
+import { RiMedalLine } from "react-icons/ri";
+import { FaHashtag } from "react-icons/fa6";
 
 export const roleListColumns: ColumnDef<Application>[] = [
   {
@@ -8,7 +10,8 @@ export const roleListColumns: ColumnDef<Application>[] = [
     header: "ID",
     enableHiding: false,
     cell: ({ row }) => (
-      <div className="flex items-center flex-nowrap whitespace-nowrap">
+      <div className="flex gap-1 items-center flex-nowrap whitespace-nowrap">
+        <FaHashtag />
         {row.getValue("id")}
       </div>
     ),
@@ -23,12 +26,19 @@ export const roleListColumns: ColumnDef<Application>[] = [
   {
     accessorKey: "ranking",
     header: "Rank",
-    cell: ({ row }) => <div>{row.getValue("ranking")} </div>,
+    cell: ({ row }) => (
+      <div className="flex items-center">
+        <RiMedalLine className="mr-1" />
+        {row.getValue("ranking")}{" "}
+      </div>
+    ),
   },
   {
     accessorKey: "description",
     header: "Description",
-    cell: ({ row }) => <div className="opacity-50">{row.getValue("description")} </div>,
+    cell: ({ row }) => (
+      <div className="opacity-50">{row.getValue("description")} </div>
+    ),
   },
   {
     id: "actions",

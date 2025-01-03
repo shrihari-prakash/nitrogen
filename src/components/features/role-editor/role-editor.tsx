@@ -36,7 +36,7 @@ export default function RoleEditor({
 }) {
   const [open, setOpen] = useState(false);
 
-  const isPermissionAllowed = usePermissions();
+  const { isPermissionAllowed } = usePermissions();
 
   const formDefaults = role || {
     id: undefined,

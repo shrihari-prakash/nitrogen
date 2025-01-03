@@ -21,6 +21,7 @@ import { Application } from "@/types/application";
 import { Input } from "./input";
 import { KeyRound } from "lucide-react";
 import { Role } from "@/types/role";
+import { Badge } from "./badge";
 
 export interface Scope {
   name: string;
@@ -59,12 +60,14 @@ const ScopeSelector = ({
   entity,
   setEntity,
   type,
+  role,
 }: {
   scopes: Scope[];
   onSelect?: any;
   entity: User | Application | Role;
   setEntity: any;
   type: "user" | "client" | "role";
+  role?: string;
 }) => {
   const scopesObject: { [name: string]: Scope } = scopes.reduce(
     (scopes, scope) => Object.assign(scopes, { [scope.name]: scope }),
@@ -87,7 +90,7 @@ const ScopeSelector = ({
 
   const { me } = useContext(MeContext);
 
-  const isPermissionAllowed = usePermissions();
+  const { isPermissionAllowed, isPermissionAllowedByRole } = usePermissions();
 
   const isUserMe = () => {
     if (!me) {
@@ -224,7 +227,15 @@ const ScopeSelector = ({
                   onCheckedChange={() => handleToggle(item.name)}
                 />
                 <span className="mx-2">
-                  <div className="mb-2 text-normal">{item.name}</div>
+                  <div className="mb-2 text-normal">
+                    {item.name}{" "}
+                    {role &&
+                    !selectedScopes.includes(item.name) &&
+                    isPermissionAllowedByRole(item.name, role) &&
+                    role !== "super_admin" ? (
+                      <Badge variant="secondary">Allowed by role!</Badge>
+                    ) : null}
+                  </div>
                   <div className="opacity-40 font-normal">
                     {item.adminDescription || item.description}
                   </div>

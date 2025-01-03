@@ -73,7 +73,7 @@ const UserList = function () {
     parseInt(localStorage.getItem("liquid_nitrogen_total_users") || "0")
   );
 
-  const isPermissionAllowed = usePermissions();
+  const { isPermissionAllowed } = usePermissions();
 
   const getData = React.useCallback(async () => {
     console.log("called getdata");

@@ -34,7 +34,7 @@ const UserCreate = () => {
   const [submitting, setSubmitting] = useState(false);
   const { setUsers } = useContext(UsersContext);
   const { setUsersSearchResults } = useContext(UsersSearchResultsContext);
-  const isPermissionAllowed = usePermissions();
+  const { isPermissionAllowed } = usePermissions();
 
   const formDefaults = useMemo(
     () => ({

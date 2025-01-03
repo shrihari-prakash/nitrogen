@@ -14,11 +14,12 @@ import { Input } from "@/components/ui/input";
 import ScopeSelector from "@/components/ui/scope-selector";
 import usePermissions from "@/hooks/use-permissions";
 import axiosInstance from "@/service/axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { BiTrash } from "react-icons/bi";
 import { toast } from "sonner";
 import { Role } from "@/types/role";
 import RoleEditor from "../role-editor/role-editor";
+import RolesContext from "@/context/roles-context";
 
 export const RoleListActions = ({
   row,
@@ -32,7 +33,8 @@ export const RoleListActions = ({
 
   const context = cell.getContext();
 
-  const isPermissionAllowed = usePermissions();
+  const { refreshRoles } = useContext(RolesContext);
+  const { isPermissionAllowed } = usePermissions();
 
   const meta = context.table.options.meta as any;
 
@@ -63,7 +65,9 @@ export const RoleListActions = ({
     return isPermissionAllowed("admin:role:delete") && !role.system;
   };
 
-  console.log(meta);
+  const onScopeChange = () => {
+    refreshRoles();
+  };
 
   return (
     <div className="flex items-center justify-center">
@@ -71,7 +75,7 @@ export const RoleListActions = ({
         row.original.id !== "super_admin" && (
           <ScopeSelector
             entity={row.original}
-            setEntity={() => null}
+            setEntity={onScopeChange}
             scopes={meta.scopes || []}
             type="role"
           />

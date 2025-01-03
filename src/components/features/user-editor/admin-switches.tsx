@@ -25,7 +25,7 @@ export default function AdminSwitches({
   const { setUsers } = useContext(UsersContext);
   const { setUsersSearchResults } = useContext(UsersSearchResultsContext);
 
-  const isPermissionAllowed = usePermissions();
+  const { isPermissionAllowed } = usePermissions();
 
   const updateUserInMemory = (setter: any, flag: string, state: boolean) => {
     setter((users: User[]) => {
