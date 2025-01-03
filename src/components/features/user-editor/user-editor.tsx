@@ -98,8 +98,8 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
                   <>
                     <TypographyH4 className="my-4">Permissions</TypographyH4>
                     <ScopeSelector
-                      user={user}
-                      setUser={setUser}
+                      entity={user}
+                      setEntity={setUser}
                       scopes={scopes}
                       type="user"
                       onSelect={(selected: string) => console.log(selected)}

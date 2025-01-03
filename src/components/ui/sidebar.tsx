@@ -1,5 +1,6 @@
 import axiosInstance from "@/service/axios";
 import oauthManager from "@/service/oauth-manager";
+import { LucideShieldEllipsis } from "lucide-react";
 import { BiUser, BiCube, BiLogOut } from "react-icons/bi";
 import { Link } from "wouter";
 
@@ -32,6 +33,11 @@ export default function SideBar() {
         border-opacity-40"
     >
       <SideBarIcon icon={<BiUser size="22" />} text="Accounts" route="/users" />
+      <SideBarIcon
+        icon={<LucideShieldEllipsis size="22" />}
+        text="Roles and Permissions"
+        route="/roles"
+      />
       <SideBarIcon
         icon={<BiCube size="22" />}
         text="Applications"

@@ -20,6 +20,7 @@ import usePermissions from "@/hooks/use-permissions";
 import { Application } from "@/types/application";
 import { Input } from "./input";
 import { KeyRound } from "lucide-react";
+import { Role } from "@/types/role";
 
 export interface Scope {
   name: string;
@@ -55,15 +56,15 @@ function isScopeAllowed(
 const ScopeSelector = ({
   scopes,
   onSelect = () => null,
-  user,
-  setUser,
+  entity,
+  setEntity,
   type,
 }: {
   scopes: Scope[];
   onSelect?: any;
-  user: User | Application;
-  setUser: any;
-  type: "user" | "client";
+  entity: User | Application | Role;
+  setEntity: any;
+  type: "user" | "client" | "role";
 }) => {
   const scopesObject: { [name: string]: Scope } = scopes.reduce(
     (scopes, scope) => Object.assign(scopes, { [scope.name]: scope }),
@@ -72,7 +73,7 @@ const ScopeSelector = ({
 
   const initialScopes: string[] = [];
   scopes.forEach((scope) => {
-    if (isScopeAllowed(scope.name, user.scope as string[], scopesObject)) {
+    if (isScopeAllowed(scope.name, entity.scope as string[], scopesObject)) {
       initialScopes.push(scope.name);
     }
   });
@@ -92,7 +93,7 @@ const ScopeSelector = ({
     if (!me) {
       return false;
     }
-    return me._id === user._id;
+    return me._id === entity._id;
   };
 
   const handleToggle = (itemName: string) => {
@@ -178,8 +179,9 @@ const ScopeSelector = ({
     setSubmitting(true);
     let promise;
     try {
+      const targetId = type === "role" ? (entity as any).id : entity._id;
       promise = axiosInstance.post("/user/admin-api/access", {
-        targets: [user._id],
+        targets: [targetId],
         targetType: type,
         scope: newScopeList,
         operation: "set",
@@ -191,10 +193,10 @@ const ScopeSelector = ({
       });
       await promise;
       console.log("Permissions granted " + newScopeList.join(","));
-      const userCopy = { ...user };
+      const userCopy = { ...entity };
       userCopy.scope = newScopeList;
-      if (setUser) {
-        setUser(userCopy);
+      if (setEntity) {
+        setEntity(userCopy);
       }
     } finally {
       setSubmitting(false);
@@ -253,9 +255,9 @@ const ScopeSelector = ({
         <DialogHeader>
           <DialogTitle>
             Managing permissions for{" "}
-            {user.firstName
-              ? user.firstName + " " + user.lastName
-              : user.displayName}
+            {"firstName" in entity
+              ? (entity as User).firstName + " " + (entity as User).lastName
+              : entity.displayName}
           </DialogTitle>
           <DialogDescription>
             {isUserMe() && (

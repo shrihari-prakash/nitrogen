@@ -1,4 +1,3 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,14 +14,13 @@ import { Input } from "@/components/ui/input";
 import ScopeSelector from "@/components/ui/scope-selector";
 import usePermissions from "@/hooks/use-permissions";
 import axiosInstance from "@/service/axios";
-import { AlertCircle } from "lucide-react";
 import { useState } from "react";
 import { BiTrash } from "react-icons/bi";
 import { toast } from "sonner";
-import ApplicationEditor from "../application-editor/application-editor";
-import { Application } from "@/types/application";
+import { Role } from "@/types/role";
+import RoleEditor from "../role-editor/role-editor";
 
-export const ApplicationListActions = ({
+export const RoleListActions = ({
   row,
   cell,
 }: {
@@ -38,10 +36,10 @@ export const ApplicationListActions = ({
 
   const meta = context.table.options.meta as any;
 
-  const onApplicationDelete = async () => {
-    const promise = axiosInstance.delete("/client/admin-api/delete", {
+  const onRoleDelete = async () => {
+    const promise = axiosInstance.delete("/roles/admin-api/delete", {
       data: {
-        target: row.original._id,
+        target: row.original.id,
       },
     });
     toast.promise(promise, {
@@ -50,44 +48,36 @@ export const ApplicationListActions = ({
       error: "Delete failed!",
     });
     await promise;
-    meta.onApplicationDelete(row.original._id);
+    meta.onRoleDelete(row.original.id);
   };
 
   const onValueChange = (e: any) => {
     setValue(e.target.value);
   };
 
-  const canDelete = (client: Application): boolean => {
-    if (client.role === "external_client") {
-      return isPermissionAllowed("admin:system:external-client:delete");
-    } else {
-      return isPermissionAllowed("admin:system:internal-client:delete");
-    }
+  const canDelete = (role: Role): boolean => {
+    return isPermissionAllowed("admin:role:delete") && !role.system;
   };
 
-  const canEdit = (client: Application): boolean => {
-    if (client.role === "external_client") {
-      return isPermissionAllowed("admin:system:external-client:write");
-    } else {
-      return isPermissionAllowed("admin:system:internal-client:write");
-    }
+  const canEdit = (role: Role): boolean => {
+    return isPermissionAllowed("admin:role:delete") && !role.system;
   };
+
+  console.log(meta);
 
   return (
     <div className="flex items-center justify-center">
-      {isPermissionAllowed("admin:profile:access:write") && (
-        <ScopeSelector
-          entity={row.original}
-          setEntity={() => null}
-          scopes={meta.scopes || []}
-          type="client"
-        />
-      )}
+      {isPermissionAllowed("admin:profile:access:write") &&
+        row.original.id !== "super_admin" && (
+          <ScopeSelector
+            entity={row.original}
+            setEntity={() => null}
+            scopes={meta.scopes || []}
+            type="role"
+          />
+        )}
       {canEdit(row.original) && (
-        <ApplicationEditor
-          application={row.original}
-          onUpdate={meta.onApplicationUpdate}
-        />
+        <RoleEditor role={row.original} onUpdate={meta.onRoleUpdate} />
       )}
       <AlertDialog>
         <AlertDialogTrigger asChild>
@@ -103,8 +93,6 @@ export const ApplicationListActions = ({
               Delete {row.original.displayName}?
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Deleting clients might have unintended consequences in the system.
-              This action cannot be undone. Are you sure you want to delete?
               <div className="input-group mt-4">
                 Type <strong>{row.original.id}</strong> in the box below to
                 enable the delete button.
@@ -114,24 +102,12 @@ export const ApplicationListActions = ({
                   onChange={onValueChange}
                 />
               </div>
-              {row.original.role === "internal_client" &&
-                value === row.original.id && (
-                  <Alert className="mt-2" variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>
-                      <strong>
-                        You are deleting an internal client. This might break
-                        your system completely. Delete at your own risk.
-                      </strong>
-                    </AlertDescription>
-                  </Alert>
-                )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={onApplicationDelete}
+              onClick={onRoleDelete}
               disabled={value !== row.original.id}
             >
               Delete

@@ -118,7 +118,7 @@ export default function BasicInfoEditor({
 
   const getRoleRank = (role: string) => {
     return roles
-      ? (roles as any[]).find((r: any) => r.name === role).rank
+      ? (roles as any[]).find((r: any) => r.id === role)?.ranking
       : 999;
   };
 
@@ -250,7 +250,7 @@ export default function BasicInfoEditor({
                   </FormControl>
                   <SelectContent defaultValue={user.role}>
                     {(roles || []).map((role: any) => (
-                      <SelectItem value={role.name} key={role.name}>
+                      <SelectItem value={role.id} key={role.id}>
                         {role.displayName}
                       </SelectItem>
                     ))}
@@ -380,7 +380,7 @@ export default function BasicInfoEditor({
                   >
                     {(countries || []).map((role: any) => (
                       <SelectItem value={role.iso} key={role.iso}>
-                        {role.name}
+                        {role.id}
                       </SelectItem>
                     ))}
                   </SelectContent>

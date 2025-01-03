@@ -22,6 +22,7 @@ import ApplicationList from "./components/features/application-list/application-
 import CountriesContext from "./context/countries-context";
 import SubscriptionTiersContext from "./context/subscription-tiers-context";
 import { Toaster } from "./components/ui/sonner";
+import RoleList from "./components/features/role-list/role-list";
 
 let scopesFetchInProgess = false;
 let countriesFetchInProgess = false;
@@ -64,8 +65,11 @@ function App() {
     if (roleFetchInProgess) return;
     roleFetchInProgess = true;
     axiosInstance
-      .get("/user/admin-api/roles")
-      .then((response: any) => setRoles(response.data.data.roles))
+      .get("/roles/list")
+      .then((response: any) => {
+        console.error(response.data);
+        setRoles(response.data.data.roles);
+      })
       .finally(() => (roleFetchInProgess = false));
   };
 
@@ -233,6 +237,9 @@ function App() {
                               </Route>
                               <Route path="/applications/:id">
                                 <ApplicationList />
+                              </Route>
+                              <Route path="/roles">
+                                <RoleList />
                               </Route>
                             </Switch>
                             <Route path="/users/:id" component={UserEditor} />
