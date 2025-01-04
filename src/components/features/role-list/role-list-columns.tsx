@@ -37,7 +37,7 @@ export const roleListColumns: ColumnDef<Application>[] = [
     accessorKey: "description",
     header: "Description",
     cell: ({ row }) => (
-      <div className="opacity-50">{row.getValue("description")} </div>
+      <div className="opacity-50 min-w-max">{row.getValue("description")} </div>
     ),
   },
   {

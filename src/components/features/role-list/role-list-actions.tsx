@@ -72,7 +72,7 @@ export const RoleListActions = ({
   };
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-right">
       {isPermissionAllowed("admin:profile:access:write") &&
         row.original.id !== "super_admin" && (
           <ScopeSelector
