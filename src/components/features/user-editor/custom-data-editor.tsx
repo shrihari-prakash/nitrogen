@@ -9,12 +9,15 @@ import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
 import axiosInstance from "@/service/axios";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const CustomDataEditor = ({ user }: { user: User }) => {
   const [customData, setCustomData] = useState(
     user.customData ? JSON.stringify(user.customData, null, 4) : `{}`
   );
   const [submitting, setSubmitting] = useState(false);
+
+  const { t } = useTranslation();
 
   async function onSubmit(formValues: any) {
     setSubmitting(true);
@@ -68,7 +71,7 @@ const CustomDataEditor = ({ user }: { user: User }) => {
           onClick={onSubmit}
         >
           <Save className="h-4 w-4 mr-2" />
-          {submitting ? "Saving..." : "Save Custom Data"}
+          {submitting ? t("button.saving") : t("button.save-custom-data")}
         </Button>
       </div>
     </>

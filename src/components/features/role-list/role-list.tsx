@@ -27,14 +27,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { applicationListColumns } from "./application-list-columns";
 import axiosInstance from "@/service/axios";
-import { Application } from "@/types/application";
-import ApplicationEditor from "../application-editor/application-editor";
 import ScopesContext from "@/context/scopes-context";
+import { roleListColumns } from "./role-list-columns";
+import { Role } from "@/types/role";
+import RoleEditor from "../role-editor/role-editor";
 import { useTranslation } from "react-i18next";
 
-const ApplicationList = function () {
+const RoleList = function () {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -48,7 +48,7 @@ const ApplicationList = function () {
     React.useState<VisibilityState>(
       (savedColumnVisibilityState as unknown as VisibilityState) || {}
     );
-  const [applications, setApplications] = React.useState<any[]>([]);
+  const [roles, setRoles] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
   const { scopes, refreshScopes } = React.useContext(ScopesContext);
 
@@ -59,37 +59,32 @@ const ApplicationList = function () {
   }, [scopes, refreshScopes]);
 
   React.useEffect(() => {
-    localStorage.setItem(
-      "nitrogen.application-list.column-visibility",
-      JSON.stringify(columnVisibility)
-    );
-  }, [columnVisibility]);
-
-  React.useEffect(() => {
-    if (!applications.length) {
+    if (!roles.length) {
       setLoading(true);
       axiosInstance
-        .get("/client/admin-api/list", { params: { limit: 50 } })
+        .get("/roles/list", { params: { limit: 50 } })
         .then((response) => {
-          setApplications(response.data.data.clients as Application[]);
+          const apiRoles = response.data.data.roles as Role[];
+          const sortedRoles = apiRoles.sort((a, b) => a.ranking - b.ranking);
+          setRoles(sortedRoles);
         })
         .finally(() => {
           setLoading(false);
         });
     }
-  }, [applications, setApplications]);
+  }, [roles, setRoles]);
 
-  const onApplicationCreate = (application: Application) => {
-    setApplications((apps) => [...apps, application]);
+  const onRoleCreate = (role: Role) => {
+    setRoles((roles) => [...roles, role]);
   };
 
-  const onApplicationDelete = (_id: string) => {
-    setApplications((apps) => apps.filter((app) => app._id !== _id));
+  const onRoleDelete = (id: string) => {
+    setRoles((apps) => apps.filter((app) => app.id !== id));
   };
 
   const table = useReactTable({
-    data: applications,
-    columns: applicationListColumns,
+    data: roles,
+    columns: roleListColumns,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -100,13 +95,16 @@ const ApplicationList = function () {
     },
     meta: {
       scopes,
-      onApplicationDelete,
-      onApplicationUpdate: (application: Application) => {
-        console.log("on up[date.");
-        const newApplications = applications.map((app: Application) =>
-          app.id === application.id ? { ...app, ...application } : app
-        );
-        setApplications(() => newApplications);
+      onRoleDelete: onRoleDelete,
+      onRoleUpdate: (role: Role) => {
+        console.log("on update.");
+        const newRoles = roles.map((r) => {
+          if (r.id === role.id) {
+            return role;
+          }
+          return r;
+        });
+        setRoles(() => newRoles);
       },
     },
   });
@@ -140,7 +138,7 @@ const ApplicationList = function () {
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <ApplicationEditor onCreate={onApplicationCreate} />
+        <RoleEditor onCreate={onRoleCreate} />
       </div>
       {loading ? (
         <div
@@ -186,7 +184,7 @@ const ApplicationList = function () {
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={applicationListColumns.length}
+                    colSpan={roleListColumns.length}
                     className="h-24 text-center"
                   >
                     Nothing to show.
@@ -201,4 +199,4 @@ const ApplicationList = function () {
   );
 };
 
-export default ApplicationList;
+export default RoleList;

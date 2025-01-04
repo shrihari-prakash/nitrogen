@@ -12,11 +12,13 @@ import {
 } from "lucide-react";
 import { HiSparkles } from "react-icons/hi";
 import { Link } from "wouter";
+import i18n from "i18next";
 
 export const userListColumns: ColumnDef<User>[] = [
   {
     accessorKey: "ProfilePicture",
     header: "",
+    id: "profilePicture",
     cell: ({ row }) => (
       <Avatar>
         <AvatarImage src={row.original.profilePictureUrl} />
@@ -30,7 +32,8 @@ export const userListColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "username",
-    header: "Username",
+    header: i18n.t("label.username") || "Username",
+    id: "username",
     enableHiding: false,
     cell: ({ row }) => (
       <Link
@@ -38,7 +41,7 @@ export const userListColumns: ColumnDef<User>[] = [
         className="flex items-center justify-start flex-nowrap whitespace-nowrap"
       >
         {row.getValue("username") || (
-          <i className="opacity-50">Not available</i>
+          <i className="opacity-50">{i18n.t("message.not-available")}</i>
         )}
         &nbsp;
         {row.original.isSubscribed && (
@@ -53,7 +56,8 @@ export const userListColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "firstName",
-    header: "First Name",
+    header: i18n.t("label.first-name") || "First Name",
+    id: "firstName",
     cell: ({ row }) => (
       <div className="capitalize">
         {row.getValue("firstName") ||
@@ -63,7 +67,8 @@ export const userListColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "lastName",
-    header: "Last Name",
+    header: i18n.t("label.last-name") || "Last Name",
+    id: "lastName",
     cell: ({ row }) => (
       <div className="capitalize">
         {row.getValue("lastName") ||
@@ -73,7 +78,8 @@ export const userListColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "role",
-    header: "Role",
+    header: i18n.t("label.role") || "Role",
+    id: "role",
     cell: ({ row }) => (
       <div className="capitalize flex items-center flex-nowrap whitespace-nowrap">
         {(row.getValue("role") as string).split("_").join(" ")}{" "}
@@ -86,11 +92,13 @@ export const userListColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "email",
-    header: "Email",
+    header: i18n.t("label.email") || "Email",
+    id: "email",
     cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
   },
   {
-    header: "Restrictions",
+    header: i18n.t("label.restrictions") || "Restrictions",
+    id: "restrictions",
     cell: ({ row }) => {
       const restricted = row.original.isRestricted;
       const banned = row.original.isBanned;
@@ -114,22 +122,26 @@ export const userListColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "organization",
-    header: "Organization",
+    header: i18n.t("label.organization") || "Organization",
+    id: "organization",
     cell: ({ row }) => row.getValue("organization"),
   },
   {
     accessorKey: "followerCount",
-    header: "Followers",
+    header: i18n.t("label.followers") || "Followers",
+    id: "followerCount",
     cell: ({ row }) => row.getValue("followerCount"),
   },
   {
     accessorKey: "followingCount",
-    header: "Following",
+    header: i18n.t("label.following") || "Following",
+    id: "followingCount",
     cell: ({ row }) => row.getValue("followingCount"),
   },
   {
     accessorKey: "credits",
-    header: "Credits",
+    header: i18n.t("label.credits") || "Credits",
+    id: "credits",
     cell: ({ row }) => row.getValue("credits"),
   },
   {

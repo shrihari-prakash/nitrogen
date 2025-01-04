@@ -20,6 +20,9 @@ import usePermissions from "@/hooks/use-permissions";
 import { Application } from "@/types/application";
 import { Input } from "./input";
 import { KeyRound } from "lucide-react";
+import { Role } from "@/types/role";
+import { Badge } from "./badge";
+import { useTranslation } from "react-i18next";
 
 export interface Scope {
   name: string;
@@ -55,15 +58,17 @@ function isScopeAllowed(
 const ScopeSelector = ({
   scopes,
   onSelect = () => null,
-  user,
-  setUser,
+  entity,
+  setEntity,
   type,
+  role,
 }: {
   scopes: Scope[];
   onSelect?: any;
-  user: User | Application;
-  setUser: any;
-  type: "user" | "client";
+  entity: User | Application | Role;
+  setEntity: any;
+  type: "user" | "client" | "role";
+  role?: string;
 }) => {
   const scopesObject: { [name: string]: Scope } = scopes.reduce(
     (scopes, scope) => Object.assign(scopes, { [scope.name]: scope }),
@@ -72,7 +77,7 @@ const ScopeSelector = ({
 
   const initialScopes: string[] = [];
   scopes.forEach((scope) => {
-    if (isScopeAllowed(scope.name, user.scope as string[], scopesObject)) {
+    if (isScopeAllowed(scope.name, entity.scope as string[], scopesObject)) {
       initialScopes.push(scope.name);
     }
   });
@@ -86,13 +91,18 @@ const ScopeSelector = ({
 
   const { me } = useContext(MeContext);
 
-  const isPermissionAllowed = usePermissions();
+  const { t } = useTranslation();
+
+  const { isPermissionAllowed, isPermissionAllowedByRole } = usePermissions();
 
   const isUserMe = () => {
     if (!me) {
       return false;
     }
-    return me._id === user._id;
+    if (me.role === (entity as Role).id) {
+      return true;
+    }
+    return me._id === entity._id;
   };
 
   const handleToggle = (itemName: string) => {
@@ -178,8 +188,9 @@ const ScopeSelector = ({
     setSubmitting(true);
     let promise;
     try {
+      const targetId = type === "role" ? (entity as any).id : entity._id;
       promise = axiosInstance.post("/user/admin-api/access", {
-        targets: [user._id],
+        targets: [targetId],
         targetType: type,
         scope: newScopeList,
         operation: "set",
@@ -191,10 +202,10 @@ const ScopeSelector = ({
       });
       await promise;
       console.log("Permissions granted " + newScopeList.join(","));
-      const userCopy = { ...user };
+      const userCopy = { ...entity };
       userCopy.scope = newScopeList;
-      if (setUser) {
-        setUser(userCopy);
+      if (setEntity) {
+        setEntity(userCopy);
       }
     } finally {
       setSubmitting(false);
@@ -217,12 +228,21 @@ const ScopeSelector = ({
               <Label className="flex items-center my-2 space-x-3 px-3 py-2">
                 <Checkbox
                   disabled={!scopeAllowed || isUserMe()}
-                  className={!scopeAllowed ? "invisible" : ""}
                   checked={selectedScopes.includes(item.name)}
                   onCheckedChange={() => handleToggle(item.name)}
                 />
                 <span className="mx-2">
-                  <div className="mb-2 text-normal">{item.name}</div>
+                  <div className="mb-2 text-normal">
+                    {item.name}
+                    {role &&
+                    !selectedScopes.includes(item.name) &&
+                    isPermissionAllowedByRole(item.name, role) &&
+                    role !== "super_admin" ? (
+                      <Badge variant="secondary" className="ml-2">
+                        {t("message.allowed-by-role")}
+                      </Badge>
+                    ) : null}
+                  </div>
                   <div className="opacity-40 font-normal">
                     {item.adminDescription || item.description}
                   </div>
@@ -245,23 +265,25 @@ const ScopeSelector = ({
         <div>
           <Button variant="outline" className="whitespace-nowrap">
             <KeyRound className="h-4 w-4 mr-2" />
-            Manage Permissions
+            {t("button.manage-permissions")}
           </Button>
         </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[800px]">
         <DialogHeader>
           <DialogTitle>
-            Managing permissions for{" "}
-            {user.firstName
-              ? user.firstName + " " + user.lastName
-              : user.displayName}
+            {t("heading.managing-permissions-for", {
+              entity:
+                "firstName" in entity
+                  ? (entity as User).firstName + " " + (entity as User).lastName
+                  : entity.displayName,
+            })}
           </DialogTitle>
           <DialogDescription>
             {isUserMe() && (
               <Alert className="mt-2">
                 <AlertDescription>
-                  You can't edit your own permissions
+                  {t("message.cannot-edit-own-permissions")}
                 </AlertDescription>
               </Alert>
             )}
@@ -276,7 +298,7 @@ const ScopeSelector = ({
         </DialogHeader>
         <div
           className={
-            "grid max-h-[400px] overflow-auto " +
+            "grid max-h-[60vh] overflow-auto " +
             (isUserMe() ? "opacity-50" : "")
           }
         >
@@ -288,7 +310,7 @@ const ScopeSelector = ({
             disabled={submitting || isUserMe()}
             onClick={onSave}
           >
-            Save changes
+            {t("button.save-changes")}
           </Button>
         </DialogFooter>
       </DialogContent>
