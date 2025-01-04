@@ -120,7 +120,7 @@ export default function RoleEditor({
     }
   }
 
-  if (!isPermissionAllowed("admin:role:write")) {
+  if (!isPermissionAllowed("admin:roles:write")) {
     return null;
   }
 
