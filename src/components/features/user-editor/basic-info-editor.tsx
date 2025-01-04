@@ -28,11 +28,13 @@ import UsersContext, {
 } from "@/context/users-context";
 import usePermissions from "@/hooks/use-permissions";
 import axiosInstance from "@/service/axios";
+import { Role } from "@/types/role";
 import { User } from "@/types/user";
 import { camelCaseToWords } from "@/utils/string";
 import { Copy, Save } from "lucide-react";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 export default function BasicInfoEditor({
@@ -69,6 +71,8 @@ export default function BasicInfoEditor({
   const { setUsersSearchResults } = useContext(UsersSearchResultsContext);
 
   const { isPermissionAllowed } = usePermissions();
+
+  const { t } = useTranslation();
 
   const savedFormRef = useRef(formDefaults);
 
@@ -194,7 +198,7 @@ export default function BasicInfoEditor({
             name="_id"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>ID</FormLabel>
+                <FormLabel>{t("label.id")}</FormLabel>
                 <div className="flex">
                   <FormControl>
                     <Input disabled {...field} />
@@ -217,17 +221,14 @@ export default function BasicInfoEditor({
             name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>{t("label.username")}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
                     disabled={!shouldAllowFieldEdit("username")}
                   />
                 </FormControl>
-                <FormDescription>
-                  Must be atleast 8 characters long. Can include alphabets,
-                  numbers and underscores.
-                </FormDescription>
+                <FormDescription>{t("message.username-help")}</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -237,7 +238,7 @@ export default function BasicInfoEditor({
             name="role"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Role</FormLabel>
+                <FormLabel>{t("label.role")}</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -249,11 +250,13 @@ export default function BasicInfoEditor({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent defaultValue={user.role}>
-                    {(roles || []).map((role: any) => (
-                      <SelectItem value={role.id} key={role.id}>
-                        {role.displayName}
-                      </SelectItem>
-                    ))}
+                    {(roles || [])
+                      .filter((role: Role) => role.type === "user")
+                      .map((role: Role) => (
+                        <SelectItem value={role.id} key={role.id}>
+                          {role.displayName}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -265,7 +268,7 @@ export default function BasicInfoEditor({
             name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>First Name</FormLabel>
+                <FormLabel>{t("label.first-name")}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -281,7 +284,7 @@ export default function BasicInfoEditor({
             name="middleName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Middle Name</FormLabel>
+                <FormLabel>{t("label.middle-name")}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -297,7 +300,7 @@ export default function BasicInfoEditor({
             name="lastName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Last Name</FormLabel>
+                <FormLabel>{t("label.last-name")}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -313,7 +316,7 @@ export default function BasicInfoEditor({
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>{t("label.email")}</FormLabel>
                 <FormControl>
                   <Input {...field} disabled={!shouldAllowFieldEdit("email")} />
                 </FormControl>
@@ -334,7 +337,7 @@ export default function BasicInfoEditor({
                   />
                 </FormControl>
                 <div className="space-y-1 leading-none">
-                  <FormLabel>Email Verified</FormLabel>
+                  <FormLabel>{t("label.email-verified")}</FormLabel>
                   <FormDescription>
                     Unverified users cannot login.
                   </FormDescription>
@@ -347,7 +350,7 @@ export default function BasicInfoEditor({
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>{t("label.password")}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -363,7 +366,7 @@ export default function BasicInfoEditor({
             name="country"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Country</FormLabel>
+                <FormLabel>{t("label.country")}</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -394,7 +397,7 @@ export default function BasicInfoEditor({
             name="organization"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Organization</FormLabel>
+                <FormLabel>{t("label.organization")}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}

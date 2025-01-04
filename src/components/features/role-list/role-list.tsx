@@ -27,14 +27,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { User } from "@/types/user";
 import axiosInstance from "@/service/axios";
-import { TypographyH4 } from "@/components/ui/typography";
-import MeContext from "@/context/me-context";
 import ScopesContext from "@/context/scopes-context";
 import { roleListColumns } from "./role-list-columns";
 import { Role } from "@/types/role";
 import RoleEditor from "../role-editor/role-editor";
+import { useTranslation } from "react-i18next";
 
 const RoleList = function () {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -52,8 +50,9 @@ const RoleList = function () {
     );
   const [roles, setRoles] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
-  const { me } = React.useContext(MeContext);
   const { scopes, refreshScopes } = React.useContext(ScopesContext);
+
+  const { t } = useTranslation();
 
   React.useEffect(() => {
     if (!scopes) refreshScopes();
@@ -111,15 +110,12 @@ const RoleList = function () {
   });
 
   return (
-    <div className="w-full h-full p-4 md:p-8">
-      <TypographyH4 className="capitalize">
-        Hello, {(me as User).firstName}
-      </TypographyH4>
+    <div className="w-full h-full px-4 md:px-8">
       <div className="flex items-center py-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
+              {t("button.columns")} <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

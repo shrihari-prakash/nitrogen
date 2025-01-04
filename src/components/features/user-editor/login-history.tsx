@@ -3,10 +3,13 @@ import axiosInstance from "@/service/axios";
 import { User } from "@/types/user";
 import { BanIcon, CheckCircle, CircleOff } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import UAParser from "ua-parser-js";
 
 const LoginHistory = ({ user }: { user: User }) => {
   const [loginHistory, setLoginHistory] = useState<any[]>([]);
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     (async () => {
@@ -23,7 +26,8 @@ const LoginHistory = ({ user }: { user: User }) => {
     <>
       {!loginHistory.length && (
         <div className="flex items-center">
-          <CircleOff className="h-4 w-4 mr-2" /> Nothing to show.
+          <CircleOff className="h-4 w-4 mr-2" />
+          {t("message.nothing-to-show")}
         </div>
       )}
       {loginHistory.map((entry: any) => {
@@ -41,7 +45,9 @@ const LoginHistory = ({ user }: { user: User }) => {
             )}
 
             <AlertTitle>
-              {entry.success ? "Successful Login" : "Failed Login Attempt"}
+              {entry.success
+                ? t("message.successful-login")
+                : t("message.failed-login-attempt")}
             </AlertTitle>
             {parserResults && (
               <AlertDescription>

@@ -32,18 +32,16 @@ import {
 import { userListColumns } from "./user-list-columns";
 import { User } from "@/types/user";
 import axiosInstance from "@/service/axios";
-import { TypographyH4 } from "@/components/ui/typography";
-import MeContext from "@/context/me-context";
 import usePermissions from "@/hooks/use-permissions";
 import UsersContext, {
   UsersSearchResultsContext,
 } from "@/context/users-context";
 import { Badge } from "@/components/ui/badge";
 import UserCreate from "../user-editor/user-create";
+import { useTranslation } from "react-i18next";
 
 const UserList = function () {
   const [search, setSearch] = React.useState(null);
-  const { me } = React.useContext(MeContext);
   const { users, setUsers } = React.useContext(UsersContext);
   const { usersSearchResults, setUsersSearchResults } = React.useContext(
     UsersSearchResultsContext
@@ -74,6 +72,8 @@ const UserList = function () {
   );
 
   const { isPermissionAllowed } = usePermissions();
+
+  const { t } = useTranslation();
 
   const getData = React.useCallback(async () => {
     console.log("called getdata");
@@ -160,10 +160,7 @@ const UserList = function () {
   });
 
   return (
-    <div className="w-full h-full p-4 md:p-8">
-      <TypographyH4 className="capitalize">
-        Hello, {(me as User).firstName}
-      </TypographyH4>
+    <div className="w-full h-full px-4 md:px-8">
       <div className="flex items-center py-4">
         {isPermissionAllowed("delegated:profile:search") && (
           <>
@@ -185,7 +182,7 @@ const UserList = function () {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
+              {t("button.columns")} <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -211,7 +208,7 @@ const UserList = function () {
       </div>
       <div className="flex justify-between items-center my-4 ml-auto gap-2">
         <div className="flex font-medium">
-          Total users:{" "}
+          {t("message.total-users")}{" "}
           <Badge variant="secondary" className="ml-2 font-medium">
             {totalUsers}
           </Badge>
@@ -277,7 +274,7 @@ const UserList = function () {
                         colSpan={userListColumns.length}
                         className="h-24 text-center"
                       >
-                        Nothing to show.
+                        {t("message.nothing-to-show")}
                       </TableCell>
                     </TableRow>
                   )}

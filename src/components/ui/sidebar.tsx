@@ -1,10 +1,15 @@
+import usePermissions from "@/hooks/use-permissions";
 import axiosInstance from "@/service/axios";
 import oauthManager from "@/service/oauth-manager";
 import { LucideShieldEllipsis } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { BiUser, BiCube, BiLogOut } from "react-icons/bi";
 import { Link } from "wouter";
 
 export default function SideBar() {
+  const { isPermissionAllowed } = usePermissions();
+  const { t } = useTranslation();
+
   const onLogout = async () => {
     try {
       await axiosInstance.get("/user/logout", { withCredentials: true });
@@ -32,20 +37,26 @@ export default function SideBar() {
         border-border
         border-opacity-40"
     >
-      <SideBarIcon icon={<BiUser size="22" />} text="Accounts" route="/users" />
       <SideBarIcon
-        icon={<LucideShieldEllipsis size="22" />}
-        text="Roles and Permissions"
-        route="/roles"
+        icon={<BiUser size="22" />}
+        text={t("heading.users")}
+        route="/users"
       />
+      {isPermissionAllowed("delegated:roles:read") && (
+        <SideBarIcon
+          icon={<LucideShieldEllipsis size="22" />}
+          text={t("heading.roles-and-permissions")}
+          route="/roles"
+        />
+      )}
       <SideBarIcon
         icon={<BiCube size="22" />}
-        text="Applications"
+        text={t("heading.applications")}
         route="/applications"
       />
       <SideBarIcon
         icon={<BiLogOut size="22" />}
-        text="Logout"
+        text={t("heading.logout")}
         route="#"
         onActivate={onLogout}
       />

@@ -23,6 +23,7 @@ import { camelCaseToWords } from "@/utils/string";
 import { PencilIcon, PlusCircle } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 export default function RoleEditor({
@@ -37,6 +38,8 @@ export default function RoleEditor({
   const [open, setOpen] = useState(false);
 
   const { isPermissionAllowed } = usePermissions();
+
+  const { t } = useTranslation();
 
   const formDefaults = role || {
     id: undefined,
@@ -130,7 +133,7 @@ export default function RoleEditor({
           ) : (
             <>
               <PlusCircle className="h-4 w-4 mr-2" />
-              Create Role
+              {t("button.create-role")}
             </>
           )}
         </Button>
@@ -152,7 +155,7 @@ export default function RoleEditor({
                 name="id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Role Identifier</FormLabel>
+                    <FormLabel>{t("label.role-id")}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -162,8 +165,7 @@ export default function RoleEditor({
                       />
                     </FormControl>
                     <FormDescription>
-                      Must be atleast 8 characters long. Can include alphabets,
-                      numbers and underscores.
+                    {t("message.username-help")}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -174,7 +176,7 @@ export default function RoleEditor({
                 name="displayName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Display Name</FormLabel>
+                    <FormLabel>{t("label.display-name")}</FormLabel>
                     <FormControl>
                       <Input {...field} minLength={8} />
                     </FormControl>
@@ -187,7 +189,7 @@ export default function RoleEditor({
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>{t("label.description")}</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -200,7 +202,7 @@ export default function RoleEditor({
                 name="ranking"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Rank</FormLabel>
+                    <FormLabel>{t("label.rank")}</FormLabel>
                     <FormControl>
                       <Input {...field} type="number" />
                     </FormControl>
@@ -208,7 +210,7 @@ export default function RoleEditor({
                   </FormItem>
                 )}
               />
-              <Button type="submit">Save changes</Button>
+              <Button type="submit">{t("button.save-changes")}</Button>
             </form>
           </Form>
         </div>

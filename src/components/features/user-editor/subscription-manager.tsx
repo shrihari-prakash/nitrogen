@@ -31,6 +31,7 @@ import UsersContext, {
   UsersSearchResultsContext,
 } from "@/context/users-context";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export default function SubscriptionManager({
   user,
@@ -46,6 +47,8 @@ export default function SubscriptionManager({
   );
   const { setUsers } = useContext(UsersContext);
   const { setUsersSearchResults } = useContext(UsersSearchResultsContext);
+
+  const { t } = useTranslation();
 
   const updateUserInMemory = (
     setter: any,
@@ -170,7 +173,7 @@ export default function SubscriptionManager({
                           {field.value ? (
                             format(new Date(field.value), "PPP")
                           ) : (
-                            <span>Pick a date</span>
+                            <span>{t("label.pick-date")}</span>
                           )}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>

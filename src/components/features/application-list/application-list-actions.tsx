@@ -21,6 +21,7 @@ import { BiTrash } from "react-icons/bi";
 import { toast } from "sonner";
 import ApplicationEditor from "../application-editor/application-editor";
 import { Application } from "@/types/application";
+import { useTranslation } from "react-i18next";
 
 export const ApplicationListActions = ({
   row,
@@ -35,6 +36,8 @@ export const ApplicationListActions = ({
   const context = cell.getContext();
 
   const { isPermissionAllowed } = usePermissions();
+
+  const { t } = useTranslation();
 
   const meta = context.table.options.meta as any;
 
@@ -129,12 +132,12 @@ export const ApplicationListActions = ({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t("button.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={onApplicationDelete}
               disabled={value !== row.original.id}
             >
-              Delete
+              {t("button.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

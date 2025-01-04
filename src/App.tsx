@@ -7,6 +7,9 @@ import UserEditor from "./components/features/user-editor/user-editor";
 import { useEffect, useState } from "react";
 import oauthManager from "./service/oauth-manager";
 import axiosInstance from "./service/axios";
+import i18n from "i18next";
+import { useTranslation, initReactI18next } from "react-i18next";
+import enJSON from "./strings/en.json";
 
 import EditableFieldsContext from "./context/editable-fields-context";
 import UsersContext, {
@@ -15,7 +18,7 @@ import UsersContext, {
 import RolesContext from "./context/roles-context";
 import SettingsContext from "./context/settings-context";
 import MeContext from "./context/me-context";
-import { KeyRound, ShieldOff } from "lucide-react";
+import { KeyRound, LucideShieldEllipsis, ShieldOff } from "lucide-react";
 import ScopesContext from "./context/scopes-context";
 import { Scope } from "./components/ui/scope-selector";
 import ApplicationList from "./components/features/application-list/application-list";
@@ -23,6 +26,8 @@ import CountriesContext from "./context/countries-context";
 import SubscriptionTiersContext from "./context/subscription-tiers-context";
 import { Toaster } from "./components/ui/sonner";
 import RoleList from "./components/features/role-list/role-list";
+import { PageTitle } from "./components/features/common/page-title";
+import { BiCube, BiUser } from "react-icons/bi";
 
 let scopesFetchInProgess = false;
 let countriesFetchInProgess = false;
@@ -30,6 +35,20 @@ let roleFetchInProgess = false;
 let settingsFetchInProgess = false;
 let editableFieldsFetchInProgess = false;
 let subscriptionTiersFetchInProgess = false;
+
+i18n.use(initReactI18next).init({
+  resources: {
+    en: {
+      translation: enJSON,
+    },
+  },
+  lng: "en",
+  fallbackLng: "en",
+
+  interpolation: {
+    escapeValue: false,
+  },
+});
 
 function App() {
   const [authError, setAuthError] = useState(false);
@@ -42,6 +61,8 @@ function App() {
   const [settings, setSettings] = useState(null);
   const [users, setUsers] = useState([]);
   const [usersSearchResults, setUsersSearchResults] = useState(null);
+
+  const { t } = useTranslation();
 
   const getSettings = () => {
     if (settingsFetchInProgess) return;
@@ -179,7 +200,7 @@ function App() {
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <div className="h-full w-full flex items-center justify-center">
           <ShieldOff className="mx-4" />
-          Authentication Error
+          {t("error.authentication-failed")}
         </div>
       </ThemeProvider>
     );
@@ -190,7 +211,7 @@ function App() {
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <div className="h-full w-full flex items-center justify-center">
           <KeyRound className="mx-4" />
-          Authenticating...
+          {t("message.authenticating")}
         </div>
       </ThemeProvider>
     );
@@ -224,21 +245,40 @@ function App() {
                           <Page>
                             <Switch>
                               <Route path="/">
+                                <PageTitle
+                                  title={t("heading.users")}
+                                  icon={<BiUser className="h-6 w-6" />}
+                                />
                                 <UserList />
                               </Route>
                               <Route path="/users">
+                                <PageTitle
+                                  title={t("heading.users")}
+                                  icon={<BiUser className="h-6 w-6" />}
+                                />
                                 <UserList />
                               </Route>
                               <Route path="/users/:id">
+                                <PageTitle
+                                  title={t("heading.users")}
+                                  icon={<BiUser className="h-6 w-6" />}
+                                />
                                 <UserList />
                               </Route>
                               <Route path="/applications">
-                                <ApplicationList />
-                              </Route>
-                              <Route path="/applications/:id">
+                                <PageTitle
+                                  title={t("heading.applications")}
+                                  icon={<BiCube className="h-6 w-6" />}
+                                />
                                 <ApplicationList />
                               </Route>
                               <Route path="/roles">
+                                <PageTitle
+                                  title={t("heading.roles-and-permissions")}
+                                  icon={
+                                    <LucideShieldEllipsis className="h-6 w-6" />
+                                  }
+                                />
                                 <RoleList />
                               </Route>
                             </Switch>

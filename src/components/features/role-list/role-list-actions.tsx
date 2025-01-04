@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { Role } from "@/types/role";
 import RoleEditor from "../role-editor/role-editor";
 import RolesContext from "@/context/roles-context";
+import { useTranslation } from "react-i18next";
 
 export const RoleListActions = ({
   row,
@@ -35,6 +36,7 @@ export const RoleListActions = ({
 
   const { refreshRoles } = useContext(RolesContext);
   const { isPermissionAllowed } = usePermissions();
+  const { t } = useTranslation();
 
   const meta = context.table.options.meta as any;
 
@@ -94,7 +96,7 @@ export const RoleListActions = ({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Delete {row.original.displayName}?
+              {t("message.delete-entity", { entity: row.original.displayName })}
             </AlertDialogTitle>
             <AlertDialogDescription>
               <div className="input-group mt-4">

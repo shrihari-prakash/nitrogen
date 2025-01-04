@@ -28,6 +28,7 @@ import UsersContext, {
   UsersSearchResultsContext,
 } from "@/context/users-context";
 import usePermissions from "@/hooks/use-permissions";
+import { useTranslation } from "react-i18next";
 
 const UserCreate = () => {
   const [open, setOpen] = useState(false);
@@ -35,6 +36,7 @@ const UserCreate = () => {
   const { setUsers } = useContext(UsersContext);
   const { setUsersSearchResults } = useContext(UsersSearchResultsContext);
   const { isPermissionAllowed } = usePermissions();
+  const { t } = useTranslation();
 
   const formDefaults = useMemo(
     () => ({
@@ -92,12 +94,13 @@ const UserCreate = () => {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger>
         <Button variant="outline" className="gap-1">
-          <BiUserPlus className="text-xl" /> Create User
+          <BiUserPlus className="text-xl" />
+          {t("heading.create-user")}
         </Button>
       </SheetTrigger>
       <SheetContent className="w-full md:!max-w-[550px] overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Create user</SheetTitle>
+          <SheetTitle>{t("heading.create-user")}</SheetTitle>
         </SheetHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -106,13 +109,12 @@ const UserCreate = () => {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>{t("label.username")}</FormLabel>
                   <FormControl>
                     <Input autoComplete="hjadsfiioq" {...field} />
                   </FormControl>
                   <FormDescription>
-                    Must be atleast 8 characters long. Can include alphabets,
-                    numbers and underscores.
+                    {t("message.username-help")}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -123,7 +125,7 @@ const UserCreate = () => {
               name="firstName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>First Name</FormLabel>
+                  <FormLabel>{t("label.first-name")}</FormLabel>
                   <FormControl>
                     <Input autoComplete="hjadsfiioq" {...field} />
                   </FormControl>
@@ -136,7 +138,7 @@ const UserCreate = () => {
               name="lastName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Last Name</FormLabel>
+                  <FormLabel>{t("label.last-name")}</FormLabel>
                   <FormControl>
                     <Input autoComplete="hjadsfiioq" {...field} />
                   </FormControl>
@@ -149,7 +151,7 @@ const UserCreate = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t("label.email")}</FormLabel>
                   <FormControl>
                     <Input autoComplete="hjadsfiioq" {...field} />
                   </FormControl>
@@ -162,7 +164,7 @@ const UserCreate = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>{t("label.password")}</FormLabel>
                   <FormControl>
                     <Input
                       autoComplete="hjadsfiioq"
@@ -171,7 +173,7 @@ const UserCreate = () => {
                     />
                   </FormControl>
                   <FormDescription>
-                    Must be atleast 8 characters long.
+                    {t("message.password-help")}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -180,7 +182,7 @@ const UserCreate = () => {
             <SheetFooter className="flex-col sm:justify-center">
               <Button type="submit" className="mb-2 md:mb-0" variant="outline">
                 <UserPlus className="h-4 w-4 mr-2" />
-                {submitting ? "Creating..." : "Create"}
+                {submitting ? t("button.creating") : t("button.create")}
               </Button>
             </SheetFooter>
           </form>

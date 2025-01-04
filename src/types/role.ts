@@ -6,4 +6,5 @@ export type Role = {
   scope: string[];
   ranking: number;
   system: boolean;
+  type: "user" | "client";
 };

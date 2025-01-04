@@ -2,7 +2,7 @@ import { Application } from "@/types/application";
 import { ColumnDef } from "@tanstack/react-table";
 import { RoleListActions } from "./role-list-actions";
 import { RiMedalLine } from "react-icons/ri";
-import { FaHashtag } from "react-icons/fa6";
+import { HiHashtag } from "react-icons/hi";
 
 export const roleListColumns: ColumnDef<Application>[] = [
   {
@@ -11,7 +11,7 @@ export const roleListColumns: ColumnDef<Application>[] = [
     enableHiding: false,
     cell: ({ row }) => (
       <div className="flex gap-1 items-center flex-nowrap whitespace-nowrap">
-        <FaHashtag />
+        <HiHashtag />
         {row.getValue("id")}
       </div>
     ),

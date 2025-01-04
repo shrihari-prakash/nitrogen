@@ -8,6 +8,7 @@ import usePermissions from "@/hooks/use-permissions";
 import axiosInstance from "@/service/axios";
 import { User } from "@/types/user";
 import { useContext, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 export default function AdminSwitches({
@@ -26,6 +27,8 @@ export default function AdminSwitches({
   const { setUsersSearchResults } = useContext(UsersSearchResultsContext);
 
   const { isPermissionAllowed } = usePermissions();
+
+  const { t } = useTranslation();
 
   const updateUserInMemory = (setter: any, flag: string, state: boolean) => {
     setter((users: User[]) => {
@@ -48,9 +51,9 @@ export default function AdminSwitches({
       state: state,
     });
     toast.promise(promise, {
-      loading: "Updating verification status...",
-      success: state ? "User verified" : "User un-verified",
-      error: "Update failed!",
+      loading: t("message.verifying"),
+      success: state ? t("message.verified") : t("message.un-verified"),
+      error: t("error.update-failed"),
     });
     await promise;
     updateUserInMemory(setUsers, "verified", state);
@@ -64,9 +67,9 @@ export default function AdminSwitches({
       state,
     });
     toast.promise(promise, {
-      loading: state ? "Suspending..." : "Restoring...",
-      success: state ? "User suspended" : "User restored",
-      error: "Update failed!",
+      loading: t("message.suspending"),
+      success: state ? t("message.suspended") : t("message.restored"),
+      error: t("error.update-failed"),
     });
     await promise;
     updateUserInMemory(setUsers, "isBanned", state);
@@ -80,9 +83,9 @@ export default function AdminSwitches({
       state,
     });
     toast.promise(promise, {
-      loading: state ? "Restricting..." : "Un-restricting...",
-      success: state ? "User restricted" : "User un-restricted",
-      error: "Update failed!",
+      loading: t("message.restricting"),
+      success: state ? t("message.restricted") : t("message.un-restricted"),
+      error: t("error.update-failed"),
     });
     await promise;
     updateUserInMemory(setUsers, "isRestricted", state);
@@ -95,7 +98,7 @@ export default function AdminSwitches({
       <div className="space-y-4 my-2">
         <div className="flex flex-row items-center justify-between rounded-lg border p-4">
           <div className="space-y-0.5">
-            <Label className="text-right">Verified</Label>
+            <Label className="text-right">{t("label.verified")}</Label>
           </div>
           <Switch
             checked={verified}
@@ -105,7 +108,7 @@ export default function AdminSwitches({
         </div>
         <div className="flex flex-row items-center justify-between rounded-lg border p-4">
           <div className="space-y-0.5">
-            <Label className="text-right">Suspended</Label>
+            <Label className="text-right">{t("label.suspended")}</Label>
           </div>
           <Switch
             checked={suspended}
@@ -118,7 +121,7 @@ export default function AdminSwitches({
         </div>
         <div className="flex flex-row items-center justify-between rounded-lg border p-4">
           <div className="space-y-0.5">
-            <Label className="text-right">Restricted</Label>
+            <Label className="text-right">{t("label.restricted")}</Label>
           </div>
           <Switch
             checked={restricted}
