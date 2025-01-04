@@ -60,11 +60,11 @@ export const RoleListActions = ({
   };
 
   const canDelete = (role: Role): boolean => {
-    return isPermissionAllowed("admin:role:delete") && !role.system;
+    return isPermissionAllowed("admin:roles:delete") && !role.system;
   };
 
   const canEdit = (role: Role): boolean => {
-    return isPermissionAllowed("admin:role:delete") && !role.system;
+    return isPermissionAllowed("admin:roles:delete") && !role.system;
   };
 
   const onScopeChange = () => {
