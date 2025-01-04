@@ -73,6 +73,13 @@ function App() {
       .finally(() => (settingsFetchInProgess = false));
   };
 
+  useEffect(() => {
+    if (!settings) {
+      return;
+    }
+    document.title = settings["system.app-name"];
+  }, [settings]);
+
   const refreshCountries = async () => {
     if (countriesFetchInProgess) return;
     countriesFetchInProgess = true;
