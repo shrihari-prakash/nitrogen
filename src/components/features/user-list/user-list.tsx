@@ -139,7 +139,7 @@ const UserList = function () {
   };
 
   React.useEffect(() => {
-    if (search || (search && usersSearchResults?.length === 0)) {
+    if (search || usersSearchResults) {
       setHasMore(false);
     } else {
       setHasMore(users.length < totalUsers);
