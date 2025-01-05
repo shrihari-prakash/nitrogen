@@ -18,7 +18,7 @@ export const roleListColumns: ColumnDef<Application>[] = [
     accessorKey: "displayName",
     header: "Display Name",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("displayName")} </div>
+      <div className="capitalize break-keep">{row.getValue("displayName")} </div>
     ),
   },
   {
