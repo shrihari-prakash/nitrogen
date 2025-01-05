@@ -139,12 +139,12 @@ const UserList = function () {
   };
 
   React.useEffect(() => {
-    if (search) {
+    if (search || (search && usersSearchResults?.length === 0)) {
       setHasMore(false);
     } else {
       setHasMore(users.length < totalUsers);
     }
-  }, [search, totalUsers, users.length]);
+  }, [search, totalUsers, users.length, usersSearchResults]);
 
   const table = useReactTable({
     data: usersSearchResults || users,
