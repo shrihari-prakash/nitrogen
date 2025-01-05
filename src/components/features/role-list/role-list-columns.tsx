@@ -1,8 +1,7 @@
 import { Application } from "@/types/application";
 import { ColumnDef } from "@tanstack/react-table";
 import { RoleListActions } from "./role-list-actions";
-import { RiMedalLine } from "react-icons/ri";
-import { HiHashtag } from "react-icons/hi";
+import { MdLocalPolice } from "react-icons/md";
 
 export const roleListColumns: ColumnDef<Application>[] = [
   {
@@ -11,7 +10,6 @@ export const roleListColumns: ColumnDef<Application>[] = [
     enableHiding: false,
     cell: ({ row }) => (
       <div className="flex gap-1 items-center flex-nowrap whitespace-nowrap">
-        <HiHashtag />
         {row.getValue("id")}
       </div>
     ),
@@ -28,8 +26,8 @@ export const roleListColumns: ColumnDef<Application>[] = [
     header: "Rank",
     cell: ({ row }) => (
       <div className="flex items-center">
-        <RiMedalLine className="mr-1" />
-        {row.getValue("ranking")}{" "}
+        <MdLocalPolice className="mr-1" />
+        {row.getValue("ranking")}
       </div>
     ),
   },
@@ -37,7 +35,7 @@ export const roleListColumns: ColumnDef<Application>[] = [
     accessorKey: "description",
     header: "Description",
     cell: ({ row }) => (
-      <div className="opacity-50 min-w-max">{row.getValue("description")} </div>
+      <div className="opacity-50">{row.getValue("description")} </div>
     ),
   },
   {

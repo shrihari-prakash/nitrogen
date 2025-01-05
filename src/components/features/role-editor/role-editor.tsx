@@ -20,10 +20,11 @@ import usePermissions from "@/hooks/use-permissions";
 import axiosInstance from "@/service/axios";
 import { Role } from "@/types/role";
 import { camelCaseToWords } from "@/utils/string";
-import { PencilIcon, PlusCircle } from "lucide-react";
+import { FaCirclePlus } from "react-icons/fa6";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { FaPen } from "react-icons/fa";
 import { toast } from "sonner";
 
 export default function RoleEditor({
@@ -129,10 +130,10 @@ export default function RoleEditor({
       <DialogTrigger asChild>
         <Button variant="outline" className="ml-2">
           {role ? (
-            <PencilIcon className="h-4 w-4" />
+            <FaPen className="h-4 w-4" />
           ) : (
             <>
-              <PlusCircle className="h-4 w-4 mr-2" />
+              <FaCirclePlus className="h-4 w-4 mr-2" />
               {t("button.create-role")}
             </>
           )}

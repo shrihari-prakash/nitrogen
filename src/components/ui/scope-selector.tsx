@@ -19,7 +19,7 @@ import { Checkbox } from "./checkbox";
 import usePermissions from "@/hooks/use-permissions";
 import { Application } from "@/types/application";
 import { Input } from "./input";
-import { KeyRound } from "lucide-react";
+import { FaKey } from "react-icons/fa";
 import { Role } from "@/types/role";
 import { Badge } from "./badge";
 import { useTranslation } from "react-i18next";
@@ -264,7 +264,7 @@ const ScopeSelector = ({
       <DialogTrigger asChild>
         <div>
           <Button variant="outline" className="whitespace-nowrap">
-            <KeyRound className="h-4 w-4 mr-2" />
+            <FaKey className="h-4 w-4 mr-2" />
             {t("button.manage-permissions")}
           </Button>
         </div>

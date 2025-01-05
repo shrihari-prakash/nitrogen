@@ -18,7 +18,8 @@ import UsersContext, {
 import RolesContext from "./context/roles-context";
 import SettingsContext from "./context/settings-context";
 import MeContext from "./context/me-context";
-import { KeyRound, LucideShieldEllipsis, ShieldOff } from "lucide-react";
+import { KeyRound, ShieldOff } from "lucide-react";
+import { BsFillBoxFill, BsFillShieldLockFill } from "react-icons/bs";
 import ScopesContext from "./context/scopes-context";
 import { Scope } from "./components/ui/scope-selector";
 import ApplicationList from "./components/features/application-list/application-list";
@@ -27,7 +28,7 @@ import SubscriptionTiersContext from "./context/subscription-tiers-context";
 import { Toaster } from "./components/ui/sonner";
 import RoleList from "./components/features/role-list/role-list";
 import { PageTitle } from "./components/features/common/page-title";
-import { BiCube, BiUser } from "react-icons/bi";
+import { FaUsers } from "react-icons/fa";
 
 let scopesFetchInProgess = false;
 let countriesFetchInProgess = false;
@@ -254,28 +255,28 @@ function App() {
                               <Route path="/">
                                 <PageTitle
                                   title={t("heading.users")}
-                                  icon={<BiUser className="h-6 w-6" />}
+                                  icon={<FaUsers className="h-6 w-6" />}
                                 />
                                 <UserList />
                               </Route>
                               <Route path="/users">
                                 <PageTitle
                                   title={t("heading.users")}
-                                  icon={<BiUser className="h-6 w-6" />}
+                                  icon={<FaUsers className="h-6 w-6" />}
                                 />
                                 <UserList />
                               </Route>
                               <Route path="/users/:id">
                                 <PageTitle
                                   title={t("heading.users")}
-                                  icon={<BiUser className="h-6 w-6" />}
+                                  icon={<FaUsers className="h-6 w-6" />}
                                 />
                                 <UserList />
                               </Route>
                               <Route path="/applications">
                                 <PageTitle
                                   title={t("heading.applications")}
-                                  icon={<BiCube className="h-6 w-6" />}
+                                  icon={<BsFillBoxFill className="h-6 w-6" />}
                                 />
                                 <ApplicationList />
                               </Route>
@@ -283,7 +284,7 @@ function App() {
                                 <PageTitle
                                   title={t("heading.roles-and-permissions")}
                                   icon={
-                                    <LucideShieldEllipsis className="h-6 w-6" />
+                                    <BsFillShieldLockFill className="h-6 w-6" />
                                   }
                                 />
                                 <RoleList />

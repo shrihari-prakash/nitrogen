@@ -1,22 +1,18 @@
 import { Application } from "@/types/application";
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  Box,
-  MonitorSmartphone,
-  Package,
-  PackageCheck,
-  RefreshCcw,
-  Verified,
-} from "lucide-react";
+import { RefreshCcw } from "lucide-react";
 import { ApplicationListActions } from "./application-list-actions";
 import i18n from "i18next";
+import { RiVerifiedBadgeFill } from "react-icons/ri";
+import { BsFillBoxFill } from "react-icons/bs";
+import { PiDevicesFill } from "react-icons/pi";
 
 const getGrantIcon = (
   grantType: "client_credentials" | "authorization_code" | "refresh_token"
 ) => {
   const iconMap = {
-    client_credentials: <Box className="h-4 w-4 ml-2" />,
-    authorization_code: <MonitorSmartphone className="h-4 w-4 ml-2" />,
+    client_credentials: <BsFillBoxFill className="h-4 w-4 ml-2" />,
+    authorization_code: <PiDevicesFill className="h-4 w-4 ml-2" />,
     refresh_token: <RefreshCcw className="h-4 w-4 ml-2" />,
   };
   return iconMap[grantType];
@@ -31,7 +27,7 @@ export const applicationListColumns: ColumnDef<Application>[] = [
       <div className="flex items-center flex-nowrap whitespace-nowrap">
         {row.getValue("id")}
         {row.original.role === "internal_client" && (
-          <Verified className="h-4 w-4 ml-2" />
+          <RiVerifiedBadgeFill className="h-4 w-4 ml-2" />
         )}
       </div>
     ),
@@ -48,13 +44,7 @@ export const applicationListColumns: ColumnDef<Application>[] = [
     header: i18n.t("label.role") || "Role",
     cell: ({ row }) => (
       <div className="capitalize flex items-center flex-nowrap whitespace-nowrap">
-        {(row.getValue("role") as string).split("_").join(" ")}{" "}
-        {row.getValue("role") === "internal_client" && (
-          <PackageCheck className="h-4 w-4 ml-2" />
-        )}
-        {row.getValue("role") === "external_client" && (
-          <Package className="h-4 w-4 ml-2" />
-        )}
+        {(row.getValue("role") as string).split("_").join(" ")}
       </div>
     ),
   },

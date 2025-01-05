@@ -19,8 +19,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { BiUserPlus } from "react-icons/bi";
-import { UserPlus } from "lucide-react";
 import { camelCaseToWords } from "@/utils/string";
 import { toast } from "sonner";
 import axiosInstance from "@/service/axios";
@@ -29,6 +27,7 @@ import UsersContext, {
 } from "@/context/users-context";
 import usePermissions from "@/hooks/use-permissions";
 import { useTranslation } from "react-i18next";
+import { FaUserPlus } from "react-icons/fa";
 
 const UserCreate = () => {
   const [open, setOpen] = useState(false);
@@ -94,7 +93,7 @@ const UserCreate = () => {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger>
         <Button variant="outline" className="gap-1">
-          <BiUserPlus className="text-xl" />
+          <FaUserPlus className="h-4 w-4" />
           {t("heading.create-user")}
         </Button>
       </SheetTrigger>
@@ -181,7 +180,7 @@ const UserCreate = () => {
             />
             <SheetFooter className="flex-col sm:justify-center">
               <Button type="submit" className="mb-2 md:mb-0" variant="outline">
-                <UserPlus className="h-4 w-4 mr-2" />
+                <FaUserPlus className="h-4 w-4 mr-2" />
                 {submitting ? t("button.creating") : t("button.create")}
               </Button>
             </SheetFooter>

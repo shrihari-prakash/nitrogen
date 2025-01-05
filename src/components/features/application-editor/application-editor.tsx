@@ -30,10 +30,11 @@ import usePermissions from "@/hooks/use-permissions";
 import axiosInstance from "@/service/axios";
 import { Application } from "@/types/application";
 import { camelCaseToWords } from "@/utils/string";
-import { PencilIcon, PlusCircle } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { FaPen } from "react-icons/fa";
+import { FaCirclePlus } from "react-icons/fa6";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 
@@ -184,10 +185,10 @@ export default function ApplicationEditor({
       <DialogTrigger asChild>
         <Button variant="outline" className="ml-2">
           {application ? (
-            <PencilIcon className="h-4 w-4" />
+            <FaPen className="h-4 w-4" />
           ) : (
             <>
-              <PlusCircle className="h-4 w-4 mr-2" />
+              <FaCirclePlus className="h-4 w-4 mr-2" />
               {t("heading.create-application")}
             </>
           )}

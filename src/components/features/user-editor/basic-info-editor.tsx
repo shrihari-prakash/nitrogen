@@ -92,6 +92,8 @@ export default function BasicInfoEditor({
     if (!countries) refreshCountries();
   }, [countries, refreshCountries]);
 
+  console.log(countries);
+
   const shouldAllowFieldEdit = (field: string) => {
     if (!isPermissionAllowed("admin:profile:write")) {
       return false;
@@ -381,9 +383,9 @@ export default function BasicInfoEditor({
                     defaultValue={user.country}
                     className="overflow-y-auto max-h-[40vh]"
                   >
-                    {(countries || []).map((role: any) => (
-                      <SelectItem value={role.iso} key={role.iso}>
-                        {role.id}
+                    {(countries || []).map((country: any) => (
+                      <SelectItem value={country.iso} key={country.iso}>
+                        {country.name}
                       </SelectItem>
                     ))}
                   </SelectContent>

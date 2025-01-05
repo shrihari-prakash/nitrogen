@@ -1,9 +1,10 @@
 import usePermissions from "@/hooks/use-permissions";
 import axiosInstance from "@/service/axios";
 import oauthManager from "@/service/oauth-manager";
-import { LucideShieldEllipsis } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { BiUser, BiCube, BiLogOut } from "react-icons/bi";
+import { IoLogOut } from "react-icons/io5";
+import { BsFillBoxFill, BsFillShieldLockFill } from "react-icons/bs";
+import { FaUsers } from "react-icons/fa";
 import { Link } from "wouter";
 
 export default function SideBar() {
@@ -38,24 +39,24 @@ export default function SideBar() {
         border-opacity-40"
     >
       <SideBarIcon
-        icon={<BiUser size="22" />}
+        icon={<FaUsers size="22" />}
         text={t("heading.users")}
         route="/users"
       />
       {isPermissionAllowed("delegated:roles:read") && (
         <SideBarIcon
-          icon={<LucideShieldEllipsis size="22" />}
+          icon={<BsFillShieldLockFill size="20" />}
           text={t("heading.roles-and-permissions")}
           route="/roles"
         />
       )}
       <SideBarIcon
-        icon={<BiCube size="22" />}
+        icon={<BsFillBoxFill size="20" />}
         text={t("heading.applications")}
         route="/applications"
       />
       <SideBarIcon
-        icon={<BiLogOut size="22" />}
+        icon={<IoLogOut size="22" />}
         text={t("heading.logout")}
         route="#"
         onActivate={onLogout}

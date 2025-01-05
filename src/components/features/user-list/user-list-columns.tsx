@@ -3,16 +3,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { User } from "@/types/user";
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  PencilIcon,
-  UserCogIcon,
-  UserMinus,
-  UserX,
-  Verified,
-} from "lucide-react";
 import { HiSparkles } from "react-icons/hi";
 import { Link } from "wouter";
 import i18n from "i18next";
+import { FaPen, FaUserCog, FaUserMinus, FaUserTimes } from "react-icons/fa";
+import { RiVerifiedBadgeFill } from "react-icons/ri";
 
 export const userListColumns: ColumnDef<User>[] = [
   {
@@ -50,7 +45,7 @@ export const userListColumns: ColumnDef<User>[] = [
             &nbsp;{row.original.subscriptionTier}
           </Badge>
         )}
-        {row.original.verified && <Verified className="h-4 w-4" />}
+        {row.original.verified && <RiVerifiedBadgeFill className="h-4 w-4" />}
       </Link>
     ),
   },
@@ -85,7 +80,7 @@ export const userListColumns: ColumnDef<User>[] = [
         {(row.getValue("role") as string).split("_").join(" ")}{" "}
         {(row.getValue("role") === "admin" ||
           row.getValue("role") === "super_admin") && (
-          <UserCogIcon className="h-4 w-4 ml-2" />
+          <FaUserCog className="h-4 w-4 ml-2" />
         )}
       </div>
     ),
@@ -106,13 +101,13 @@ export const userListColumns: ColumnDef<User>[] = [
         <div className="flex gap-2">
           {restricted ? (
             <Badge variant={"secondary"} className="flex gap-1">
-              <UserMinus className="h-4 w-4" />
+              <FaUserMinus className="h-4 w-4" />
               Restricted
             </Badge>
           ) : null}
           {banned ? (
             <Badge variant="destructive" className="flex gap-1">
-              <UserX className="h-4 w-4 " />
+              <FaUserTimes className="h-4 w-4 " />
               Banned
             </Badge>
           ) : null}
@@ -151,7 +146,7 @@ export const userListColumns: ColumnDef<User>[] = [
       return (
         <Link href={`/users/${row.original._id}`}>
           <Button variant="outline">
-            <PencilIcon className="h-4 w-4" />
+            <FaPen className="h-4 w-4" />
           </Button>
         </Link>
       );

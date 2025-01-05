@@ -15,12 +15,12 @@ import ScopeSelector from "@/components/ui/scope-selector";
 import usePermissions from "@/hooks/use-permissions";
 import axiosInstance from "@/service/axios";
 import { useContext, useState } from "react";
-import { BiTrash } from "react-icons/bi";
 import { toast } from "sonner";
 import { Role } from "@/types/role";
 import RoleEditor from "../role-editor/role-editor";
 import RolesContext from "@/context/roles-context";
 import { useTranslation } from "react-i18next";
+import { FaTrash } from "react-icons/fa";
 
 export const RoleListActions = ({
   row,
@@ -89,7 +89,7 @@ export const RoleListActions = ({
         <AlertDialogTrigger asChild>
           {canDelete(row.original) && (
             <Button className="ml-2" variant="outline">
-              <BiTrash className="h-4 w-4" />
+              <FaTrash className="h-4 w-4" />
             </Button>
           )}
         </AlertDialogTrigger>

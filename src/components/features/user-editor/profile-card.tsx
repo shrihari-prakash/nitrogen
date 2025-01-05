@@ -9,8 +9,8 @@ import {
   UserMinus,
   UserX,
   Users,
-  Verified,
 } from 'lucide-react';
+import { RiVerifiedBadgeFill } from 'react-icons/ri';
 
 export default function ProfileCard({ user }: { user: User }) {
   return (
@@ -36,7 +36,7 @@ export default function ProfileCard({ user }: { user: User }) {
                   {user.subscriptionTier}
                 </Badge>
               )}
-              {user.verified && <Verified className='h-4 w-4 mr-2' />}
+              {user.verified && <RiVerifiedBadgeFill className='h-4 w-4 mr-2' />}
               {user.isBanned && <UserX className='h-4 w-4 mr-2' />}
               {user.isRestricted && <UserMinus className='h-4 w-4 mr-2' />}
             </div>

@@ -17,11 +17,11 @@ import usePermissions from "@/hooks/use-permissions";
 import axiosInstance from "@/service/axios";
 import { AlertCircle } from "lucide-react";
 import { useState } from "react";
-import { BiTrash } from "react-icons/bi";
 import { toast } from "sonner";
 import ApplicationEditor from "../application-editor/application-editor";
 import { Application } from "@/types/application";
 import { useTranslation } from "react-i18next";
+import { FaTrash } from "react-icons/fa";
 
 export const ApplicationListActions = ({
   row,
@@ -96,7 +96,7 @@ export const ApplicationListActions = ({
         <AlertDialogTrigger asChild>
           {canDelete(row.original) && (
             <Button className="ml-2" variant="outline">
-              <BiTrash className="h-4 w-4" />
+              <FaTrash className="h-4 w-4" />
             </Button>
           )}
         </AlertDialogTrigger>
