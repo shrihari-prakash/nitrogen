@@ -31,10 +31,11 @@ import axiosInstance from "@/service/axios";
 import { Role } from "@/types/role";
 import { User } from "@/types/user";
 import { camelCaseToWords } from "@/utils/string";
-import { Copy, Save } from "lucide-react";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { FaCopy } from "react-icons/fa";
+import { FaFloppyDisk } from "react-icons/fa6";
 import { toast } from "sonner";
 
 export default function BasicInfoEditor({
@@ -211,7 +212,7 @@ export default function BasicInfoEditor({
                     className="ml-2"
                     variant="outline"
                   >
-                    <Copy className="h-4 w-4" />
+                    <FaCopy className="h-4 w-4" />
                   </Button>
                 </div>
                 <FormMessage />
@@ -417,7 +418,7 @@ export default function BasicInfoEditor({
               className="mb-2 md:mb-0"
               variant="outline"
             >
-              <Save className="h-4 w-4 mr-2" />
+              <FaFloppyDisk className="h-4 w-4 mr-2" />
               {submitting ? "Saving..." : "Save Basic Info"}
             </Button>
           </SheetFooter>

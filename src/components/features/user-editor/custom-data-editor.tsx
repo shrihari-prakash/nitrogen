@@ -6,10 +6,10 @@ import "prismjs/components/prism-json";
 import "prismjs/themes/prism-solarizedlight.min.css";
 import { User } from "@/types/user";
 import { Button } from "@/components/ui/button";
-import { Save } from "lucide-react";
 import axiosInstance from "@/service/axios";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { FaFloppyDisk } from "react-icons/fa6";
 
 const CustomDataEditor = ({ user }: { user: User }) => {
   const [customData, setCustomData] = useState(
@@ -70,7 +70,7 @@ const CustomDataEditor = ({ user }: { user: User }) => {
           variant="outline"
           onClick={onSubmit}
         >
-          <Save className="h-4 w-4 mr-2" />
+          <FaFloppyDisk className="h-4 w-4 mr-2" />
           {submitting ? t("button.saving") : t("button.save-custom-data")}
         </Button>
       </div>

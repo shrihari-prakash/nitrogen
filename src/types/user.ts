@@ -13,12 +13,12 @@ export type User = {
   bio?: string;
   profilePictureUrl?: string;
   profilePicturePath?: string;
-  followingCount?: string;
+  followingCount?: number;
   pronouns?: string;
   verified?: boolean;
   verifiedDate?: Date;
   customLink?: string;
-  followerCount?: string;
+  followerCount?: number;
   isPrivate?: boolean;
   email: string;
   emailVerified?: boolean;

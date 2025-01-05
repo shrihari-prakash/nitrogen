@@ -269,7 +269,7 @@ const ScopeSelector = ({
           </Button>
         </div>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[800px]">
+      <DialogContent className="sm:max-w-[800px] max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>
             {t("heading.managing-permissions-for", {
@@ -298,7 +298,7 @@ const ScopeSelector = ({
         </DialogHeader>
         <div
           className={
-            "grid max-h-[60vh] overflow-auto " +
+            "grid overflow-auto flex-1" +
             (isUserMe() ? "opacity-50" : "")
           }
         >
