@@ -15,13 +15,16 @@ export const PageTitle = ({
   const { t } = useTranslation();
 
   return (
-    <div className="flex justify-between flex-row px-4 md:px-8 pt-4">
+    <div
+      className="flex justify-between flex-row px-4 md:px-8 pt-4"
+      data-t="page-title"
+    >
       <TypographyH4 className="capitalize flex gap-2 items-center">
         {icon}
         {title}
       </TypographyH4>
       <TypographyH4 className="capitalize">
-        {t("message.hello", { name: (me as User).firstName })}
+        <span data-t="greeting">{t("message.hello", { name: (me as User).firstName })}</span>
       </TypographyH4>
     </div>
   );

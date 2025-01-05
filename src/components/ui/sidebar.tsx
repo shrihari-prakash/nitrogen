@@ -42,24 +42,28 @@ export default function SideBar() {
         icon={<FaUsers size="22" />}
         text={t("heading.users")}
         route="/users"
+        id="users"
       />
       {isPermissionAllowed("delegated:roles:read") && (
         <SideBarIcon
           icon={<BsFillShieldLockFill size="20" />}
           text={t("heading.roles-and-permissions")}
           route="/roles"
+          id="roles"
         />
       )}
       <SideBarIcon
         icon={<BsFillBoxFill size="20" />}
         text={t("heading.applications")}
         route="/applications"
+        id="applications"
       />
       <SideBarIcon
         icon={<IoLogOut size="22" />}
         text={t("heading.logout")}
         route="#"
         onActivate={onLogout}
+        id="logout"
       />
     </div>
   );
@@ -70,15 +74,18 @@ export const SideBarIcon = ({
   text,
   route,
   onActivate,
+  id,
 }: {
   icon: any;
   text: string;
   route: string;
   onActivate?: any;
+  id: string;
 }) => {
   return (
     <Link href={route} onClick={onActivate}>
       <div
+        data-t={`navigation-${id}`}
         className="relative
           flex
           items-center

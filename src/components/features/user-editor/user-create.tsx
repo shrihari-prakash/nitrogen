@@ -92,7 +92,7 @@ const UserCreate = () => {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger>
-        <Button variant="outline" className="gap-1">
+        <Button variant="outline" className="gap-1" data-t="create-user-button">
           <FaUserPlus className="h-4 w-4" />
           {t("heading.create-user")}
         </Button>
@@ -179,7 +179,12 @@ const UserCreate = () => {
               )}
             />
             <SheetFooter className="flex-col sm:justify-center">
-              <Button type="submit" className="mb-2 md:mb-0" variant="outline">
+              <Button
+                type="submit"
+                className="mb-2 md:mb-0"
+                variant="outline"
+                data-t="create-user-submit"
+              >
                 <FaUserPlus className="h-4 w-4 mr-2" />
                 {submitting ? t("button.creating") : t("button.create")}
               </Button>
