@@ -5,25 +5,6 @@ import { RiShieldFill } from "react-icons/ri";
 
 export const roleListColumns: ColumnDef<Application>[] = [
   {
-    accessorKey: "id",
-    header: "ID",
-    enableHiding: false,
-    cell: ({ row }) => (
-      <div className="flex gap-1 items-center flex-nowrap whitespace-nowrap">
-        {row.getValue("id")}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "displayName",
-    header: "Display Name",
-    cell: ({ row }) => (
-      <div className="capitalize break-keep">
-        {row.getValue("displayName")}{" "}
-      </div>
-    ),
-  },
-  {
     accessorKey: "ranking",
     header: "Rank",
     cell: ({ row }) => (
@@ -40,6 +21,18 @@ export const roleListColumns: ColumnDef<Application>[] = [
             {row.getValue("ranking")}
           </span>
         </div>
+      </div>
+    ),
+  },
+  {
+    accessorKey: "displayName",
+    header: "Name",
+    cell: ({ row }) => (
+      <div className="capitalize break-keep flex flex-col flex-nowrap whitespace-nowrap">
+        <div className="flex gap-1 items-center flex-nowrap whitespace-nowrap text-xs opacity-70">
+          #&nbsp;{row.original.id}
+        </div>
+        {row.getValue("displayName")}
       </div>
     ),
   },
