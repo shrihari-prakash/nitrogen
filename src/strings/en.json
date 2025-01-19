@@ -65,7 +65,7 @@
   "message.type-to-delete": "Type {{name}} in the box below to enable the delete button.",
   "message.following": "{{count}} Following",
   "message.followers": "{{count}} Followers",
-  "message.scopes-changed": "Removing permissions will log out users immediately. Adding permissions will not log out users, but will require them to log in again to have updated permissions. Are you sure you want to proceed?",
+  "message.scopes-changed": "Removing permissions will log out users immediately. Adding permissions will not log out users, but will require them to log in again to have the updated permissions. Are you sure you want to proceed?",
 
   "label.id": "ID",
   "label.username": "Username",
