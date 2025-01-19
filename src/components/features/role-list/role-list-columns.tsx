@@ -1,9 +1,10 @@
-import { Application } from "@/types/application";
 import { ColumnDef } from "@tanstack/react-table";
 import { RoleListActions } from "./role-list-actions";
 import { RiShieldFill } from "react-icons/ri";
+import { FaLock } from "react-icons/fa";
+import { Role } from "@/types/role";
 
-export const roleListColumns: ColumnDef<Application>[] = [
+export const roleListColumns: ColumnDef<Role>[] = [
   {
     accessorKey: "ranking",
     header: "Rank",
@@ -32,7 +33,10 @@ export const roleListColumns: ColumnDef<Application>[] = [
         <div className="flex gap-1 items-center flex-nowrap whitespace-nowrap text-xs opacity-70">
           #&nbsp;{row.original.id}
         </div>
-        {row.getValue("displayName")}
+        <span className="flex gap-1 items-center">
+          {row.getValue("displayName")}
+          {row.original.system ? <FaLock className="text-xs" /> : null}
+        </span>
       </div>
     ),
   },
@@ -40,7 +44,11 @@ export const roleListColumns: ColumnDef<Application>[] = [
     accessorKey: "description",
     header: "Description",
     cell: ({ row }) => (
-      <div className="opacity-50">{row.getValue("description")} </div>
+      <div className="opacity-50">
+        <span className="min-w-max break-keep whitespace-nowrap">
+          {row.getValue("description")}
+        </span>
+      </div>
     ),
   },
   {
