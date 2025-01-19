@@ -49,6 +49,9 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        fontFamily: {
+          'mono': ['"Courier New"', 'monospace'],
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
