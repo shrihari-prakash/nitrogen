@@ -324,8 +324,8 @@ const ScopeSelector = ({
             </Button>
           ) : (
             <Popover open={popoverOpen} onOpenChange={onPopoverOpenChange}>
-              <PopoverTrigger>
-                <Button>
+              <PopoverTrigger disabled={submitting || isUserMe()}>
+                <Button disabled={submitting || isUserMe()}>
                   {t("button.save-changes")}
                 </Button>
               </PopoverTrigger>
