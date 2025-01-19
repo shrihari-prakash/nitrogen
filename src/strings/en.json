@@ -12,6 +12,7 @@
   "button.create": "Create",
   "button.creating": "Creating...",
   "button.saving": "Saving...",
+  "button.yes": "Yes",
 
   "heading.users": "Users",
   "heading.applications": "Applications",
@@ -64,6 +65,7 @@
   "message.type-to-delete": "Type {{name}} in the box below to enable the delete button.",
   "message.following": "{{count}} Following",
   "message.followers": "{{count}} Followers",
+  "message.scopes-changed": "Removing permissions will log out users instantly. Adding permissions will require users to login again. Are you sure you want to continue?",
 
   "label.id": "ID",
   "label.username": "Username",

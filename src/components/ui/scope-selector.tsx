@@ -23,6 +23,7 @@ import { FaKey } from "react-icons/fa";
 import { Role } from "@/types/role";
 import { Badge } from "./badge";
 import { useTranslation } from "react-i18next";
+import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
 export interface Scope {
   name: string;
@@ -62,6 +63,7 @@ const ScopeSelector = ({
   setEntity,
   type,
   role,
+  warning = false,
 }: {
   scopes: Scope[];
   onSelect?: any;
@@ -69,6 +71,7 @@ const ScopeSelector = ({
   setEntity: any;
   type: "user" | "client" | "role";
   role?: string;
+  warning?: boolean;
 }) => {
   const scopesObject: { [name: string]: Scope } = scopes.reduce(
     (scopes, scope) => Object.assign(scopes, { [scope.name]: scope }),
@@ -88,6 +91,12 @@ const ScopeSelector = ({
 
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [search, setSearch] = useState<string>("");
+  const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
+
+  const onPopoverOpenChange = (state: boolean) => {
+    console.log("Popover open state: " + state);
+    setPopoverOpen(state);
+  };
 
   const { me } = useContext(MeContext);
 
@@ -176,6 +185,7 @@ const ScopeSelector = ({
   };
 
   const onSave = async () => {
+    onPopoverOpenChange(false);
     let newScopeList = [...selectedScopes];
     scopes.forEach((scope) => {
       if (!scope.parent) {
@@ -298,20 +308,41 @@ const ScopeSelector = ({
         </DialogHeader>
         <div
           className={
-            "grid overflow-auto flex-1" +
-            (isUserMe() ? "opacity-50" : "")
+            "grid overflow-auto flex-1" + (isUserMe() ? "opacity-50" : "")
           }
         >
           {scopes && renderTree(scopes)}
         </div>
         <DialogFooter>
-          <Button
-            type="submit"
-            disabled={submitting || isUserMe()}
-            onClick={onSave}
-          >
-            {t("button.save-changes")}
-          </Button>
+          {!warning ? (
+            <Button
+              type="submit"
+              disabled={submitting || isUserMe()}
+              onClick={onSave}
+            >
+              {t("button.save-changes")}
+            </Button>
+          ) : (
+            <Popover open={popoverOpen} onOpenChange={onPopoverOpenChange}>
+              <PopoverTrigger>
+                <Button>
+                  {t("button.save-changes")}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="flex flex-col gap-3">
+                <span className="text-sm opacity-75">
+                  {t(warning ? t("message.scopes-changed") : "")}
+                </span>
+                <Button
+                  type="submit"
+                  disabled={submitting || isUserMe()}
+                  onClick={onSave}
+                >
+                  {t("button.yes")}
+                </Button>
+              </PopoverContent>
+            </Popover>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

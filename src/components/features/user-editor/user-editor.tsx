@@ -111,6 +111,7 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
                       type="user"
                       onSelect={(selected: string) => console.log(selected)}
                       role={user.role}
+                      warning
                     />
                   </>
                 )}

@@ -80,6 +80,7 @@ export const RoleListActions = ({
             setEntity={onScopeChange}
             scopes={meta.scopes || []}
             type="role"
+            warning
           />
         )}
       {canEdit(row.original) && (
