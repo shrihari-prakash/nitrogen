@@ -29,7 +29,7 @@ export const roleListColumns: ColumnDef<Role>[] = [
     accessorKey: "displayName",
     header: "Name",
     cell: ({ row }) => (
-      <div className="capitalize break-keep flex flex-col flex-nowrap whitespace-nowrap">
+      <div className="break-keep flex flex-col flex-nowrap whitespace-nowrap">
         <div className="flex gap-1 items-center flex-nowrap whitespace-nowrap text-xs opacity-70">
           #&nbsp;{row.original.id}
         </div>
