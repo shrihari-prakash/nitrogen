@@ -128,7 +128,7 @@ export default function RoleEditor({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="ml-2">
+        <Button variant={role ? "outline" : "default"} className="ml-2">
           {role ? (
             <FaPen className="h-4 w-4" />
           ) : (
@@ -141,9 +141,7 @@ export default function RoleEditor({
       </DialogTrigger>
       <DialogContent className="sm:max-w-full md:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>
-            {role ? "Update Role" : "Create Role"}
-          </DialogTitle>
+          <DialogTitle>{role ? "Update Role" : "Create Role"}</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <Form {...form}>
@@ -166,7 +164,7 @@ export default function RoleEditor({
                       />
                     </FormControl>
                     <FormDescription>
-                    {t("message.username-help")}
+                      {t("message.username-help")}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
