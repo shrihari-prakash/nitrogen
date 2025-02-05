@@ -183,7 +183,7 @@ export default function ApplicationEditor({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="ml-2">
+        <Button variant={application ? "outline" : "default"} className="ml-2">
           {application ? (
             <FaPen className="h-4 w-4" />
           ) : (

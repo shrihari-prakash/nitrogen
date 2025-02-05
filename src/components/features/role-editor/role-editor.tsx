@@ -128,7 +128,7 @@ export default function RoleEditor({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="ml-2">
+        <Button className="ml-2">
           {role ? (
             <FaPen className="h-4 w-4" />
           ) : (

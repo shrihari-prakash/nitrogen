@@ -96,15 +96,25 @@ export const SideBarIcon = ({
           mt-2
           mb-2
           mx-auto
-          bg-muted
-          hover:bg-primary
           rounded-3xl
           hover:rounded-xl
-          hover:text-primary-foreground
           transition-all
           duration-150
           ease-linear
-          group"
+          group
+          outline-offset-2
+          focus-visible:outline
+          focus-visible:outline-2
+          focus-visible:outline-ring/70
+          bg-secondary
+          text-secondary-foreground
+          hover:bg-primary/75
+          border
+          border-primary-foreground/5
+          hover:border-primary-foreground/10
+          hover:text-primary-foreground
+          shadow-sm
+          shadow-black/5"
       >
         {icon}
         <span
