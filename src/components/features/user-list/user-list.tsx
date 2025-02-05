@@ -91,6 +91,9 @@ const UserList = function () {
         }
         localStorage.setItem("liquid_nitrogen_total_users", data.totalUsers);
       })
+      .catch(() => {
+        setHasMore(false);
+      })
       .finally(() => {
         setLoading(false);
       });
