@@ -39,27 +39,27 @@ export default function SideBar() {
         border-opacity-40"
     >
       <SideBarIcon
-        icon={<FaUsers size="22" />}
+        icon={<FaUsers size="20" />}
         text={t("heading.users")}
         route="/users"
         id="users"
       />
       {isPermissionAllowed("delegated:roles:read") && (
         <SideBarIcon
-          icon={<BsFillShieldLockFill size="20" />}
+          icon={<BsFillShieldLockFill size="18" />}
           text={t("heading.roles-and-permissions")}
           route="/roles"
           id="roles"
         />
       )}
       <SideBarIcon
-        icon={<BsFillBoxFill size="20" />}
+        icon={<BsFillBoxFill size="18" />}
         text={t("heading.applications")}
         route="/applications"
         id="applications"
       />
       <SideBarIcon
-        icon={<IoLogOut size="22" />}
+        icon={<IoLogOut size="20" />}
         text={t("heading.logout")}
         route="#"
         onActivate={onLogout}
@@ -91,13 +91,13 @@ export const SideBarIcon = ({
           items-center
           justify-center
           cursor-pointer
-          h-11
-          w-11
+          h-10
+          w-10
           mt-2
           mb-2
           mx-auto
           bg-muted
-          hover:bg-muted-foreground
+          hover:bg-primary
           rounded-3xl
           hover:rounded-xl
           hover:text-primary-foreground
