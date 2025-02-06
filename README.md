@@ -19,7 +19,7 @@ Read more about the Liquid project [here](https://github.com/shrihari-prakash/li
 ### 🔧 Installation:
 
 > [!IMPORTANT]
-> Before preparing for the installation, make sure the host of your nitrogen instance is present in your Liquid CORS settings (`cors.allowed-origins`). For instance, local host of Nitrogen after running the docker image would be http://localhost:2001.
+> Before preparing for the installation, make sure the host of your nitrogen instance is present in the redirect URI list of the client you intend to use. For instance, local host of Nitrogen after running the docker image would be http://localhost:2001.
 
 #### Docker (Recommended):
 1. Run the following command
@@ -40,4 +40,4 @@ VITE_LIQUID_CLIENT_ID=application_client
 2. Run `npm install`.
 3. Run `npm run build`.
 4. Host the `dist` folder in a static server.
-5. Add the host of your Nitrogen instance to Liquid CORS settings and Redirect URI of the client from step 1.
+5. Add the host of your Nitrogen instance to Redirect URI of the client specified in `VITE_LIQUID_CLIENT_ID`.
