@@ -4,17 +4,19 @@
 
 ### What is Liquid?
 
-Liquid is a Docker-based open-source authentication server that supercharges your product development by offering out of the box APIs for features like follow-unfollow, blocking, and banning so that you can focus on just your application logic. 🚀
+Liquid is an open-source authentication server built on Docker, designed to accelerate your product development by providing ready-to-use APIs for features like OAuth, follow/unfollow, blocking, and banning. This allows you to focus solely on your application's logic. 🚀
+
+Once you have a Liquid instance set up, Nitrogen provides a user interface for managing administrative tasks.
 
 Read more about the Liquid project [here](https://github.com/shrihari-prakash/liquid).
 
-### ⭐ Nitrogen features:
+### ⭐ Features:
 
-- **Effortless Integration with Liquid:** Simply build the project with your Liquid hostname and client ID and you are all good to go!
+- **Effortless Integration with Liquid:** Just configure the project / docker image with your Liquid hostname and client ID, and you're ready to go!
 - **User Info Editor:** Quick and intuitive user info editing.
 - **Admin Controls:** Verify, Ban or restrict users right from your Nitrogen instance.
-- **Permissions Editor:** Nitrogen offers an intuitive permissions editor for granting precise access to Liquid instance administrators.
-- **Highly Responsive:** Nitrogen was designed with mobile first approach making user management possible from anywhere!
+- **Permissions Editor:** Nitrogen offers an intuitive permissions editor for granting precise access to users in your Liquid instance.
+- **Highly Responsive:** Built with a mobile-first approach, Nitrogen ensures user management is accessible from anywhere!
 
 ### 🔧 Installation:
 
