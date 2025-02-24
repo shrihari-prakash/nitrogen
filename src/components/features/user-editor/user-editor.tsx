@@ -56,7 +56,9 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
     setLoadError(false);
     userRef.current = {};
     axiosInstance
-      .get("/user/admin-api/user-info?targets=" + params.id)
+      .post("/user/admin-api/retrieve-user-info", {
+        targets: [params.id],
+      })
       .then((response) => {
         setUser(response.data.data.users[0]);
       })
