@@ -183,13 +183,23 @@ function App() {
           if (code) {
             try {
               await oauthManager.getTokenFromCode(code);
-              onLogin(await oauthManager.me());
+              const me = await oauthManager.me();
+              if (me === false) {
+                setAuthError(true);
+                return;
+              }
+              onLogin(me);
               removeQueryParam(["code", "state"]);
             } catch {
               setAuthError(true);
             }
           } else if (oauthManager.checkCredentials()) {
-            onLogin(await oauthManager.me());
+            const me = await oauthManager.me();
+            if (me === false) {
+              setAuthError(true);
+              return;
+            }
+            onLogin(me);
           } else {
             oauthManager.clearCredentials();
             redirectToLogin();
