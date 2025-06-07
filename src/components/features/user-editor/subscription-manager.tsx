@@ -183,6 +183,12 @@ export default function SubscriptionManager({
                       <Calendar
                         mode="single"
                         captionLayout="dropdown"
+                        startMonth={
+                          new Date(Date.now() - 5 * 365 * 24 * 60 * 60 * 1000)
+                        } // ~5 years
+                        endMonth={
+                          new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000)
+                        } // ~5 years
                         selected={field.value}
                         onSelect={field.onChange}
                         disabled={(date) =>
