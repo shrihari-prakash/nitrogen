@@ -13,6 +13,8 @@
   "button.creating": "Creating...",
   "button.saving": "Saving...",
   "button.yes": "Yes",
+  "button.updating": "Updating...",
+  "button.update-credits": "Update Credits",
 
   "heading.users": "Users",
   "heading.applications": "Applications",
@@ -22,6 +24,7 @@
   "heading.security": "Security",
   "heading.administration": "Administrative Controls",
   "heading.subscription": "Subscription",
+  "heading.credits": "Credits",
   "heading.custom-data": "Custom Data",
   "heading.create-application": "Create Application",
   "heading.update-application": "Update Application",
@@ -66,6 +69,10 @@
   "message.following": "{{count}} Following",
   "message.followers": "{{count}} Followers",
   "message.scopes-changed": "Removing permissions will log out users immediately. Adding permissions will not log out users, but will require them to log in again to have the updated permissions. Are you sure you want to proceed?",
+  "message.processing-credits-update": "Processing credits update...",
+  "message.credits-updated-successfully": "Credits updated successfully",
+  "message.credits-update-failed": "Credits update failed!",
+  "message.invalid-credit-value": "Invalid credit value",
 
   "label.id": "ID",
   "label.username": "Username",
@@ -95,6 +102,7 @@
   "label.following": "Following",
   "label.followers": "Followers",
   "label.credits": "Credits",
+  "label.enter-credit-amount": "Enter credit amount",
 
   "error.authentication-failed": "Authentication failed. Please try again.",
   "error.update-failed": "Update failed. Please try again.",
