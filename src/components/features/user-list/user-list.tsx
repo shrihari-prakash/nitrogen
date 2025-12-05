@@ -39,6 +39,7 @@ import { useUsers, useUserSearch } from "@/hooks/api/use-users";
 
 const UserList = function () {
   const [search, setSearch] = React.useState<string | null>(null);
+  const [inputValue, setInputValue] = React.useState("");
 
   const {
     data: usersData,
@@ -95,9 +96,18 @@ const UserList = function () {
     );
   }, [columnVisibility]);
 
-  const onSearchChange = (e: any) => {
-    const value = e.target.value;
-    setSearch(value === "" ? null : value);
+  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleSearch = () => {
+    setSearch(inputValue === "" ? null : inputValue);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
   };
 
   const table = useReactTable({
@@ -121,9 +131,11 @@ const UserList = function () {
             <Input
               placeholder="Search users..."
               className="max-w-sm"
+              value={inputValue}
               onChange={onSearchChange}
+              onKeyDown={handleKeyDown}
             />
-            <Button variant="outline" className="mx-2">
+            <Button variant="outline" className="mx-2" onClick={handleSearch}>
               <Search className="h-4 w-4" />
             </Button>
           </>
