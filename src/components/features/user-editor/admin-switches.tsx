@@ -5,11 +5,11 @@ import UsersContext, {
   UsersSearchResultsContext,
 } from "@/context/users-context";
 import usePermissions from "@/hooks/use-permissions";
-import axiosInstance from "@/service/axios";
 import { User } from "@/types/user";
 import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { useVerifyUser, useBanUser, useRestrictUser } from "@/hooks/api/use-user-mutations";
 
 export default function AdminSwitches({
   user,
@@ -45,8 +45,12 @@ export default function AdminSwitches({
       });
   };
 
+  const { mutateAsync: verifyUser } = useVerifyUser();
+  const { mutateAsync: banUser } = useBanUser();
+  const { mutateAsync: restrictUser } = useRestrictUser();
+
   const onVerifyChange = async (state: boolean) => {
-    const promise = axiosInstance.post("/user/admin-api/verify", {
+    const promise = verifyUser({
       target: user._id,
       state: state,
     });
@@ -62,7 +66,7 @@ export default function AdminSwitches({
   };
 
   const onSuspendChange = async (state: boolean) => {
-    const promise = axiosInstance.post("/user/admin-api/ban", {
+    const promise = banUser({
       target: user._id,
       state,
     });
@@ -78,7 +82,7 @@ export default function AdminSwitches({
   };
 
   const onRestrictChange = async (state: boolean) => {
-    const promise = axiosInstance.post("/user/admin-api/restrict", {
+    const promise = restrictUser({
       target: user._id,
       state,
     });

@@ -1,26 +1,13 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import axiosInstance from "@/service/axios";
 import { User } from "@/types/user";
 import { BanIcon, CheckCircle, CircleOff } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import UAParser from "ua-parser-js";
+import { useLoginHistory } from "@/hooks/api/use-users";
 
 const LoginHistory = ({ user }: { user: User }) => {
-  const [loginHistory, setLoginHistory] = useState<any[]>([]);
-
+  const { data: loginHistory = [] } = useLoginHistory(user._id);
   const { t } = useTranslation();
-
-  useEffect(() => {
-    (async () => {
-      const history = await axiosInstance.get("/user/admin-api/login-history", {
-        params: {
-          target: user._id,
-        },
-      });
-      setLoginHistory(history.data.data.records);
-    })();
-  }, [user]);
 
   return (
     <>

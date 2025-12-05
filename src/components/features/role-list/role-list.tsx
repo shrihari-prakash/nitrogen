@@ -27,12 +27,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import axiosInstance from "@/service/axios";
 import ScopesContext from "@/context/scopes-context";
 import { roleListColumns } from "./role-list-columns";
 import { Role } from "@/types/role";
 import RoleEditor from "../role-editor/role-editor";
 import { useTranslation } from "react-i18next";
+import { useRolesList } from "@/hooks/api/use-roles";
 
 const RoleList = function () {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -48,8 +48,15 @@ const RoleList = function () {
     React.useState<VisibilityState>(
       (savedColumnVisibilityState as unknown as VisibilityState) || {}
     );
-  const [roles, setRoles] = React.useState<any[]>([]);
-  const [loading, setLoading] = React.useState<boolean>(true);
+  const { data: rolesData, isLoading: loading } = useRolesList();
+  const [roles, setRoles] = React.useState<Role[]>([]);
+
+  React.useEffect(() => {
+    if (rolesData) {
+      setRoles(rolesData);
+    }
+  }, [rolesData]);
+
   const { scopes, refreshScopes } = React.useContext(ScopesContext);
 
   const { t } = useTranslation();
@@ -57,22 +64,6 @@ const RoleList = function () {
   React.useEffect(() => {
     if (!scopes) refreshScopes();
   }, [scopes, refreshScopes]);
-
-  React.useEffect(() => {
-    if (!roles.length) {
-      setLoading(true);
-      axiosInstance
-        .get("/roles/list", { params: { limit: 50 } })
-        .then((response) => {
-          const apiRoles = response.data.data.roles as Role[];
-          const sortedRoles = apiRoles.sort((a, b) => a.ranking - b.ranking);
-          setRoles(sortedRoles);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  }, [roles, setRoles]);
 
   const onRoleCreate = (role: Role) => {
     setRoles((roles) => [...roles, role]);
@@ -158,9 +149,9 @@ const RoleList = function () {
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                       </TableHead>
                     );
                   })}

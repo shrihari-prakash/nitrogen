@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ScopeSelector from "@/components/ui/scope-selector";
 import usePermissions from "@/hooks/use-permissions";
-import axiosInstance from "@/service/axios";
 import { AlertCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -22,6 +21,7 @@ import ApplicationEditor from "../application-editor/application-editor";
 import { Application } from "@/types/application";
 import { useTranslation } from "react-i18next";
 import { FaTrash } from "react-icons/fa";
+import { useDeleteApplication } from "@/hooks/api/use-application-mutations";
 
 export const ApplicationListActions = ({
   row,
@@ -41,12 +41,10 @@ export const ApplicationListActions = ({
 
   const meta = context.table.options.meta as any;
 
+  const { mutateAsync: deleteApplication } = useDeleteApplication();
+
   const onApplicationDelete = async () => {
-    const promise = axiosInstance.delete("/client/admin-api/delete", {
-      data: {
-        target: row.original._id,
-      },
-    });
+    const promise = deleteApplication(row.original._id);
     toast.promise(promise, {
       loading: `Deleting ${row.original.displayName}...`,
       success: `${row.original.displayName} deleted`,

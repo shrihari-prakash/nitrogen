@@ -31,22 +31,24 @@ import {
 } from "@/components/ui/table";
 import { userListColumns } from "./user-list-columns";
 import { User } from "@/types/user";
-import axiosInstance from "@/service/axios";
 import usePermissions from "@/hooks/use-permissions";
-import UsersContext, {
-  UsersSearchResultsContext,
-} from "@/context/users-context";
 import { Badge } from "@/components/ui/badge";
 import UserCreate from "../user-editor/user-create";
 import { useTranslation } from "react-i18next";
+import { useUsers, useUserSearch } from "@/hooks/api/use-users";
 
 const UserList = function () {
-  const [search, setSearch] = React.useState(null);
-  const { users, setUsers } = React.useContext(UsersContext);
-  const { usersSearchResults, setUsersSearchResults } = React.useContext(
-    UsersSearchResultsContext
-  );
-  const [hasMore, setHasMore] = React.useState(true);
+  const [search, setSearch] = React.useState<string | null>(null);
+
+  const {
+    data: usersData,
+    fetchNextPage,
+    hasNextPage,
+    isLoading: isUsersLoading,
+  } = useUsers();
+
+  const { data: searchResults, isLoading: isSearchLoading } = useUserSearch(search);
+
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -64,49 +66,27 @@ const UserList = function () {
         credits: false,
       }
     );
-  const [loading, setLoading] = React.useState<boolean>(
-    users.length ? false : true
-  );
-  const [totalUsers, setTotalUsers] = React.useState<number>(
-    parseInt(localStorage.getItem("liquid_nitrogen_total_users") || "0")
-  );
 
   const { isPermissionAllowed } = usePermissions();
 
   const { t } = useTranslation();
 
-  const getData = React.useCallback(async () => {
-    console.log("called getdata");
-    const limit = 100;
-    const offset = users.length ? users[users.length - 1]._id : null;
-    axiosInstance
-      .get("/user/admin-api/list", { params: { limit: limit, offset: offset } })
-      .then((response) => {
-        const data = response.data.data;
-        setUsers([...users, ...data.users] as User[]);
-        setTotalUsers(data.totalUsers);
-        console.log(data.totalUsers, users.length);
-        if (data.totalUsers === users.length) {
-          setHasMore(false);
-        }
-        localStorage.setItem("liquid_nitrogen_total_users", data.totalUsers);
-      })
-      .catch(() => {
-        setHasMore(false);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [setUsers, users]);
-
-  React.useEffect(() => {
-    if (!users.length) {
-      setLoading(true);
-      getData();
-    } else {
-      setLoading(false);
+  const users = React.useMemo(() => {
+    if (usersData) {
+      return usersData.pages.flatMap((page) => page.users) as User[];
     }
-  }, [users, setUsers, getData]);
+    return [];
+  }, [usersData]);
+
+  const totalUsers = React.useMemo(() => {
+    if (usersData && usersData.pages.length > 0) {
+      return usersData.pages[usersData.pages.length - 1].totalUsers;
+    }
+    return 0;
+  }, [usersData]);
+
+  const displayData = searchResults || users;
+  const loading = isUsersLoading || isSearchLoading;
 
   React.useEffect(() => {
     localStorage.setItem(
@@ -115,42 +95,13 @@ const UserList = function () {
     );
   }, [columnVisibility]);
 
-  React.useEffect(() => {
-    return () => setUsersSearchResults(null);
-  }, [setUsersSearchResults]);
-
   const onSearchChange = (e: any) => {
-    setSearch(e.target.value);
+    const value = e.target.value;
+    setSearch(value === "" ? null : value);
   };
-
-  const onSearch = async () => {
-    try {
-      setLoading(true);
-      const query = search;
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      //@ts-ignore
-      if (!query || query.length === 0) {
-        return setUsersSearchResults(null);
-      }
-      const response = await axiosInstance.post("/user/admin-api/search", {
-        query,
-      });
-      setUsersSearchResults(response.data.data.results);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  React.useEffect(() => {
-    if (search || usersSearchResults) {
-      setHasMore(false);
-    } else {
-      setHasMore(users.length < totalUsers);
-    }
-  }, [search, totalUsers, users.length, usersSearchResults]);
 
   const table = useReactTable({
-    data: usersSearchResults || users,
+    data: displayData,
     columns: userListColumns,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -171,13 +122,8 @@ const UserList = function () {
               placeholder="Search users..."
               className="max-w-sm"
               onChange={onSearchChange}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  onSearch();
-                }
-              }}
             />
-            <Button variant="outline" className="mx-2" onClick={onSearch}>
+            <Button variant="outline" className="mx-2">
               <Search className="h-4 w-4" />
             </Button>
           </>
@@ -218,7 +164,7 @@ const UserList = function () {
         </div>
         <UserCreate />
       </div>
-      {loading ? (
+      {loading && !displayData.length ? (
         <div
           className={`h-[calc(100%-124px)] w-full flex-1 flex items-center justify-center cursor-default relative`}
         >
@@ -227,10 +173,10 @@ const UserList = function () {
       ) : (
         <>
           <InfiniteScroll
-            dataLength={users.length}
-            next={getData}
+            dataLength={displayData.length}
+            next={fetchNextPage}
             scrollableTarget="page"
-            hasMore={hasMore}
+            hasMore={!!hasNextPage && !searchResults}
             loader={
               <div className="h-20">
                 <Loader />
@@ -248,9 +194,9 @@ const UserList = function () {
                             {header.isPlaceholder
                               ? null
                               : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
                           </TableHead>
                         );
                       })}

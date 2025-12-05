@@ -27,16 +27,16 @@ import UsersContext, {
   UsersSearchResultsContext,
 } from "@/context/users-context";
 import usePermissions from "@/hooks/use-permissions";
-import axiosInstance from "@/service/axios";
 import { Role } from "@/types/role";
 import { User } from "@/types/user";
 import { camelCaseToWords } from "@/utils/string";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { FaCopy } from "react-icons/fa";
 import { FaFloppyDisk } from "react-icons/fa6";
 import { toast } from "sonner";
+import { useUpdateUser } from "@/hooks/api/use-user-mutations";
 
 export default function BasicInfoEditor({
   user,
@@ -59,7 +59,7 @@ export default function BasicInfoEditor({
     role: user.role || "",
   };
 
-  const [submitting, setSubmitting] = useState(false);
+  const { mutateAsync: updateUser, isPending: submitting } = useUpdateUser();
 
   const { me } = useContext(MeContext);
   const { countries, refreshCountries } = useContext(CountriesContext);
@@ -144,7 +144,6 @@ export default function BasicInfoEditor({
   });
 
   async function onSubmit(formValues: any) {
-    setSubmitting(true);
     const savedForm = { ...formDefaults, ...formValues };
     Object.keys(formValues).forEach((key) => {
       if (formValues[key] === (savedFormRef.current as any)[key]) {
@@ -158,16 +157,17 @@ export default function BasicInfoEditor({
     console.log(formValues);
     let promise;
     try {
-      promise = axiosInstance.patch("/user/admin-api/update", {
+      promise = updateUser({
         target: user._id,
         ...formValues,
       });
       toast.promise(promise, {
         loading: "Processing changes...",
         success: "Update complete",
-        error: (data: any) => {
-          console.log(data);
-          const errors = data?.response?.data?.additionalInfo?.errors;
+        error: (error: any) => {
+          console.log(error);
+          const data = error.response?.data;
+          const errors = data?.additionalInfo?.errors;
           if (errors) {
             return "Invalid " + camelCaseToWords(errors[0].param);
           }
@@ -187,8 +187,8 @@ export default function BasicInfoEditor({
       setUsers(cb);
       setUsersSearchResults(cb);
       setUser((user: User) => ({ ...user, ...formValues }));
-    } finally {
-      setSubmitting(false);
+    } catch (e) {
+      // Error handled by toast
     }
   }
 

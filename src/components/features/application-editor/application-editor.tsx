@@ -27,7 +27,6 @@ import { Tag, TagInput } from "@/components/ui/tag-input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import RolesContext from "@/context/roles-context";
 import usePermissions from "@/hooks/use-permissions";
-import axiosInstance from "@/service/axios";
 import { Application } from "@/types/application";
 import { camelCaseToWords } from "@/utils/string";
 import { useContext, useEffect, useState } from "react";
@@ -37,6 +36,7 @@ import { FaPen } from "react-icons/fa";
 import { FaCirclePlus } from "react-icons/fa6";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
+import { useCreateApplication, useUpdateApplication } from "@/hooks/api/use-application-mutations";
 
 export default function ApplicationEditor({
   onCreate,
@@ -102,14 +102,18 @@ export default function ApplicationEditor({
     }
   }, [application, setRedirectUris]);
 
+  const { mutateAsync: createApplication } = useCreateApplication();
+  const { mutateAsync: updateApplication } = useUpdateApplication();
+
   async function create(formValues: any) {
-    const promise = axiosInstance.post("/client/admin-api/create", formValues);
+    const promise = createApplication(formValues);
     toast.promise(promise, {
       loading: "Processing creation...",
       success: "Application created",
-      error: (data: any) => {
-        console.log(data);
-        const errors = data?.response?.data?.additionalInfo?.errors;
+      error: (error: any) => {
+        console.log(error);
+        const data = error.response?.data;
+        const errors = data?.additionalInfo?.errors;
         if (errors) {
           return "Invalid " + camelCaseToWords(errors[0].param);
         }
@@ -134,16 +138,17 @@ export default function ApplicationEditor({
         delete formValues[field];
       }
     }
-    const promise = axiosInstance.patch("/client/admin-api/update", {
+    const promise = updateApplication({
       target: application._id,
       ...formValues,
     });
     toast.promise(promise, {
       loading: "Processing changes...",
       success: "Update complete",
-      error: (data: any) => {
-        console.log(data);
-        const errors = data?.response?.data?.additionalInfo?.errors;
+      error: (error: any) => {
+        console.log(error);
+        const data = error.response?.data;
+        const errors = data?.additionalInfo?.errors;
         if (errors) {
           return `Invalid ${camelCaseToWords(errors[0].param)}`;
         }

@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import usePermissions from "@/hooks/use-permissions";
-import axiosInstance from "@/service/axios";
 import { Role } from "@/types/role";
 import { camelCaseToWords } from "@/utils/string";
 import { FaCirclePlus } from "react-icons/fa6";
@@ -26,6 +25,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { FaPen } from "react-icons/fa";
 import { toast } from "sonner";
+import { useCreateRole, useUpdateRole } from "@/hooks/api/use-role-mutations";
 
 export default function RoleEditor({
   onCreate,
@@ -53,14 +53,18 @@ export default function RoleEditor({
     defaultValues: formDefaults,
   });
 
+  const { mutateAsync: createRole } = useCreateRole();
+  const { mutateAsync: updateRole } = useUpdateRole();
+
   async function create(formValues: any) {
-    const promise = axiosInstance.post("/roles/admin-api/create", formValues);
+    const promise = createRole(formValues);
     toast.promise(promise, {
       loading: "Processing creation...",
       success: "Role created",
-      error: (data: any) => {
-        console.log(data);
-        const errors = data?.response?.data?.additionalInfo?.errors;
+      error: (error: any) => {
+        console.log(error);
+        const data = error.response?.data;
+        const errors = data?.additionalInfo?.errors;
         if (errors) {
           return "Invalid " + camelCaseToWords(errors[0].path);
         }
@@ -83,16 +87,17 @@ export default function RoleEditor({
         delete formValues[field];
       }
     }
-    const promise = axiosInstance.patch("/roles/admin-api/update", {
+    const promise = updateRole({
       target: role._id,
       ...formValues,
     });
     toast.promise(promise, {
       loading: "Processing changes...",
       success: "Update complete",
-      error: (data: any) => {
-        console.log(data);
-        const errors = data?.response?.data?.additionalInfo?.errors;
+      error: (error: any) => {
+        console.log(error);
+        const data = error.response?.data;
+        const errors = data?.additionalInfo?.errors;
         if (errors) {
           return `Invalid ${camelCaseToWords(errors[0].param)}`;
         }

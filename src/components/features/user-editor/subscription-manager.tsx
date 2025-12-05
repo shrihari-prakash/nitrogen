@@ -5,7 +5,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { CalendarIcon, Check, Loader2 } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { User } from "@/types/user";
@@ -26,12 +26,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import axiosInstance from "@/service/axios";
 import UsersContext, {
   UsersSearchResultsContext,
 } from "@/context/users-context";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { useUpdateSubscription } from "@/hooks/api/use-user-mutations";
 
 export default function SubscriptionManager({
   user,
@@ -40,7 +40,7 @@ export default function SubscriptionManager({
   user: User;
   setUser?: any;
 }) {
-  const [submitting, setSubmitting] = useState(false);
+  const { mutateAsync: updateSubscription, isPending: submitting } = useUpdateSubscription();
 
   const { subscriptionTiers, refreshSubscriptionTiers } = useContext(
     SubscriptionTiersContext
@@ -89,17 +89,13 @@ export default function SubscriptionManager({
   }
 
   const onSubmit = async (formValues: any) => {
-    setSubmitting(true);
     try {
       if (typeof formValues.expiry !== "string") {
         formValues.expiry = formValues.expiry.toISOString();
       }
       formValues.state = true;
       formValues.target = user._id;
-      const promise = axiosInstance.post(
-        "/user/admin-api/subscription",
-        formValues
-      );
+      const promise = updateSubscription(formValues);
       toast.promise(promise, {
         loading: "Submitting...",
         success: "Update complete",
@@ -114,8 +110,8 @@ export default function SubscriptionManager({
         !(new Date(formValues.expiry) < new Date());
       updateUserInMemory(setUsers, formValues.tier, isSubscribed);
       updateUserInMemory(setUsersSearchResults, formValues.tier, isSubscribed);
-    } finally {
-      setSubmitting(false);
+    } catch (e) {
+      // Error handled by toast
     }
   };
 

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -21,19 +21,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { camelCaseToWords } from "@/utils/string";
 import { toast } from "sonner";
-import axiosInstance from "@/service/axios";
-import UsersContext, {
-  UsersSearchResultsContext,
-} from "@/context/users-context";
 import usePermissions from "@/hooks/use-permissions";
 import { useTranslation } from "react-i18next";
 import { FaUserPlus } from "react-icons/fa";
+import { useCreateUser } from "@/hooks/api/use-users";
 
 const UserCreate = () => {
   const [open, setOpen] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const { setUsers } = useContext(UsersContext);
-  const { setUsersSearchResults } = useContext(UsersSearchResultsContext);
+  const { mutateAsync: createUser, isPending: submitting } = useCreateUser();
   const { isPermissionAllowed } = usePermissions();
   const { t } = useTranslation();
 
@@ -55,33 +50,31 @@ const UserCreate = () => {
   }, [open, form, formDefaults]);
 
   async function onSubmit(formValues: any) {
-    setSubmitting(true);
     console.log(formValues);
     let promise;
     try {
-      promise = axiosInstance.post("/user/admin-api/create", [formValues]);
+      promise = createUser(formValues);
       toast.promise(promise, {
         loading: "Creating user...",
         success: "User created successfully!",
-        error: (data: any) => {
-          console.log(data);
-          const errors = data?.response?.data?.additionalInfo?.errors;
+        error: (error: any) => {
+          console.log(error);
+          const data = error.response?.data;
+          const errors = data?.additionalInfo?.errors;
           if (errors) {
             return "Invalid " + camelCaseToWords(errors[0].path);
           }
-          if (data?.response?.data?.additionalInfo?.existingUsers) {
+          if (data?.additionalInfo?.existingUsers) {
             return "User already exists!";
           }
           return "Failed to create user!";
         },
       });
       await promise;
-      setUsers(() => []);
-      setUsersSearchResults(null);
       form.reset(formDefaults);
       setOpen(false);
-    } finally {
-      setSubmitting(false);
+    } catch (e) {
+      // Error handled by toast
     }
   }
 

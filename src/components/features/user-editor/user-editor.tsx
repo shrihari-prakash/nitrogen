@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect } from "react";
 import {
   Sheet,
   SheetContent,
@@ -7,8 +7,6 @@ import {
 } from "@/components/ui/sheet";
 import { XCircle } from "lucide-react";
 import { useLocation } from "wouter";
-import axiosInstance from "@/service/axios";
-import { User } from "@/types/user";
 import Loader from "@/components/ui/loader";
 import AdminSwitches from "./admin-switches";
 import BasicInfoEditor from "./basic-info-editor";
@@ -22,11 +20,12 @@ import CustomDataEditor from "./custom-data-editor";
 import CreditsEditor from "./credits-editor";
 import { LoginHistoryDialog } from "./login-history-dialog";
 import { useTranslation } from "react-i18next";
+import { useUser } from "@/hooks/api/use-users";
 
 const UserEditor = function ({ params }: { params: { id: string } }) {
   const [, setLocation] = useLocation();
-  const [user, setUser] = useState<any | User>();
-  const [loadError, setLoadError] = useState(false);
+  const { data: user, isError: loadError } = useUser(params.id);
+  const setUser = () => { };
 
   const { isPermissionAllowed } = usePermissions();
 
@@ -45,28 +44,11 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
     if (!scopes) refreshScopes();
   }, [scopes, refreshScopes]);
 
-  const userRef = useRef({});
-
   const onOpenChange = (state: boolean) => {
     if (!state) {
       setLocation("/users");
     }
   };
-
-  useEffect(() => {
-    setLoadError(false);
-    userRef.current = {};
-    axiosInstance
-      .post("/user/admin-api/retrieve-user-info", {
-        targets: [params.id],
-      })
-      .then((response) => {
-        setUser(response.data.data.users[0]);
-      })
-      .catch(() => {
-        setLoadError(true);
-      });
-  }, [params.id, setUser]);
 
   if (!isPermissionAllowed("admin:profile:read")) {
     return null;
@@ -88,7 +70,7 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
             ) : (
               <Loader className="!h-[calc(100%-28px)]" />
             )
-        ) : (
+          ) : (
             <>
               <ProfileCard user={user} />
               {scopes &&

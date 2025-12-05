@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ScopeSelector from "@/components/ui/scope-selector";
 import usePermissions from "@/hooks/use-permissions";
-import axiosInstance from "@/service/axios";
 import { useContext, useState } from "react";
 import { toast } from "sonner";
 import { Role } from "@/types/role";
@@ -21,6 +20,7 @@ import RoleEditor from "../role-editor/role-editor";
 import RolesContext from "@/context/roles-context";
 import { useTranslation } from "react-i18next";
 import { FaTrash } from "react-icons/fa";
+import { useDeleteRole } from "@/hooks/api/use-role-mutations";
 
 export const RoleListActions = ({
   row,
@@ -40,12 +40,10 @@ export const RoleListActions = ({
 
   const meta = context.table.options.meta as any;
 
+  const { mutateAsync: deleteRole } = useDeleteRole();
+
   const onRoleDelete = async () => {
-    const promise = axiosInstance.delete("/roles/admin-api/delete", {
-      data: {
-        target: row.original.id,
-      },
-    });
+    const promise = deleteRole(row.original.id);
     toast.promise(promise, {
       loading: `Deleting ${row.original.displayName}...`,
       success: `${row.original.displayName} deleted`,

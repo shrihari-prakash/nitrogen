@@ -28,11 +28,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { applicationListColumns } from "./application-list-columns";
-import axiosInstance from "@/service/axios";
 import { Application } from "@/types/application";
 import ApplicationEditor from "../application-editor/application-editor";
 import ScopesContext from "@/context/scopes-context";
 import { useTranslation } from "react-i18next";
+import { useApplications } from "@/hooks/api/use-applications";
 
 const ApplicationList = function () {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -48,8 +48,15 @@ const ApplicationList = function () {
     React.useState<VisibilityState>(
       (savedColumnVisibilityState as unknown as VisibilityState) || {}
     );
-  const [applications, setApplications] = React.useState<any[]>([]);
-  const [loading, setLoading] = React.useState<boolean>(true);
+  const { data: applicationsData, isLoading: loading } = useApplications();
+  const [applications, setApplications] = React.useState<Application[]>([]);
+
+  React.useEffect(() => {
+    if (applicationsData) {
+      setApplications(applicationsData);
+    }
+  }, [applicationsData]);
+
   const { scopes, refreshScopes } = React.useContext(ScopesContext);
 
   const { t } = useTranslation();
@@ -64,20 +71,6 @@ const ApplicationList = function () {
       JSON.stringify(columnVisibility)
     );
   }, [columnVisibility]);
-
-  React.useEffect(() => {
-    if (!applications.length) {
-      setLoading(true);
-      axiosInstance
-        .get("/client/admin-api/list", { params: { limit: 50 } })
-        .then((response) => {
-          setApplications(response.data.data.clients as Application[]);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  }, [applications, setApplications]);
 
   const onApplicationCreate = (application: Application) => {
     setApplications((apps) => [...apps, application]);
@@ -160,9 +153,9 @@ const ApplicationList = function () {
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                       </TableHead>
                     );
                   })}

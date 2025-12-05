@@ -1,19 +1,21 @@
 import usePermissions from "@/hooks/use-permissions";
-import axiosInstance from "@/service/axios";
 import oauthManager from "@/service/oauth-manager";
 import { useTranslation } from "react-i18next";
 import { IoLogOut } from "react-icons/io5";
 import { BsFillBoxFill, BsFillShieldLockFill } from "react-icons/bs";
 import { FaUsers } from "react-icons/fa";
 import { Link } from "wouter";
+import { useLogout } from "@/hooks/api/use-auth";
 
 export default function SideBar() {
   const { isPermissionAllowed } = usePermissions();
   const { t } = useTranslation();
 
+  const { mutateAsync: logout } = useLogout();
+
   const onLogout = async () => {
     try {
-      await axiosInstance.get("/user/logout", { withCredentials: true });
+      await logout();
     } finally {
       oauthManager.clearCredentials();
       window.location.reload();

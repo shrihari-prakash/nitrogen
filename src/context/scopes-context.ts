@@ -6,7 +6,7 @@ export type IScopesContext = {
   refreshScopes: any;
 };
 
-const ScopesContext = createContext({
+const ScopesContext = createContext<IScopesContext>({
   scopes: null,
   refreshScopes: () => {},
 });

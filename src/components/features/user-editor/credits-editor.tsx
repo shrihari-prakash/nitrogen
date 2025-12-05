@@ -12,13 +12,13 @@ import { SheetFooter } from "@/components/ui/sheet";
 import UsersContext, {
   UsersSearchResultsContext,
 } from "@/context/users-context";
-import axiosInstance from "@/service/axios";
 import { User } from "@/types/user";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { PiCoinVertical } from "react-icons/pi";
 import { toast } from "sonner";
+import { useUpdateCredits } from "@/hooks/api/use-user-mutations";
 
 export default function CreditsEditor({
   user,
@@ -31,7 +31,7 @@ export default function CreditsEditor({
     value: user.credits || 0,
   };
 
-  const [submitting, setSubmitting] = useState(false);
+  const { mutateAsync: updateCredits, isPending: submitting } = useUpdateCredits();
 
   const { setUsers } = useContext(UsersContext);
   const { setUsersSearchResults } = useContext(UsersSearchResultsContext);
@@ -43,17 +43,15 @@ export default function CreditsEditor({
   });
 
   async function onSubmit(formValues: any) {
-    setSubmitting(true);
     const value = parseInt(formValues.value);
     if (isNaN(value) || value < 0) {
       toast.error(t("message.invalid-credit-value"));
-      setSubmitting(false);
       return;
     }
 
     let promise;
     try {
-      promise = axiosInstance.post("/user/admin-api/credits", {
+      promise = updateCredits({
         target: user._id,
         type: "set",
         value: value,
@@ -61,9 +59,9 @@ export default function CreditsEditor({
       toast.promise(promise, {
         loading: t("message.processing-credits-update"),
         success: t("message.credits-updated-successfully"),
-        error: (data: any) => {
-          console.log(data);
-          const message = data?.response?.data?.message;
+        error: (error: any) => {
+          console.log(error);
+          const message = error.response?.data?.message;
           if (message) {
             return message;
           }
@@ -83,8 +81,8 @@ export default function CreditsEditor({
       setUsers(cb);
       setUsersSearchResults(cb);
       setUser((user: User) => ({ ...user, credits: value }));
-    } finally {
-      setSubmitting(false);
+    } catch (e) {
+      // Error handled by toast
     }
   }
 

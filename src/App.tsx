@@ -10,6 +10,14 @@ import axiosInstance from "./service/axios";
 import i18n from "i18next";
 import { useTranslation, initReactI18next } from "react-i18next";
 import enJSON from "./strings/en.json";
+import {
+  useSettings,
+  useCountries,
+  useRoles,
+  useScopes,
+  useEditableFields,
+  useSubscriptionTiers,
+} from "./hooks/api/use-global-data";
 
 import EditableFieldsContext from "./context/editable-fields-context";
 import UsersContext, {
@@ -21,7 +29,6 @@ import MeContext from "./context/me-context";
 import { KeyRound, ShieldOff } from "lucide-react";
 import { BsFillBoxFill, BsFillShieldLockFill } from "react-icons/bs";
 import ScopesContext from "./context/scopes-context";
-import { Scope } from "./components/ui/scope-selector";
 import ApplicationList from "./components/features/application-list/application-list";
 import CountriesContext from "./context/countries-context";
 import SubscriptionTiersContext from "./context/subscription-tiers-context";
@@ -30,12 +37,6 @@ import RoleList from "./components/features/role-list/role-list";
 import { PageTitle } from "./components/features/common/page-title";
 import { FaUsers } from "react-icons/fa";
 
-let scopesFetchInProgess = false;
-let countriesFetchInProgess = false;
-let roleFetchInProgess = false;
-let settingsFetchInProgess = false;
-let editableFieldsFetchInProgess = false;
-let subscriptionTiersFetchInProgess = false;
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -53,91 +54,19 @@ i18n.use(initReactI18next).init({
 
 function App() {
   const [authError, setAuthError] = useState(false);
-  const [scopes, setScopes] = useState<any>(null);
   const [me, setMe] = useState(null);
-  const [editableFields, setEditableFields] = useState(null);
-  const [subscriptionTiers, setSubscriptionTiers] = useState(null);
-  const [countries, setCountries] = useState(null);
-  const [roles, setRoles] = useState(null);
-  const [settings, setSettings] = useState(null);
   const [users, setUsers] = useState([]);
   const [usersSearchResults, setUsersSearchResults] = useState(null);
 
+  const { data: settings, refetch: refreshSettings } = useSettings();
+  const { data: countries, refetch: refreshCountries } = useCountries();
+  const { data: roles, refetch: refreshRoles } = useRoles(!!me);
+  const { data: scopes, refetch: refreshScopes } = useScopes(!!me);
+  const { data: editableFields, refetch: refreshEditableFields } = useEditableFields(!!me);
+  const { data: subscriptionTiers, refetch: refreshSubscriptionTiers } = useSubscriptionTiers(!!me);
+
   const { t } = useTranslation();
 
-  const getSettings = () => {
-    if (settingsFetchInProgess) return;
-    settingsFetchInProgess = true;
-    axiosInstance
-      .get("/system/settings")
-      .then((response: any) => setSettings(response.data.data.settings))
-      .finally(() => (settingsFetchInProgess = false));
-  };
-
-  useEffect(() => {
-    if (!settings) {
-      return;
-    }
-    document.title = settings["system.app-name"];
-  }, [settings]);
-
-  const refreshCountries = async () => {
-    if (countriesFetchInProgess) return;
-    countriesFetchInProgess = true;
-    axiosInstance
-      .get("/system/countries-insecure")
-      .then((response: any) => setCountries(response.data.data.countries))
-      .finally(() => (countriesFetchInProgess = false));
-  };
-
-  const refreshRoles = async () => {
-    if (roleFetchInProgess) return;
-    roleFetchInProgess = true;
-    axiosInstance
-      .get("/roles/list")
-      .then((response: any) => {
-        console.error(response.data);
-        setRoles(response.data.data.roles);
-      })
-      .finally(() => (roleFetchInProgess = false));
-  };
-
-  const refreshScopes = async () => {
-    if (scopesFetchInProgess) return;
-    scopesFetchInProgess = true;
-    axiosInstance
-      .get("/user/scopes")
-      .then((response: any) => {
-        const scopesObject = response.data.data.scopes;
-        const scopes = Object.keys(scopesObject).map(
-          (key) => scopesObject[key]
-        ) as Scope[];
-        setScopes(scopes);
-      })
-      .finally(() => (scopesFetchInProgess = false));
-  };
-
-  const refreshEditableFields = () => {
-    if (editableFieldsFetchInProgess) return;
-    editableFieldsFetchInProgess = true;
-    axiosInstance
-      .get("/user/admin-api/editable-fields")
-      .then((response: any) =>
-        setEditableFields(response.data.data.editableFields)
-      )
-      .finally(() => (editableFieldsFetchInProgess = false));
-  };
-
-  const refreshSubscriptionTiers = () => {
-    if (subscriptionTiersFetchInProgess) return;
-    subscriptionTiersFetchInProgess = true;
-    axiosInstance
-      .get("/user/admin-api/subscription-tiers")
-      .then((response: any) =>
-        setSubscriptionTiers(response.data.data.subscriptionTiers)
-      )
-      .finally(() => (subscriptionTiersFetchInProgess = false));
-  };
 
   const redirectToLogin = () => {
     window.location.href =
@@ -238,14 +167,14 @@ function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <SettingsContext.Provider
-        value={{ settings, setSettings, refreshSettings: getSettings }}
+        value={{ settings, setSettings: () => { }, refreshSettings }}
       >
         <CountriesContext.Provider value={{ countries, refreshCountries }}>
           <UsersContext.Provider value={{ users, setUsers }}>
             <UsersSearchResultsContext.Provider
               value={{ usersSearchResults, setUsersSearchResults }}
             >
-              <ScopesContext.Provider value={{ scopes, refreshScopes }}>
+              <ScopesContext.Provider value={{ scopes: scopes || null, refreshScopes }}>
                 <SubscriptionTiersContext.Provider
                   value={{ subscriptionTiers, refreshSubscriptionTiers }}
                 >
@@ -253,7 +182,7 @@ function App() {
                     <EditableFieldsContext.Provider
                       value={{
                         editableFields,
-                        setEditableFields,
+                        setEditableFields: () => { },
                         refreshEditableFields,
                       }}
                     >

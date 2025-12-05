@@ -2,7 +2,6 @@ import { useContext, useState } from "react";
 import { Label } from "./label";
 import MeContext from "@/context/me-context";
 import { User } from "@/types/user";
-import axiosInstance from "@/service/axios";
 import { Button } from "./button";
 import {
   Dialog,
@@ -24,6 +23,7 @@ import { Role } from "@/types/role";
 import { Badge } from "./badge";
 import { useTranslation } from "react-i18next";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+import { useUpdateAccess } from "@/hooks/api/use-user-mutations";
 
 export interface Scope {
   name: string;
@@ -89,7 +89,6 @@ const ScopeSelector = ({
     initialScopes as string[]
   );
 
-  const [submitting, setSubmitting] = useState<boolean>(false);
   const [search, setSearch] = useState<string>("");
   const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
 
@@ -184,6 +183,8 @@ const ScopeSelector = ({
     setSearch("");
   };
 
+  const { mutateAsync: updateAccess, isPending: submitting } = useUpdateAccess();
+
   const onSave = async () => {
     onPopoverOpenChange(false);
     let newScopeList = [...selectedScopes];
@@ -195,11 +196,10 @@ const ScopeSelector = ({
         newScopeList = newScopeList.filter((s) => s !== scope.name);
       }
     });
-    setSubmitting(true);
     let promise;
     try {
       const targetId = type === "role" ? (entity as any).id : entity._id;
-      promise = axiosInstance.post("/user/admin-api/access", {
+      promise = updateAccess({
         targets: [targetId],
         targetType: type,
         scope: newScopeList,
@@ -217,8 +217,8 @@ const ScopeSelector = ({
       if (setEntity) {
         setEntity(userCopy);
       }
-    } finally {
-      setSubmitting(false);
+    } catch (e) {
+      // Error handled by toast
     }
   };
 
@@ -234,7 +234,7 @@ const ScopeSelector = ({
         return (
           <div key={item.name}>
             {search !== "" &&
-            !item.name.includes(search.toLowerCase()) ? null : (
+              !item.name.includes(search.toLowerCase()) ? null : (
               <Label className="flex items-center my-2 space-x-3 px-3 py-2">
                 <Checkbox
                   disabled={!scopeAllowed || isUserMe()}
@@ -245,9 +245,9 @@ const ScopeSelector = ({
                   <div className="mb-2 text-normal">
                     {item.name}
                     {role &&
-                    !selectedScopes.includes(item.name) &&
-                    isPermissionAllowedByRole(item.name, role) &&
-                    role !== "super_admin" ? (
+                      !selectedScopes.includes(item.name) &&
+                      isPermissionAllowedByRole(item.name, role) &&
+                      role !== "super_admin" ? (
                       <Badge variant="secondary" className="ml-2">
                         {t("message.allowed-by-role")}
                       </Badge>

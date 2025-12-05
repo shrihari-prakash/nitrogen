@@ -6,21 +6,20 @@ import "prismjs/components/prism-json";
 import "prismjs/themes/prism-solarizedlight.min.css";
 import { User } from "@/types/user";
 import { Button } from "@/components/ui/button";
-import axiosInstance from "@/service/axios";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { FaFloppyDisk } from "react-icons/fa6";
+import { useUpdateCustomData } from "@/hooks/api/use-user-mutations";
 
 const CustomDataEditor = ({ user }: { user: User }) => {
   const [customData, setCustomData] = useState(
     user.customData ? JSON.stringify(user.customData, null, 4) : `{}`
   );
-  const [submitting, setSubmitting] = useState(false);
+  const { mutateAsync: updateCustomData, isPending: submitting } = useUpdateCustomData();
 
   const { t } = useTranslation();
 
   async function onSubmit(formValues: any) {
-    setSubmitting(true);
     console.log(formValues);
     let promise;
     let serialized;
@@ -28,20 +27,20 @@ const CustomDataEditor = ({ user }: { user: User }) => {
       serialized = JSON.parse(customData);
     } catch (e) {
       toast.error("Invalid JSON");
-      setSubmitting(false);
       return;
     }
     try {
-      promise = axiosInstance.put("/user/admin-api/custom-data", {
+      promise = updateCustomData({
         target: user._id,
         customData: serialized,
       });
       toast.promise(promise, {
         loading: "Processing changes...",
         success: "Update complete",
-        error: (data: any) => {
-          console.log(data);
-          const errors = data?.response?.data?.additionalInfo?.errors;
+        error: (error: any) => {
+          console.log(error);
+          const data = error.response?.data;
+          const errors = data?.additionalInfo?.errors;
           if (errors) {
             return "Invalid JSON";
           }
@@ -49,8 +48,8 @@ const CustomDataEditor = ({ user }: { user: User }) => {
         },
       });
       await promise;
-    } finally {
-      setSubmitting(false);
+    } catch (e) {
+      // Error handled by toast
     }
   }
 
