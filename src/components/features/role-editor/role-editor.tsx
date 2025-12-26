@@ -164,7 +164,7 @@ export default function RoleEditor({
                       <Input
                         {...field}
                         autoCapitalize="none"
-                        minLength={8}
+                        minLength={1}
                         disabled={!!role}
                       />
                     </FormControl>
@@ -182,7 +182,7 @@ export default function RoleEditor({
                   <FormItem>
                     <FormLabel>{t("label.display-name")}</FormLabel>
                     <FormControl>
-                      <Input {...field} minLength={8} />
+                      <Input {...field} minLength={1} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
