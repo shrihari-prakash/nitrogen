@@ -11,6 +11,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ChevronDown, Search } from "lucide-react";
+import { useLocation } from "wouter";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -38,6 +39,7 @@ import { useTranslation } from "react-i18next";
 import { useUsers, useUserSearch } from "@/hooks/api/use-users";
 
 const UserList = function () {
+  const [, setLocation] = useLocation();
   const [search, setSearch] = React.useState<string | null>(null);
   const [inputValue, setInputValue] = React.useState("");
 
@@ -218,7 +220,17 @@ const UserList = function () {
                 <TableBody>
                   {table.getRowModel().rows?.length ? (
                     table.getRowModel().rows.map((row) => (
-                      <TableRow key={row.id}>
+                      <TableRow 
+                        key={row.id}
+                        className="cursor-pointer"
+                        onClick={(e) => {
+                          const target = e.target as HTMLElement;
+                          if (target.closest("button") || target.closest("a") || target.closest("input")) {
+                            return;
+                          }
+                          setLocation(`/users/${row.original._id}`);
+                        }}
+                      >
                         {row.getVisibleCells().map((cell) => (
                           <TableCell key={cell.id}>
                             {flexRender(
