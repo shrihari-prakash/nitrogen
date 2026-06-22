@@ -103,6 +103,23 @@
   "label.followers": "Followers",
   "label.credits": "Credits",
   "label.enter-credit-amount": "Enter credit amount",
+  "label.custom-data": "Custom Data",
+  "label.json-payload": "JSON Payload",
+  "label.plan-tier": "Plan Tier",
+  "label.expiration-date": "Expiration Date",
+  "label.subscription-details": "Subscription Details",
+
+  "message.credits-description": "Credits are usually similar to virtual money that you can use for controlling paid features. You can also use this as a reward points system.",
+  "message.custom-data-description": "Store arbitrary JSON metadata for this user. Custom data allows you to attach any custom attributes, preferences, or integration-specific identifiers directly to the user profile.",
+  "message.subscription-description": "Manage the user's active subscription tier and its expiration date.",
+  "message.suspension-description": "Suspended users cannot log in to the application.",
+  "message.verification-description": "Sets a verified flag for application logic.",
+  "message.email-verified-description": "Unverified users cannot login.",
+  "message.restriction-description": "Sets a restricted flag for application logic.",
+  "message.cannot-format-invalid-json": "Cannot format invalid JSON",
+
+  "button.format": "Format",
+  "button.reset": "Reset",
 
   "error.authentication-failed": "Authentication failed. Please try again.",
   "error.update-failed": "Update failed. Please try again.",

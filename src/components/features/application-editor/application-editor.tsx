@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import {
   Form,
   FormControl,
@@ -186,8 +186,8 @@ export default function ApplicationEditor({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
         <Button variant={application ? "outline" : "default"} className="ml-2">
           {application ? (
             <FaPen className="h-4 w-4" />
@@ -198,18 +198,18 @@ export default function ApplicationEditor({
             </>
           )}
         </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-full md:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle>
+      </SheetTrigger>
+      <SheetContent className="sm:max-w-md md:max-w-[500px] overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>
             {application ? "Update Application" : "Create Application"}
-          </DialogTitle>
-        </DialogHeader>
+          </SheetTitle>
+        </SheetHeader>
         <div className="grid gap-4 py-4">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-2 p-4 max-h-[60vh] overflow-y-auto"
+              className="space-y-4"
             >
               <FormField
                 control={form.control}
@@ -351,7 +351,7 @@ export default function ApplicationEditor({
             </form>
           </Form>
         </div>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }

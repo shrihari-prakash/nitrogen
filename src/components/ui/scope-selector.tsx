@@ -18,7 +18,7 @@ import { Checkbox } from "./checkbox";
 import usePermissions from "@/hooks/use-permissions";
 import { Application } from "@/types/application";
 import { Input } from "./input";
-import { FaKey } from "react-icons/fa";
+import { FaKey, FaChevronRight, FaChevronDown } from "react-icons/fa";
 import { Role } from "@/types/role";
 import { Badge } from "./badge";
 import { useTranslation } from "react-i18next";
@@ -88,6 +88,8 @@ const ScopeSelector = ({
   const [selectedScopes, setSelectedScopes] = useState<string[]>(
     initialScopes as string[]
   );
+
+  const [expandedScopes, setExpandedScopes] = useState<string[]>([]);
 
   const [search, setSearch] = useState<string>("");
   const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
@@ -222,6 +224,25 @@ const ScopeSelector = ({
     }
   };
 
+  const toggleExpand = (itemName: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (expandedScopes.includes(itemName)) {
+      setExpandedScopes(expandedScopes.filter((s) => s !== itemName));
+    } else {
+      setExpandedScopes([...expandedScopes, itemName]);
+    }
+  };
+
+  const hasMatchingDescendant = (itemName: string, searchTerm: string): boolean => {
+    const children = scopes.filter((child) => child.parent === itemName);
+    return children.some(
+      (child) =>
+        child.name.toLowerCase().includes(searchTerm) ||
+        hasMatchingDescendant(child.name, searchTerm)
+    );
+  };
+
   const renderTree = (items: Scope[], parent = "*") => {
     return items
       .filter((item) => item.parent === parent)
@@ -231,35 +252,64 @@ const ScopeSelector = ({
           me?.scope as string[],
           scopesObject
         );
+        
+        const children = items.filter((child) => child.parent === item.name);
+        const hasChildren = children.length > 0;
+        
+        const searchTerm = search.toLowerCase();
+        const matchesSearch = searchTerm === "" || item.name.toLowerCase().includes(searchTerm);
+        const childrenMatchSearch = searchTerm !== "" && hasMatchingDescendant(item.name, searchTerm);
+        
+        if (searchTerm !== "" && !matchesSearch && !childrenMatchSearch) {
+          return null;
+        }
+
+        const isExpanded = searchTerm !== "" || expandedScopes.includes(item.name);
+
         return (
-          <div key={item.name}>
-            {search !== "" &&
-              !item.name.includes(search.toLowerCase()) ? null : (
-              <Label className="flex items-center my-2 space-x-3 px-3 py-2">
-                <Checkbox
-                  disabled={!scopeAllowed || isUserMe()}
-                  checked={selectedScopes.includes(item.name)}
-                  onCheckedChange={() => handleToggle(item.name)}
-                />
-                <span className="mx-2">
-                  <div className="mb-2 text-normal">
+          <div key={item.name} className="flex flex-col mt-1">
+            <div className={`flex items-start rounded-md transition-colors ${matchesSearch ? "hover:bg-secondary/40" : "opacity-50"}`}>
+              {hasChildren ? (
+                <button
+                  onClick={(e) => toggleExpand(item.name, e)}
+                  className="p-2 mt-1 mr-1 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {isExpanded ? <FaChevronDown className="h-3 w-3" /> : <FaChevronRight className="h-3 w-3" />}
+                </button>
+              ) : (
+                <div className="w-7 mr-1 shrink-0" />
+              )}
+              <Label className="flex-1 flex items-start py-2 pr-3 cursor-pointer">
+                <div className="mt-1 flex items-center justify-center">
+                  <Checkbox
+                    disabled={!scopeAllowed || isUserMe()}
+                    checked={selectedScopes.includes(item.name)}
+                    onCheckedChange={() => handleToggle(item.name)}
+                  />
+                </div>
+                <span className="mx-3 flex-1">
+                  <div className="mb-1 text-sm font-medium leading-none">
                     {item.name}
                     {role &&
                       !selectedScopes.includes(item.name) &&
                       isPermissionAllowedByRole(item.name, role) &&
                       role !== "super_admin" ? (
-                      <Badge variant="secondary" className="ml-2">
+                      <Badge variant="secondary" className="ml-2 font-normal text-xs">
                         {t("message.allowed-by-role")}
                       </Badge>
                     ) : null}
                   </div>
-                  <div className="opacity-40 font-normal">
+                  <div className="text-sm text-muted-foreground font-normal leading-snug">
                     {item.adminDescription || item.description}
                   </div>
                 </span>
               </Label>
+            </div>
+            {isExpanded && hasChildren && (
+              <div className="ml-4 pl-3 border-l-2 border-border/50">
+                {renderTree(items, item.name)}
+              </div>
             )}
-            <div className="mx-8">{renderTree(items, item.name)}</div>
           </div>
         );
       });
@@ -308,7 +358,7 @@ const ScopeSelector = ({
         </DialogHeader>
         <div
           className={
-            "grid overflow-auto flex-1" + (isUserMe() ? "opacity-50" : "")
+            "grid overflow-auto flex-1 " + (isUserMe() ? "opacity-50" : "")
           }
         >
           {scopes && renderTree(scopes)}

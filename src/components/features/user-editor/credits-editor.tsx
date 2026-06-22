@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -88,14 +89,25 @@ export default function CreditsEditor({
 
   return (
     <div className="grid gap-4">
+      <div className="flex justify-between items-center pb-4 mb-2 border-b">
+        <div>
+          <h3 className="font-medium text-sm text-muted-foreground">{t("label.credits")} Balance</h3>
+          <p className="text-2xl font-semibold">{user.credits || 0}</p>
+        </div>
+      </div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
             name="value"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("label.credits")}</FormLabel>
+                <FormLabel>
+                  {t("label.credits")}
+                </FormLabel>
+                <FormDescription>
+                  {t("message.credits-description")}
+                </FormDescription>
                 <FormControl>
                   <Input
                     {...field}
@@ -104,17 +116,43 @@ export default function CreditsEditor({
                     placeholder={t("label.enter-credit-amount")}
                   />
                 </FormControl>
+                <div className="flex gap-2 pt-2">
+                  {[10, 50, 100, 500].map((amount) => (
+                    <Button
+                      key={amount}
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={() => {
+                        const current = parseInt(form.getValues("value") as any) || 0;
+                        form.setValue("value", current + amount, { shouldValidate: true, shouldDirty: true });
+                      }}
+                    >
+                      +{amount}
+                    </Button>
+                  ))}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-xs ml-auto"
+                    onClick={() => {
+                      form.setValue("value", 0, { shouldValidate: true, shouldDirty: true });
+                    }}
+                  >
+                    {t("button.reset")}
+                  </Button>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <SheetFooter className="flex-col sm:justify-center">
+          <SheetFooter className="mt-4">
             <Button
               type="submit"
               disabled={submitting}
-              className="mb-2 md:mb-0"
-              variant="outline"
             >
               <PiCoinVertical className="h-4 w-4 mr-2" />
               {submitting ? t("button.updating") : t("button.update-credits")}

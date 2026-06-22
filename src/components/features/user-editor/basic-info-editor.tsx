@@ -195,7 +195,7 @@ export default function BasicInfoEditor({
   return (
     <div className="grid gap-4">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
             name="_id"
@@ -204,13 +204,14 @@ export default function BasicInfoEditor({
                 <FormLabel>{t("label.id")}</FormLabel>
                 <div className="flex">
                   <FormControl>
-                    <Input disabled {...field} />
+                    <Input disabled {...field} className="bg-muted" />
                   </FormControl>
                   <Button
                     onClick={copyId}
                     type="button"
                     className="ml-2"
                     variant="outline"
+                    title="Copy ID"
                   >
                     <FaCopy className="h-4 w-4" />
                   </Button>
@@ -219,6 +220,7 @@ export default function BasicInfoEditor({
               </FormItem>
             )}
           />
+          
           <FormField
             control={form.control}
             name="username"
@@ -236,6 +238,72 @@ export default function BasicInfoEditor({
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("label.first-name")}</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    disabled={!shouldAllowFieldEdit("firstName")}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="middleName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("label.middle-name")}</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    disabled={!shouldAllowFieldEdit("middleName")}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("label.last-name")}</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    disabled={!shouldAllowFieldEdit("lastName")}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("label.email")}</FormLabel>
+                <FormControl>
+                  <Input {...field} disabled={!shouldAllowFieldEdit("email")} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
           <FormField
             control={form.control}
             name="role"
@@ -266,88 +334,7 @@ export default function BasicInfoEditor({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="firstName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("label.first-name")}</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    disabled={!shouldAllowFieldEdit("firstName")}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="middleName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("label.middle-name")}</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    disabled={!shouldAllowFieldEdit("middleName")}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="lastName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("label.last-name")}</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    disabled={!shouldAllowFieldEdit("lastName")}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("label.email")}</FormLabel>
-                <FormControl>
-                  <Input {...field} disabled={!shouldAllowFieldEdit("email")} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="emailVerified"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                <FormControl>
-                  <Checkbox
-                    defaultChecked={field.value}
-                    onCheckedChange={field.onChange}
-                    disabled={!shouldAllowFieldEdit("emailVerified")}
-                  />
-                </FormControl>
-                <div className="space-y-1 leading-none">
-                  <FormLabel>{t("label.email-verified")}</FormLabel>
-                  <FormDescription>
-                    Unverified users cannot login.
-                  </FormDescription>
-                </div>
-              </FormItem>
-            )}
-          />
+
           <FormField
             control={form.control}
             name="password"
@@ -364,6 +351,7 @@ export default function BasicInfoEditor({
               </FormItem>
             )}
           />
+          
           <FormField
             control={form.control}
             name="country"
@@ -395,6 +383,7 @@ export default function BasicInfoEditor({
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="organization"
@@ -411,15 +400,37 @@ export default function BasicInfoEditor({
               </FormItem>
             )}
           />
-          <SheetFooter className="flex-col sm:justify-center">
+          
+          <FormField
+            control={form.control}
+            name="emailVerified"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 shadow-sm bg-card h-[72px]">
+                <div className="space-y-1 leading-none pr-4">
+                  <FormLabel className="text-base font-medium">{t("label.email-verified")}</FormLabel>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {t("message.email-verified-description")}
+                  </p>
+                </div>
+                <FormControl>
+                  <Checkbox
+                    defaultChecked={field.value}
+                    onCheckedChange={field.onChange}
+                    disabled={!shouldAllowFieldEdit("emailVerified")}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <SheetFooter className="mt-6 flex justify-end">
             <Button
               type="submit"
               disabled={!isPermissionAllowed("admin:profile:write")}
-              className="mb-2 md:mb-0"
-              variant="outline"
+              className="w-full sm:w-auto"
             >
               <FaFloppyDisk className="h-4 w-4 mr-2" />
-              {submitting ? "Saving..." : "Save Basic Info"}
+              {submitting ? t("button.saving") : t("button.save-basic-info")}
             </Button>
           </SheetFooter>
         </form>

@@ -8,16 +8,28 @@ import { User } from "@/types/user";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { FaFloppyDisk } from "react-icons/fa6";
+import { FaFloppyDisk, FaCheck, FaWandMagicSparkles } from "react-icons/fa6";
 import { useUpdateCustomData } from "@/hooks/api/use-user-mutations";
 
 const CustomDataEditor = ({ user }: { user: User }) => {
   const [customData, setCustomData] = useState(
     user.customData ? JSON.stringify(user.customData, null, 4) : `{}`
   );
+  const [isFormatting, setIsFormatting] = useState(false);
   const { mutateAsync: updateCustomData, isPending: submitting } = useUpdateCustomData();
 
   const { t } = useTranslation();
+
+  const formatJson = () => {
+    try {
+      const parsed = JSON.parse(customData);
+      setCustomData(JSON.stringify(parsed, null, 4));
+      setIsFormatting(true);
+      setTimeout(() => setIsFormatting(false), 1000);
+    } catch (e) {
+      toast.error(t("message.cannot-format-invalid-json"));
+    }
+  };
 
   async function onSubmit(formValues: any) {
     console.log(formValues);
@@ -54,26 +66,40 @@ const CustomDataEditor = ({ user }: { user: User }) => {
   }
 
   return (
-    <>
-      <Editor
-        value={customData}
-        onValueChange={(code) => setCustomData(code)}
-        highlight={(code) => highlight(code, languages.json)}
-        padding={10}
-        className="text-sm font-mono rounded-lg [&>*]:rounded-lg border overflow-hidden"
-      />
-      <div className="flex sm:flex-row sm:justify-center sm:space-x-2 flex-col mt-4">
+    <div className="grid gap-4">
+      <div>
+        <p className="text-sm text-muted-foreground">
+          {t("message.custom-data-description")}
+        </p>
+      </div>
+
+      <div className="relative group rounded-md border bg-muted/20">
+        <Editor
+          value={customData}
+          onValueChange={(code) => setCustomData(code)}
+          highlight={(code) => highlight(code, languages.json)}
+          padding={16}
+          className="text-sm font-mono min-h-[200px]"
+        />
+        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+          <Button size="sm" variant="outline" onClick={formatJson} className="h-7 text-xs">
+            {isFormatting ? <FaCheck className="w-3 h-3 mr-1" /> : <FaWandMagicSparkles className="w-3 h-3 mr-1" />}
+            {t("button.format")}
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex justify-end">
         <Button
           type="submit"
-          className="mb-2 md:mb-0"
-          variant="outline"
           onClick={onSubmit}
+          disabled={submitting}
         >
           <FaFloppyDisk className="h-4 w-4 mr-2" />
           {submitting ? t("button.saving") : t("button.save-custom-data")}
         </Button>
       </div>
-    </>
+    </div>
   );
 };
 

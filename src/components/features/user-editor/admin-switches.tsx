@@ -98,42 +98,51 @@ export default function AdminSwitches({
   };
 
   return (
-    <>
-      <div className="space-y-4 my-2">
-        <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-          <div className="space-y-0.5">
-            <Label className="text-right">{t("label.verified")}</Label>
-          </div>
-          <Switch
-            checked={verified}
-            onCheckedChange={onVerifyChange}
-            disabled={!isPermissionAllowed("admin:profile:verifications:write")}
-          />
+    <div className="space-y-4 my-2 mb-6">
+      <div className="flex flex-row items-center justify-between rounded-lg border p-4 shadow-sm bg-card">
+        <div className="space-y-1 pr-4">
+          <Label className="text-base font-medium">{t("label.suspended")}</Label>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {t("message.suspension-description")}
+          </p>
         </div>
-        <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-          <div className="space-y-0.5">
-            <Label className="text-right">{t("label.suspended")}</Label>
-          </div>
-          <Switch
-            checked={suspended}
-            disabled={
-              ((me as User)._id as string) === user._id ||
-              !isPermissionAllowed("admin:profile:ban:write")
-            }
-            onCheckedChange={onSuspendChange}
-          />
-        </div>
-        <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-          <div className="space-y-0.5">
-            <Label className="text-right">{t("label.restricted")}</Label>
-          </div>
-          <Switch
-            checked={restricted}
-            onCheckedChange={onRestrictChange}
-            disabled={!isPermissionAllowed("admin:profile:restrict:write")}
-          />
-        </div>
+        <Switch
+          checked={suspended}
+          disabled={
+            ((me as User)._id as string) === user._id ||
+            !isPermissionAllowed("admin:profile:ban:write")
+          }
+          onCheckedChange={onSuspendChange}
+        />
       </div>
-    </>
+
+      <div className="flex flex-row items-center justify-between rounded-lg border p-4 shadow-sm bg-card">
+        <div className="space-y-1 pr-4">
+          <Label className="text-base font-medium">{t("label.verified")}</Label>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {t("message.verification-description")}
+          </p>
+        </div>
+        <Switch
+          checked={verified}
+          onCheckedChange={onVerifyChange}
+          disabled={!isPermissionAllowed("admin:profile:verifications:write")}
+        />
+      </div>
+
+      <div className="flex flex-row items-center justify-between rounded-lg border p-4 shadow-sm bg-card">
+        <div className="space-y-1 pr-4">
+          <Label className="text-base font-medium">{t("label.restricted")}</Label>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {t("message.restriction-description")}
+          </p>
+        </div>
+        <Switch
+          checked={restricted}
+          onCheckedChange={onRestrictChange}
+          disabled={!isPermissionAllowed("admin:profile:restrict:write")}
+        />
+      </div>
+    </div>
   );
 }
