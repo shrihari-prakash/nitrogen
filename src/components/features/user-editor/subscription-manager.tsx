@@ -23,7 +23,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
@@ -117,16 +116,15 @@ export default function SubscriptionManager({
   };
 
   return (
-    <div className="grid gap-4">
+    <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <div className="md:flex">
             <FormField
               control={form.control}
               name="tier"
               render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>{t("label.plan-tier")}</FormLabel>
+                <FormItem className="flex flex-col w-full md:w-1/2 mr-0 mb-2 md:mr-2 md:mb-0">
                   <Select
                     defaultValue={field.value}
                     onValueChange={field.onChange}
@@ -150,7 +148,6 @@ export default function SubscriptionManager({
                       </SelectGroup>
                     </SelectContent>
                   </Select>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -158,16 +155,15 @@ export default function SubscriptionManager({
               control={form.control}
               name="expiry"
               render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>{t("label.expiration-date")}</FormLabel>
+                <FormItem className="flex flex-col w-full md:w-1/2 mr-0 mb-2 md:mr-2 md:mb-0">
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
                           variant={"outline"}
                           className={
-                            "pl-3 text-left font-normal " +
-                            (!field.value ? "text-muted-foreground" : "")
+                            "pl-3 text-left font-normal" +
+                            (!field.value && "text-muted-foreground")
                           }
                         >
                           {field.value ? (
@@ -189,7 +185,7 @@ export default function SubscriptionManager({
                         endMonth={
                           new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000)
                         } // ~5 years
-                        selected={field.value ? new Date(field.value) : undefined}
+                        selected={field.value}
                         onSelect={field.onChange}
                         disabled={(date) =>
                           date < new Date(Date.now() - 86400000)
@@ -202,23 +198,21 @@ export default function SubscriptionManager({
                 </FormItem>
               )}
             />
-          </div>
-          
-          <div className="flex justify-end pt-2">
             <Button
               type="submit"
+              variant="outline"
+              className="w-full md:w-fit"
               disabled={submitting}
             >
               {submitting ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                <Check className="h-4 w-4 mr-2" />
+                <Check className="h-4 w-4" />
               )}
-              {t("button.save-changes")}
             </Button>
           </div>
         </form>
       </Form>
-    </div>
+    </>
   );
 }
