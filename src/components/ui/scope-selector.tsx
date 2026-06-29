@@ -329,7 +329,7 @@ const ScopeSelector = ({
           </Button>
         </div>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[800px] max-h-full flex flex-col px-1">
+      <DialogContent className="sm:max-w-[800px] max-h-full flex flex-col px-1 sm:px-4">
         <DialogHeader>
           <DialogTitle className="px-6">
             {t("heading.managing-permissions-for", {
