@@ -123,5 +123,12 @@
 
   "error.authentication-failed": "Authentication failed. Please try again.",
   "error.update-failed": "Update failed. Please try again.",
-  "error.load-failed": "Failed to load data. Please try again."
+  "error.load-failed": "Failed to load data. Please try again.",
+
+  "message.authenticating-description": "Please wait while we secure your session...",
+  "message.authentication-failed-description": "We encountered an issue verifying your credentials. Please sign in again.",
+  "message.no-users-found": "No users found matching your criteria.",
+  "message.no-applications-found": "No applications found matching your criteria.",
+  "message.no-roles-found": "No roles found matching your criteria.",
+  "button.sign-in-again": "Sign In Again"
 }

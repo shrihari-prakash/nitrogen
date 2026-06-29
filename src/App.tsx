@@ -26,7 +26,7 @@ import UsersContext, {
 import RolesContext from "./context/roles-context";
 import SettingsContext from "./context/settings-context";
 import MeContext from "./context/me-context";
-import { KeyRound, ShieldOff } from "lucide-react";
+import { KeyRound, ShieldOff, LogIn } from "lucide-react";
 import { BsFillBoxFill, BsFillShieldLockFill } from "react-icons/bs";
 import ScopesContext from "./context/scopes-context";
 import ApplicationList from "./components/features/application-list/application-list";
@@ -145,9 +145,27 @@ function App() {
   if (authError) {
     return (
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <div className="h-full w-full flex items-center justify-center">
-          <ShieldOff className="mx-4" />
-          {t("error.authentication-failed")}
+        <div className="min-h-screen w-full bg-background flex items-center justify-center p-4 select-none">
+          <div className="flex flex-col items-center p-8 rounded-lg bg-card border border-border shadow-sm max-w-sm w-full text-center animate-in fade-in-50 duration-200">
+            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-destructive/10 border border-destructive/20 text-destructive mb-4">
+              <ShieldOff className="w-6 h-6" />
+            </div>
+
+            <h2 className="text-lg font-semibold tracking-tight text-foreground mb-1">
+              {t("error.authentication-failed")}
+            </h2>
+            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+              {t("message.authentication-failed-description")}
+            </p>
+
+            <button
+              onClick={redirectToLogin}
+              className="w-full py-2 px-4 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 font-medium text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <LogIn className="w-4 h-4" />
+              <span>{t("button.sign-in-again")}</span>
+            </button>
+          </div>
         </div>
       </ThemeProvider>
     );
@@ -156,9 +174,19 @@ function App() {
   if (!me) {
     return (
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <div className="h-full w-full flex items-center justify-center">
-          <KeyRound className="mx-4" />
-          {t("message.authenticating")}
+        <div className="min-h-screen w-full bg-background flex items-center justify-center p-4 select-none">
+          <div className="flex flex-col items-center p-8 rounded-lg bg-card border border-border shadow-sm max-w-sm w-full text-center animate-in fade-in-50 duration-200">
+            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 border border-primary/20 text-primary mb-4">
+              <KeyRound className="w-6 h-6 animate-pulse" />
+            </div>
+
+            <h2 className="text-lg font-semibold tracking-tight text-foreground mb-1">
+              {t("message.authenticating")}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {t("message.authenticating-description")}
+            </p>
+          </div>
         </div>
       </ThemeProvider>
     );

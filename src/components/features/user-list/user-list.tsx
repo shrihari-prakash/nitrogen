@@ -10,7 +10,8 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown, Search } from "lucide-react";
+import { ChevronDown, Search, Users } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useLocation } from "wouter";
 
 import { Button } from "@/components/ui/button";
@@ -245,9 +246,13 @@ const UserList = function () {
                     <TableRow>
                       <TableCell
                         colSpan={userListColumns.length}
-                        className="h-24 text-center"
+                        className="h-48 text-center p-0"
                       >
-                        {t("message.nothing-to-show")}
+                        <EmptyState
+                          title={t("message.nothing-to-show")}
+                          description={t("message.no-users-found")}
+                          icon={<Users className="w-5 h-5 text-muted-foreground" />}
+                        />
                       </TableCell>
                     </TableRow>
                   )}

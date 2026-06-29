@@ -9,7 +9,8 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ShieldAlert } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -176,9 +177,13 @@ const RoleList = function () {
                 <TableRow>
                   <TableCell
                     colSpan={roleListColumns.length}
-                    className="h-24 text-center"
+                    className="h-48 text-center p-0"
                   >
-                    Nothing to show.
+                    <EmptyState
+                      title={t("message.nothing-to-show")}
+                      description={t("message.no-roles-found")}
+                      icon={<ShieldAlert className="w-5 h-5 text-muted-foreground" />}
+                    />
                   </TableCell>
                 </TableRow>
               )}
