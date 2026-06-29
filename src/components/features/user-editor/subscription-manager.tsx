@@ -156,7 +156,7 @@ export default function SubscriptionManager({
               name="expiry"
               render={({ field }) => (
                 <FormItem className="flex flex-col w-full md:w-1/2 mr-0 mb-2 md:mr-2 md:mb-0">
-                  <Popover>
+                  <Popover modal={true}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button

@@ -252,14 +252,14 @@ const ScopeSelector = ({
           me?.scope as string[],
           scopesObject
         );
-        
+
         const children = items.filter((child) => child.parent === item.name);
         const hasChildren = children.length > 0;
-        
+
         const searchTerm = search.toLowerCase();
         const matchesSearch = searchTerm === "" || item.name.toLowerCase().includes(searchTerm);
         const childrenMatchSearch = searchTerm !== "" && hasMatchingDescendant(item.name, searchTerm);
-        
+
         if (searchTerm !== "" && !matchesSearch && !childrenMatchSearch) {
           return null;
         }
@@ -329,9 +329,9 @@ const ScopeSelector = ({
           </Button>
         </div>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[800px] max-h-[90vh] flex flex-col">
+      <DialogContent className="sm:max-w-[800px] max-h-full flex flex-col px-1">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="px-6">
             {t("heading.managing-permissions-for", {
               entity:
                 "firstName" in entity
