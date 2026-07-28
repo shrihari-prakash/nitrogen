@@ -58,7 +58,7 @@ function App() {
   const [users, setUsers] = useState([]);
   const [usersSearchResults, setUsersSearchResults] = useState(null);
 
-  const { data: settings, refetch: refreshSettings } = useSettings();
+  const { data: settings, refetch: refreshSettings } = useSettings(!!me);
   const { data: countries, refetch: refreshCountries } = useCountries();
   const { data: roles, refetch: refreshRoles } = useRoles(!!me);
   const { data: scopes, refetch: refreshScopes } = useScopes(!!me);
@@ -66,6 +66,12 @@ function App() {
   const { data: subscriptionTiers, refetch: refreshSubscriptionTiers } = useSubscriptionTiers(!!me);
 
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (settings && settings["system.app-name"]) {
+      document.title = settings["system.app-name"];
+    }
+  }, [settings]);
 
 
   const redirectToLogin = () => {

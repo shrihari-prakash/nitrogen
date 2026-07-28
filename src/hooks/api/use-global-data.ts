@@ -2,13 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/service/axios";
 import { Scope } from "@/components/ui/scope-selector";
 
-export const useSettings = () => {
+export const useSettings = (enabled: boolean = true) => {
   return useQuery({
     queryKey: ["settings"],
     queryFn: async () => {
       const response = await axiosInstance.get("/system/settings");
       return response.data.data.settings;
     },
+    enabled,
   });
 };
 
