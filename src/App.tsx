@@ -69,7 +69,7 @@ function App() {
 
   useEffect(() => {
     if (settings && settings["system.app-name"]) {
-      document.title = settings["system.app-name"];
+      document.title = `${settings["system.app-name"]} - ${t("word.admin")}`;
     }
   }, [settings]);
 
