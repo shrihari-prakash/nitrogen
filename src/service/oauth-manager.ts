@@ -1,5 +1,6 @@
 import Cookies from "js-cookie";
 import axiosInstance from "./axios";
+import { liquid } from "./liquid";
 
 class OAuthManager {
   tokenEndpoint = `${import.meta.env.VITE_LIQUID_HOST}/oauth/token`;
@@ -78,14 +79,16 @@ class OAuthManager {
 
   async me() {
     try {
-      const endpoint = `${import.meta.env.VITE_LIQUID_HOST}/user/me`;
-      const token = await this.getAccessToken();
-      const response = await axiosInstance.get(endpoint, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      return response.data.data.user;
+      const response = await liquid.user.getMe();
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error("Unauthorized");
+        }
+        return false;
+      }
+      return (response.data as any)?.data?.user;
     } catch (error: any) {
-      if (error?.response?.status === 401) {
+      if (error?.message === "Unauthorized" || error?.status === 401) {
         throw error;
       } else {
         return false;

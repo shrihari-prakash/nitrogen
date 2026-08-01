@@ -1,13 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axiosInstance from "@/service/axios";
+import { liquid } from "@/service/liquid";
 
 export const useLogout = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      const response = await axiosInstance.get("/user/logout", {
-        withCredentials: true,
-      });
+      const response = await liquid.user.logout();
       return response.data;
     },
     onSuccess: () => {

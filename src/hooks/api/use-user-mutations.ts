@@ -1,14 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axiosInstance from "@/service/axios";
+import { liquid } from "@/service/liquid";
 
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: any) => {
-      const response = await axiosInstance.patch(
-        "/user/admin-api/update",
-        data
-      );
+      const response = await liquid.admin.users.update(data);
       return response.data;
     },
     onSuccess: (_data, variables) => {
@@ -22,10 +19,7 @@ export const useUpdateSubscription = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: any) => {
-      const response = await axiosInstance.post(
-        "/user/admin-api/subscription",
-        data
-      );
+      const response = await liquid.admin.users.setSubscription(data);
       return response.data;
     },
     onSuccess: (_data, variables) => {
@@ -39,10 +33,7 @@ export const useUpdateCustomData = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: any) => {
-      const response = await axiosInstance.put(
-        "/user/admin-api/custom-data",
-        data
-      );
+      const response = await liquid.admin.users.setCustomData(data);
       return response.data;
     },
     onSuccess: (_data, variables) => {
@@ -56,10 +47,7 @@ export const useUpdateCredits = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: any) => {
-      const response = await axiosInstance.post(
-        "/user/admin-api/credits",
-        data
-      );
+      const response = await liquid.admin.users.setCredits(data);
       return response.data;
     },
     onSuccess: (_data, variables) => {
@@ -73,7 +61,7 @@ export const useVerifyUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: any) => {
-      const response = await axiosInstance.post("/user/admin-api/verify", data);
+      const response = await liquid.admin.users.verify(data);
       return response.data;
     },
     onSuccess: (_data, variables) => {
@@ -87,7 +75,7 @@ export const useBanUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: any) => {
-      const response = await axiosInstance.post("/user/admin-api/ban", data);
+      const response = await liquid.admin.users.ban(data);
       return response.data;
     },
     onSuccess: (_data, variables) => {
@@ -101,10 +89,7 @@ export const useRestrictUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: any) => {
-      const response = await axiosInstance.post(
-        "/user/admin-api/restrict",
-        data
-      );
+      const response = await liquid.admin.users.restrict(data);
       return response.data;
     },
     onSuccess: (_data, variables) => {
@@ -118,7 +103,7 @@ export const useUpdateAccess = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: any) => {
-      const response = await axiosInstance.post("/user/admin-api/access", data);
+      const response = await liquid.admin.users.setAccess(data);
       return response.data;
     },
     onSuccess: (_data, variables) => {

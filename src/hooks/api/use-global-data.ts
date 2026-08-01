@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import axiosInstance from "@/service/axios";
+import { liquid } from "@/service/liquid";
 import { Scope } from "@/components/ui/scope-selector";
 
 export const useSettings = (enabled: boolean = true) => {
   return useQuery({
     queryKey: ["settings"],
     queryFn: async () => {
-      const response = await axiosInstance.get("/system/settings");
-      return response.data.data.settings;
+      const response = await liquid.system.getSettings();
+      return (response.data as any)?.data?.settings;
     },
     enabled,
   });
@@ -17,8 +17,8 @@ export const useCountries = () => {
   return useQuery({
     queryKey: ["countries"],
     queryFn: async () => {
-      const response = await axiosInstance.get("/system/countries-insecure");
-      return response.data.data.countries;
+      const response = await liquid.system.getCountriesInsecure();
+      return (response.data as any)?.data?.countries;
     },
   });
 };
@@ -27,8 +27,8 @@ export const useRoles = (enabled: boolean = true) => {
   return useQuery({
     queryKey: ["roles"],
     queryFn: async () => {
-      const response = await axiosInstance.get("/roles/list");
-      return response.data.data.roles;
+      const response = await liquid.roles.list();
+      return (response.data as any)?.data?.roles;
     },
     enabled,
   });
@@ -38,8 +38,8 @@ export const useScopes = (enabled: boolean = true) => {
   return useQuery({
     queryKey: ["scopes"],
     queryFn: async () => {
-      const response = await axiosInstance.get("/user/scopes");
-      const scopesObject = response.data.data.scopes;
+      const response = await liquid.user.getScopes();
+      const scopesObject = (response.data as any)?.data?.scopes || {};
       return Object.keys(scopesObject).map(
         (key) => scopesObject[key]
       ) as Scope[];
@@ -52,10 +52,8 @@ export const useEditableFields = (enabled: boolean = true) => {
   return useQuery({
     queryKey: ["editableFields"],
     queryFn: async () => {
-      const response = await axiosInstance.get(
-        "/user/admin-api/editable-fields"
-      );
-      return response.data.data.editableFields;
+      const response = await liquid.admin.users.getEditableFields();
+      return (response.data as any)?.data?.editableFields;
     },
     enabled,
   });
@@ -65,10 +63,8 @@ export const useSubscriptionTiers = (enabled: boolean = true) => {
   return useQuery({
     queryKey: ["subscriptionTiers"],
     queryFn: async () => {
-      const response = await axiosInstance.get(
-        "/user/admin-api/subscription-tiers"
-      );
-      return response.data.data.subscriptionTiers;
+      const response = await liquid.admin.users.getSubscriptionTiers();
+      return (response.data as any)?.data?.subscriptionTiers;
     },
     enabled,
   });
