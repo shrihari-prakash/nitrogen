@@ -173,7 +173,7 @@ export default function ApplicationEditor({
     if (!application) {
       const result = await create(formValues);
       if (onCreate) {
-        onCreate(result.data.data.client);
+        onCreate(result.data.client);
       }
     } else {
       await update(formValues);

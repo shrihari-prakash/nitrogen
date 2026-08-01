@@ -86,7 +86,7 @@ class OAuthManager {
         }
         return false;
       }
-      return (response.data as any)?.data?.user;
+      return (response.data as any)?.user;
     } catch (error: any) {
       if (error?.message === "Unauthorized" || error?.status === 401) {
         throw error;

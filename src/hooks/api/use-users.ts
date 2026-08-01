@@ -16,7 +16,7 @@ export const useUsers = (limit: number = 100) => {
         params.offset = pageParam;
       }
       const response = await liquid.admin.users.list(params);
-      return (response.data as any)?.data;
+      return response.data as any;
     },
     getNextPageParam: (lastPage) => {
       if (!lastPage?.users || lastPage.users.length < limit) return undefined;
@@ -32,7 +32,7 @@ export const useUserSearch = (query: string | null) => {
     queryFn: async () => {
       if (!query) return null;
       const response = await liquid.admin.users.search({ query });
-      return (response.data as any)?.data?.results as User[];
+      return (response.data as any)?.results as User[];
     },
     enabled: !!query && query.length > 0,
   });
@@ -59,7 +59,7 @@ export const useUser = (id: string) => {
       const response = await liquid.admin.users.retrieveInfo({
         targets: [id],
       });
-      return (response.data as any)?.data?.users?.[0];
+      return (response.data as any)?.users?.[0];
     },
     enabled: !!id,
   });
@@ -72,7 +72,7 @@ export const useLoginHistory = (userId: string) => {
       const response = await liquid.admin.users.getLoginHistory({
         target: userId,
       });
-      return (response.data as any)?.data?.records;
+      return (response.data as any)?.records;
     },
     enabled: !!userId,
   });

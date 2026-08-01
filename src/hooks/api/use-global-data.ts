@@ -7,7 +7,7 @@ export const useSettings = (enabled: boolean = true) => {
     queryKey: ["settings"],
     queryFn: async () => {
       const response = await liquid.system.getSettings();
-      return (response.data as any)?.data?.settings;
+      return (response.data as any)?.settings;
     },
     enabled,
   });
@@ -18,7 +18,7 @@ export const useCountries = () => {
     queryKey: ["countries"],
     queryFn: async () => {
       const response = await liquid.system.getCountriesInsecure();
-      return (response.data as any)?.data?.countries;
+      return (response.data as any)?.countries;
     },
   });
 };
@@ -28,7 +28,7 @@ export const useRoles = (enabled: boolean = true) => {
     queryKey: ["roles"],
     queryFn: async () => {
       const response = await liquid.roles.list();
-      return (response.data as any)?.data?.roles;
+      return (response.data as any)?.roles;
     },
     enabled,
   });
@@ -39,7 +39,7 @@ export const useScopes = (enabled: boolean = true) => {
     queryKey: ["scopes"],
     queryFn: async () => {
       const response = await liquid.user.getScopes();
-      const scopesObject = (response.data as any)?.data?.scopes || {};
+      const scopesObject = (response.data as any)?.scopes || {};
       return Object.keys(scopesObject).map(
         (key) => scopesObject[key]
       ) as Scope[];
@@ -53,7 +53,7 @@ export const useEditableFields = (enabled: boolean = true) => {
     queryKey: ["editableFields"],
     queryFn: async () => {
       const response = await liquid.admin.users.getEditableFields();
-      return (response.data as any)?.data?.editableFields;
+      return (response.data as any)?.editableFields;
     },
     enabled,
   });
@@ -64,7 +64,7 @@ export const useSubscriptionTiers = (enabled: boolean = true) => {
     queryKey: ["subscriptionTiers"],
     queryFn: async () => {
       const response = await liquid.admin.users.getSubscriptionTiers();
-      return (response.data as any)?.data?.subscriptionTiers;
+      return (response.data as any)?.subscriptionTiers;
     },
     enabled,
   });

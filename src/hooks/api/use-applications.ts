@@ -7,7 +7,7 @@ export const useApplications = () => {
     queryKey: ["applications"],
     queryFn: async () => {
       const response = await liquid.admin.oauth.listClients({ limit: 50 });
-      return (response.data as any)?.data?.clients as Application[];
+      return (response.data as any)?.clients as Application[];
     },
   });
 };

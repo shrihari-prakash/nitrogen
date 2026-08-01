@@ -114,7 +114,7 @@ export default function RoleEditor({
     if (!role) {
       const result = await create(formValues);
       if (onCreate) {
-        onCreate(result.data.data.role);
+        onCreate(result.data.role);
       }
     } else {
       await update(formValues);

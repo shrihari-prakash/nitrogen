@@ -7,7 +7,7 @@ export const useRolesList = () => {
     queryKey: ["roles-list"],
     queryFn: async () => {
       const response = await liquid.roles.list({ limit: 50 });
-      const apiRoles = ((response.data as any)?.data?.roles || []) as Role[];
+      const apiRoles = ((response.data as any)?.roles || []) as Role[];
       return apiRoles.sort((a, b) => a.ranking - b.ranking);
     },
   });
