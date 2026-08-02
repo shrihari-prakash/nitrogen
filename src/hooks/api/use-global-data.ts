@@ -38,7 +38,7 @@ export const useScopes = (enabled: boolean = true) => {
   return useQuery({
     queryKey: ["scopes"],
     queryFn: async () => {
-      const response = await liquid.user.getScopes();
+      const response = await liquid.delegated.getScopes();
       const scopesObject = (response.data as any)?.scopes || {};
       return Object.keys(scopesObject).map(
         (key) => scopesObject[key]
