@@ -79,7 +79,7 @@ class OAuthManager {
 
   async me() {
     try {
-      const response = await liquid.delegated.getMe();
+      const response = await liquid.users.getMe();
       if (!response.ok) {
         if (response.status === 401) {
           throw new Error("Unauthorized");

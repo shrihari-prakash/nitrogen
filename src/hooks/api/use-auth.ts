@@ -5,7 +5,7 @@ export const useLogout = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      const response = await liquid.delegated.logout();
+      const response = await liquid.users.logout();
       return response.data;
     },
     onSuccess: () => {
