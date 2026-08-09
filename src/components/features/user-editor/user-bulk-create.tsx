@@ -305,11 +305,10 @@ export const UserBulkCreate = () => {
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center gap-3 ${
-                isDragging
-                  ? "border-primary bg-primary/10 scale-[0.99]"
-                  : "border-border/70 hover:border-primary/50 hover:bg-accent/40 bg-muted/20"
-              }`}
+              className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center gap-3 ${isDragging
+                ? "border-primary bg-primary/10 scale-[0.99]"
+                : "border-border/70 hover:border-primary/50 hover:bg-accent/40 bg-muted/20"
+                }`}
             >
               <input
                 ref={fileInputRef}
@@ -429,33 +428,30 @@ export const UserBulkCreate = () => {
                   <button
                     type="button"
                     onClick={() => setFilterTab("all")}
-                    className={`flex-1 sm:flex-none text-center px-3 py-1 text-xs font-semibold rounded-lg transition-all whitespace-nowrap ${
-                      filterTab === "all"
-                        ? "bg-background text-foreground shadow-xs"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`flex-1 sm:flex-none text-center px-3 py-1 text-xs font-semibold rounded-lg transition-all whitespace-nowrap ${filterTab === "all"
+                      ? "bg-background text-foreground shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                      }`}
                   >
                     {t("label.all-rows", { count: rows.length })}
                   </button>
                   <button
                     type="button"
                     onClick={() => setFilterTab("valid")}
-                    className={`flex-1 sm:flex-none text-center px-3 py-1 text-xs font-semibold rounded-lg transition-all whitespace-nowrap ${
-                      filterTab === "valid"
-                        ? "bg-background text-foreground shadow-xs"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`flex-1 sm:flex-none text-center px-3 py-1 text-xs font-semibold rounded-lg transition-all whitespace-nowrap ${filterTab === "valid"
+                      ? "bg-background text-foreground shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                      }`}
                   >
                     {t("label.valid-only", { count: validRows.length })}
                   </button>
                   <button
                     type="button"
                     onClick={() => setFilterTab("invalid")}
-                    className={`flex-1 sm:flex-none text-center px-3 py-1 text-xs font-semibold rounded-lg transition-all whitespace-nowrap ${
-                      filterTab === "invalid"
-                        ? "bg-background text-foreground shadow-xs"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`flex-1 sm:flex-none text-center px-3 py-1 text-xs font-semibold rounded-lg transition-all whitespace-nowrap ${filterTab === "invalid"
+                      ? "bg-background text-foreground shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                      }`}
                   >
                     {t("label.errors-only", { count: invalidRows.length })}
                   </button>
@@ -595,10 +591,9 @@ export const UserBulkCreate = () => {
                           {virtualizer.getVirtualItems().length > 0 && (
                             <tr
                               style={{
-                                height: `${
-                                  virtualizer.getTotalSize() -
+                                height: `${virtualizer.getTotalSize() -
                                   virtualizer.getVirtualItems()[virtualizer.getVirtualItems().length - 1].end
-                                }px`,
+                                  }px`,
                               }}
                             />
                           )}
@@ -642,9 +637,7 @@ export const UserBulkCreate = () => {
         </div>
 
         <SheetFooter className="p-4 border-t border-border/40 bg-card/60 flex items-center justify-between sm:justify-between">
-          <Button variant="ghost" size="sm" onClick={() => setOpen(false)} className="text-xs">
-            {t("button.cancel")}
-          </Button>
+          <div></div>
           <div className="flex items-center gap-2">
             {rows.length > 0 && (
               <Button
