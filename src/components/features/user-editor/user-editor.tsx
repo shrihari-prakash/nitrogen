@@ -5,7 +5,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { XCircle } from "lucide-react";
+import { XCircle, Shield, KeyRound, User as UserIcon, Sliders, CreditCard, Coins, Database } from "lucide-react";
 import { useLocation } from "wouter";
 import Loader from "@/components/ui/loader";
 import AdminSwitches from "./admin-switches";
@@ -14,13 +14,30 @@ import ProfileCard from "./profile-card";
 import ScopeSelector from "@/components/ui/scope-selector";
 import ScopesContext from "@/context/scopes-context";
 import usePermissions from "@/hooks/use-permissions";
-import { TypographyH4 } from "@/components/ui/typography";
 import SubscriptionManager from "./subscription-manager";
 import CustomDataEditor from "./custom-data-editor";
 import CreditsEditor from "./credits-editor";
 import { LoginHistoryDialog } from "./login-history-dialog";
 import { useTranslation } from "react-i18next";
 import { useUser } from "@/hooks/api/use-users";
+
+const EditorSection = ({
+  title,
+  icon: Icon,
+  children,
+}: {
+  title: string;
+  icon?: any;
+  children: React.ReactNode;
+}) => (
+  <div className="rounded-xl border border-border/70 bg-card/60 p-4 md:p-5 my-4 shadow-xs space-y-3.5 transition-colors">
+    <div className="flex items-center gap-2 pb-2.5 border-b border-border/40">
+      {Icon && <Icon className="h-4 w-4 text-primary shrink-0" />}
+      <h4 className="text-sm font-bold text-foreground tracking-tight">{title}</h4>
+    </div>
+    <div>{children}</div>
+  </div>
+);
 
 const UserEditor = function ({ params }: { params: { id: string } }) {
   const [, setLocation] = useLocation();
@@ -73,22 +90,18 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
           ) : (
             <>
               <ProfileCard user={user} />
+              
               {scopes &&
                 isPermissionAllowed("admin:profile:login-history:read") && (
-                  <>
-                    <TypographyH4 className="my-4">
-                      {t("heading.security")}
-                    </TypographyH4>
+                  <EditorSection title={t("heading.security")} icon={Shield}>
                     <LoginHistoryDialog user={user} />
-                  </>
+                  </EditorSection>
                 )}
+
               {scopes &&
                 isPermissionAllowed("admin:profile:access:write") &&
                 !isUserSuperAdmin() && (
-                  <>
-                    <TypographyH4 className="my-4">
-                      {t("heading.permissions")}
-                    </TypographyH4>
+                  <EditorSection title={t("heading.permissions")} icon={KeyRound}>
                     <ScopeSelector
                       entity={user}
                       setEntity={setUser}
@@ -98,39 +111,33 @@ const UserEditor = function ({ params }: { params: { id: string } }) {
                       role={user.role}
                       warning
                     />
-                  </>
+                  </EditorSection>
                 )}
-              <TypographyH4 className="my-4">
-                {t("heading.basic-info")}
-              </TypographyH4>
-              <BasicInfoEditor user={user} setUser={setUser} />
-              <TypographyH4 className="my-4">
-                {t("heading.administration")}
-              </TypographyH4>
-              <AdminSwitches user={user} setUser={setUser} />
+
+              <EditorSection title={t("heading.basic-info")} icon={UserIcon}>
+                <BasicInfoEditor user={user} setUser={setUser} />
+              </EditorSection>
+
+              <EditorSection title={t("heading.administration")} icon={Sliders}>
+                <AdminSwitches user={user} setUser={setUser} />
+              </EditorSection>
+
               {isPermissionAllowed("admin:profile:subscriptions:write") && (
-                <>
-                  <TypographyH4 className="my-4">
-                    {t("heading.subscription")}
-                  </TypographyH4>
+                <EditorSection title={t("heading.subscription")} icon={CreditCard}>
                   <SubscriptionManager user={user} setUser={setUser} />
-                </>
+                </EditorSection>
               )}
+
               {isPermissionAllowed("admin:profile:credits:write") && (
-                <>
-                  <TypographyH4 className="my-4">
-                    {t("heading.credits")}
-                  </TypographyH4>
+                <EditorSection title={t("heading.credits")} icon={Coins}>
                   <CreditsEditor user={user} setUser={setUser} />
-                </>
+                </EditorSection>
               )}
+
               {isPermissionAllowed("admin:profile:custom-data:write") && (
-                <>
-                  <TypographyH4 className="my-4">
-                    {t("heading.custom-data")}
-                  </TypographyH4>
-                  <CustomDataEditor user={user}></CustomDataEditor>
-                </>
+                <EditorSection title={t("heading.custom-data")} icon={Database}>
+                  <CustomDataEditor user={user} />
+                </EditorSection>
               )}
             </>
           )}

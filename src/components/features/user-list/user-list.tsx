@@ -127,57 +127,65 @@ const UserList = function () {
   });
 
   return (
-    <div className="w-full h-full px-4 md:px-8">
-      <div className="flex items-center py-4">
+    <div className="w-full h-full px-4 md:px-8 py-4">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-4">
         {isPermissionAllowed("delegated:profile:search") && (
-          <>
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10 pointer-events-none" />
             <Input
-              placeholder="Search users..."
-              className="max-w-sm"
+              placeholder="Search users by name, email, username..."
+              className="pl-9 pr-20 h-10 rounded-xl bg-card border-border/70 focus-visible:ring-primary/40"
               value={inputValue}
               onChange={onSearchChange}
               onKeyDown={handleKeyDown}
             />
-            <Button variant="outline" className="mx-2" onClick={handleSearch}>
-              <Search className="h-4 w-4" />
+            <Button
+              size="sm"
+              variant="ghost"
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-8 px-2.5 text-xs font-semibold hover:bg-accent"
+              onClick={handleSearch}
+            >
+              Search
             </Button>
-          </>
+          </div>
         )}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              {t("button.columns")} <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center gap-2 ml-auto">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="h-10 rounded-xl px-3.5 border-border/70 bg-card/60 backdrop-blur-sm font-medium">
+                {t("button.columns")} <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <UserCreate />
+        </div>
       </div>
-      <div className="flex justify-between items-center my-4 ml-auto gap-2">
-        <div className="flex font-medium">
-          {t("message.total-users")}{" "}
-          <Badge variant="secondary" className="ml-2 font-medium">
+      <div className="flex justify-between items-center mb-3">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
+          <span>{t("message.total-users")}</span>
+          <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 font-bold text-xs bg-primary/10 text-primary border border-primary/20">
             {totalUsers}
           </Badge>
         </div>
-        <UserCreate />
       </div>
       {loading && !displayData.length ? (
         <div
@@ -198,14 +206,14 @@ const UserList = function () {
               </div>
             }
           >
-            <div className="rounded-md border">
+            <div className="rounded-xl border border-border/70 bg-card shadow-xs overflow-hidden">
               <Table className="overflow-y-auto">
                 <TableHeader>
                   {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow key={headerGroup.id}>
+                    <TableRow key={headerGroup.id} className="hover:bg-transparent">
                       {headerGroup.headers.map((header) => {
                         return (
-                          <TableHead key={header.id}>
+                          <TableHead key={header.id} className="text-sm font-semibold text-muted-foreground py-3">
                             {header.isPlaceholder
                               ? null
                               : flexRender(
@@ -223,7 +231,7 @@ const UserList = function () {
                     table.getRowModel().rows.map((row) => (
                       <TableRow 
                         key={row.id}
-                        className="cursor-pointer"
+                        className="cursor-pointer transition-colors hover:bg-primary/5 border-b border-border/40"
                         onClick={(e) => {
                           const target = e.target as HTMLElement;
                           if (target.closest("button") || target.closest("a") || target.closest("input")) {
@@ -233,7 +241,7 @@ const UserList = function () {
                         }}
                       >
                         {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
+                          <TableCell key={cell.id} className="py-3.5">
                             {flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext()

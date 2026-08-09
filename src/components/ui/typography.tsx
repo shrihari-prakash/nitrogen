@@ -10,7 +10,7 @@ export function TypographyH4({ children, className }: any) {
   return (
     <h4
       className={
-        "scroll-m-20 text-lg font-semibold tracking-tight " + (className || "")
+        "scroll-m-20 text-base font-bold tracking-tight text-foreground border-b border-border/40 pb-1.5 " + (className || "")
       }
     >
       {children}

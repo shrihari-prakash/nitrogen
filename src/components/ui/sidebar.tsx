@@ -44,7 +44,7 @@ export default function SideBar() {
         md:py-3
         z-40"
     >
-      <div className="flex flex-row md:flex-col items-center gap-1 md:gap-2 w-full justify-around md:justify-start">
+      <div className="flex flex-row md:flex-col items-center gap-1 md:gap-3 w-full justify-around md:justify-start">
         <SideBarIcon
           icon={<FaUsers size="20" />}
           text={t("heading.users")}
@@ -155,10 +155,9 @@ export const SideBarIcon = ({
           focus-visible:outline
           focus-visible:outline-2
           focus-visible:outline-ring/70
-          ${
-            isActive
-              ? "bg-primary text-primary-foreground shadow-md shadow-primary/25 rounded-xl scale-105"
-              : "bg-secondary/80 text-muted-foreground hover:bg-accent hover:text-foreground rounded-2xl hover:rounded-xl"
+          ${isActive
+            ? "bg-primary text-primary-foreground shadow-md shadow-primary/25 rounded-xl scale-105"
+            : "bg-secondary/80 text-muted-foreground hover:bg-accent hover:text-foreground rounded-2xl hover:rounded-xl"
           }`}
       >
         {isActive && (
