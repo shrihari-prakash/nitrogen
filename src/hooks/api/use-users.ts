@@ -43,8 +43,20 @@ export const useCreateUser = () => {
 
   return useMutation({
     mutationFn: async (user: any) => {
-      const response = await liquid.admin.users.create(user);
-      return response.data;
+      const payload = Array.isArray(user) ? user : [user];
+      const response: any = await liquid.admin.users.create(payload as any);
+      
+      const resData: any = response?.data || response;
+      if (response?.ok === false || resData?.ok === 0 || resData?.error || resData?.ok === false) {
+        const errorObj: any = new Error(
+          resData?.error || resData?.message || "Failed to create user"
+        );
+        errorObj.response = { data: resData };
+        errorObj.data = resData;
+        throw errorObj;
+      }
+      
+      return resData;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
