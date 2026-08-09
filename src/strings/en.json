@@ -154,5 +154,9 @@
   "button.import-users": "Import {{count}} User",
   "button.import-users_other": "Import {{count}} Users",
   "button.importing-users": "Importing Users...",
-  "message.validation-issues": "Validation Issues ({{count}})"
+  "message.validation-issues": "Validation Issues ({{count}})",
+  "heading.import-complete": "Import Complete",
+  "message.users-created-success": "Successfully created {{count}} user(s) in system.",
+  "button.upload-another": "Upload Another CSV",
+  "label.imported": "Imported"
 }

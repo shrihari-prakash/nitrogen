@@ -14,6 +14,7 @@ export interface ParsedUserRow {
     phoneCountryCode?: string;
   };
   isValid: boolean;
+  isImported?: boolean;
   errors: Partial<Record<string, string>>;
   serverError?: string;
 }

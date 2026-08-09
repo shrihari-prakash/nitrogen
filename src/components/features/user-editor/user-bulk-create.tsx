@@ -45,6 +45,10 @@ export const UserBulkCreate = () => {
   const [showPasswords, setShowPasswords] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [successResponse, setSuccessResponse] = useState<{
+    count: number;
+    message: string;
+  } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { isPermissionAllowed } = usePermissions();
@@ -59,6 +63,7 @@ export const UserBulkCreate = () => {
 
     setFile(selectedFile);
     setHeaderError(null);
+    setSuccessResponse(null);
 
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -108,6 +113,7 @@ export const UserBulkCreate = () => {
     setRows([]);
     setHeaderError(null);
     setFilterTab("all");
+    setSuccessResponse(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -117,7 +123,7 @@ export const UserBulkCreate = () => {
     setRows((prev) => prev.filter((r) => r.id !== id));
   };
 
-  const validRows = rows.filter((r) => r.isValid && !r.serverError);
+  const validRows = rows.filter((r) => r.isValid && !r.serverError && !r.isImported);
   const invalidRows = rows.filter((r) => !r.isValid || !!r.serverError);
 
   const filteredRows = rows.filter((row) => {
@@ -138,8 +144,20 @@ export const UserBulkCreate = () => {
     try {
       await createUser(payload as any);
       toast.success(`Successfully imported ${validRows.length} users!`);
-      handleReset();
-      setOpen(false);
+
+      const importedCount = validRows.length;
+
+      // Mark imported rows with isImported: true so they reflect success status
+      setRows((prev) =>
+        prev.map((r) =>
+          r.isValid && !r.serverError ? { ...r, isImported: true } : r
+        )
+      );
+
+      setSuccessResponse({
+        count: importedCount,
+        message: t("message.users-created-success", { count: importedCount }),
+      });
     } catch (error: any) {
       console.error("Bulk upload API error:", error);
       const resData = error?.response?.data || error?.data || error;
@@ -325,6 +343,28 @@ export const UserBulkCreate = () => {
             </div>
           )}
 
+          {/* Success Response Banner */}
+          {successResponse && (
+            <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-start justify-between gap-3 text-xs font-medium">
+              <div className="flex items-center gap-2.5">
+                <LuFileCheck className="h-5 w-5 shrink-0 text-emerald-500" />
+                <div>
+                  <p className="font-semibold text-sm mb-0.5">{t("heading.import-complete")}</p>
+                  <p>{successResponse.message}</p>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleReset}
+                className="gap-1 text-xs h-8 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"
+              >
+                <LuRefreshCw className="h-3.5 w-3.5" />
+                {t("button.upload-another")}
+              </Button>
+            </div>
+          )}
+
           {/* Header Error Banner */}
           {headerError && (
             <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive flex items-start gap-3 text-xs font-medium">
@@ -467,7 +507,11 @@ export const UserBulkCreate = () => {
                                 {row.rowIndex}
                               </TableCell>
                               <TableCell>
-                                {isRowValid ? (
+                                {row.isImported ? (
+                                  <Badge variant="secondary" className="bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 gap-1 text-[10px]">
+                                    <LuCheck className="h-3 w-3" /> {t("label.imported")}
+                                  </Badge>
+                                ) : isRowValid ? (
                                   <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 gap-1 text-[10px]">
                                     <LuCheck className="h-3 w-3" /> {t("label.valid")}
                                   </Badge>
