@@ -30,8 +30,8 @@ const EditorSection = ({
   icon?: any;
   children: React.ReactNode;
 }) => (
-  <div className="rounded-xl border border-border/70 bg-card/60 p-4 md:p-5 my-4 shadow-xs space-y-3.5 transition-colors">
-    <div className="flex items-center gap-2 pb-2.5 border-b border-border/40">
+  <div className="rounded-xl border border-border/70 bg-card/60 p-3.5 md:p-4 my-3 shadow-xs space-y-2.5 transition-colors">
+    <div className="flex items-center gap-2 pb-2 border-b border-border/40">
       {Icon && <Icon className="h-4 w-4 text-primary shrink-0" />}
       <h4 className="text-sm font-bold text-foreground tracking-tight">{title}</h4>
     </div>

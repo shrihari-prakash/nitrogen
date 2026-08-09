@@ -156,8 +156,8 @@ export const SideBarIcon = ({
           focus-visible:outline-2
           focus-visible:outline-ring/70
           ${isActive
-            ? "bg-primary text-primary-foreground shadow-md shadow-primary/25 rounded-xl scale-105"
-            : "bg-secondary/80 text-muted-foreground hover:bg-accent hover:text-foreground rounded-2xl hover:rounded-xl"
+            ? "bg-primary border border-primary-foreground/20 text-primary-foreground shadow-md shadow-primary/25 rounded-xl scale-105"
+            : "bg-secondary/80 border border-border/50 text-muted-foreground hover:bg-accent hover:text-foreground hover:border-border/80 rounded-xl"
           }`}
       >
         {isActive && (
