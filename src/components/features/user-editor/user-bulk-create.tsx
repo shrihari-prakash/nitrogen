@@ -1,4 +1,5 @@
-import { useState, useRef, ChangeEvent, DragEvent } from "react";
+import { useState, useRef, useCallback, ChangeEvent, DragEvent } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   Sheet,
   SheetContent,
@@ -51,6 +52,7 @@ export const UserBulkCreate = () => {
   } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const tableScrollRef = useRef<HTMLDivElement>(null);
   const { isPermissionAllowed } = usePermissions();
   const { mutateAsync: createUser } = useCreateUser();
   const { t } = useTranslation();
@@ -130,6 +132,15 @@ export const UserBulkCreate = () => {
     if (filterTab === "valid") return row.isValid && !row.serverError;
     if (filterTab === "invalid") return !row.isValid || !!row.serverError;
     return true;
+  });
+
+  const ROW_HEIGHT = 40;
+
+  const virtualizer = useVirtualizer({
+    count: filteredRows.length,
+    getScrollElement: () => tableScrollRef.current,
+    estimateSize: useCallback(() => ROW_HEIGHT, []),
+    overscan: 10,
   });
 
   async function handleSubmitBulk() {
@@ -339,9 +350,10 @@ export const UserBulkCreate = () => {
                 variant="ghost"
                 size="sm"
                 onClick={handleReset}
+                disabled={submitting}
                 className="gap-1.5 text-xs text-muted-foreground hover:text-foreground"
               >
-                <LuRefreshCw className="h-3.5 w-3.5" />
+                <LuRefreshCw className={`h-3.5 w-3.5 ${submitting ? "animate-spin" : ""}`} />
                 Change File
               </Button>
             </div>
@@ -453,11 +465,11 @@ export const UserBulkCreate = () => {
                 </span>
               </div>
 
-              {/* Preview Data Table */}
+              {/* Preview Data Table (Virtualized) */}
               <div className="rounded-xl border border-border/60 overflow-hidden bg-card shadow-xs">
-                <div className="max-h-72 overflow-y-auto">
+                <div ref={tableScrollRef} className="max-h-72 overflow-y-auto relative">
                   <Table>
-                    <TableHeader className="bg-muted/50 sticky top-0 z-10 backdrop-blur-md">
+                    <TableHeader className="bg-muted/50 sticky top-0 z-20 backdrop-blur-md">
                       <TableRow className="hover:bg-transparent">
                         <TableHead className="w-12 text-center text-xs">#</TableHead>
                         <TableHead className="w-28 text-xs">{t("label.status")}</TableHead>
@@ -490,83 +502,107 @@ export const UserBulkCreate = () => {
                           </TableCell>
                         </TableRow>
                       ) : (
-                        filteredRows.map((row) => {
-                          const isRowValid = row.isValid && !row.serverError;
-                          const errList = Object.entries(row.errors)
-                            .map(([k, v]) => `${k}: ${v}`)
-                            .concat(row.serverError ? [row.serverError] : []);
+                        <>
+                          {/* Virtual Spacer Top */}
+                          {virtualizer.getVirtualItems().length > 0 && (
+                            <tr style={{ height: `${virtualizer.getVirtualItems()[0].start}px` }} />
+                          )}
 
-                          const phoneDisplay = [row.data.phoneCountryCode, row.data.phone]
-                            .filter(Boolean)
-                            .join(" ");
+                          {virtualizer.getVirtualItems().map((virtualRow) => {
+                            const row = filteredRows[virtualRow.index];
+                            if (!row) return null;
 
-                          return (
-                            <TableRow
-                              key={row.id}
-                              className={
-                                !isRowValid ? "bg-destructive/5 hover:bg-destructive/10" : undefined
-                              }
-                            >
-                              <TableCell className="text-center text-xs font-mono text-muted-foreground">
-                                {row.rowIndex}
-                              </TableCell>
-                              <TableCell>
-                                {row.isImported ? (
-                                  <Badge variant="secondary" className="bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 gap-1 text-[10px]">
-                                    <LuCheck className="h-3 w-3" /> {t("label.imported")}
-                                  </Badge>
-                                ) : isRowValid ? (
-                                  <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 gap-1 text-[10px]">
-                                    <LuCheck className="h-3 w-3" /> {t("label.valid")}
-                                  </Badge>
-                                ) : (
-                                  <Badge variant="destructive" className="gap-1 text-[10px]" title={errList.join(", ")}>
-                                    <LuCircleAlert className="h-3 w-3" /> {t("label.invalid")}
-                                  </Badge>
-                                )}
-                              </TableCell>
-                              <TableCell className="text-xs font-mono font-medium">
-                                {row.data.username || <span className="text-muted-foreground italic">missing</span>}
-                              </TableCell>
-                              <TableCell className="text-xs">
-                                {[row.data.firstName, row.data.lastName].filter(Boolean).join(" ") || (
-                                  <span className="text-muted-foreground italic">—</span>
-                                )}
-                              </TableCell>
-                              <TableCell className="text-xs font-mono">
-                                {row.data.email || <span className="text-muted-foreground italic">missing</span>}
-                              </TableCell>
-                              <TableCell className="text-xs font-mono">
-                                {row.data.password ? (
-                                  showPasswords ? (
-                                    row.data.password
+                            const isRowValid = row.isValid && !row.serverError;
+                            const errList = Object.entries(row.errors)
+                              .map(([k, v]) => `${k}: ${v}`)
+                              .concat(row.serverError ? [row.serverError] : []);
+
+                            const phoneDisplay = [row.data.phoneCountryCode, row.data.phone]
+                              .filter(Boolean)
+                              .join(" ");
+
+                            return (
+                              <TableRow
+                                key={row.id}
+                                className={
+                                  !isRowValid ? "bg-destructive/5 hover:bg-destructive/10" : undefined
+                                }
+                                style={{ height: `${virtualRow.size}px` }}
+                              >
+                                <TableCell className="text-center text-xs font-mono text-muted-foreground">
+                                  {row.rowIndex}
+                                </TableCell>
+                                <TableCell>
+                                  {row.isImported ? (
+                                    <Badge variant="secondary" className="bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 gap-1 text-[10px]">
+                                      <LuCheck className="h-3 w-3" /> {t("label.imported")}
+                                    </Badge>
+                                  ) : isRowValid ? (
+                                    <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 gap-1 text-[10px]">
+                                      <LuCheck className="h-3 w-3" /> {t("label.valid")}
+                                    </Badge>
                                   ) : (
-                                    <span className="text-muted-foreground font-sans">••••••••</span>
-                                  )
-                                ) : (
-                                  <span className="text-muted-foreground italic">missing</span>
-                                )}
-                              </TableCell>
-                              <TableCell className="text-xs capitalize whitespace-nowrap">
-                                {row.data.role || "user"}
-                              </TableCell>
-                              <TableCell className="text-xs font-mono whitespace-nowrap">
-                                {phoneDisplay || <span className="text-muted-foreground italic">—</span>}
-                              </TableCell>
-                              <TableCell className="text-center">
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => handleDeleteRow(row.id)}
-                                  className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                                  title="Remove row"
-                                >
-                                  <LuTrash2 className="h-3.5 w-3.5" />
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })
+                                    <Badge variant="destructive" className="gap-1 text-[10px]" title={errList.join(", ")}>
+                                      <LuCircleAlert className="h-3 w-3" /> {t("label.invalid")}
+                                    </Badge>
+                                  )}
+                                </TableCell>
+                                <TableCell className="text-xs font-mono font-medium">
+                                  {row.data.username || <span className="text-muted-foreground italic">missing</span>}
+                                </TableCell>
+                                <TableCell className="text-xs">
+                                  {[row.data.firstName, row.data.lastName].filter(Boolean).join(" ") || (
+                                    <span className="text-muted-foreground italic">—</span>
+                                  )}
+                                </TableCell>
+                                <TableCell className="text-xs font-mono">
+                                  {row.data.email || <span className="text-muted-foreground italic">missing</span>}
+                                </TableCell>
+                                <TableCell className="text-xs font-mono">
+                                  {row.data.password ? (
+                                    showPasswords ? (
+                                      row.data.password
+                                    ) : (
+                                      <span className="text-muted-foreground font-sans">••••••••</span>
+                                    )
+                                  ) : (
+                                    <span className="text-muted-foreground italic">missing</span>
+                                  )}
+                                </TableCell>
+                                <TableCell className="text-xs capitalize whitespace-nowrap">
+                                  {row.data.role || "user"}
+                                </TableCell>
+                                <TableCell className="text-xs font-mono whitespace-nowrap">
+                                  {phoneDisplay || <span className="text-muted-foreground italic">—</span>}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleDeleteRow(row.id)}
+                                    disabled={submitting}
+                                    className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                                    title="Remove row"
+                                  >
+                                    <LuTrash2 className="h-3.5 w-3.5" />
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+
+                          {/* Virtual Spacer Bottom */}
+                          {virtualizer.getVirtualItems().length > 0 && (
+                            <tr
+                              style={{
+                                height: `${
+                                  virtualizer.getTotalSize() -
+                                  virtualizer.getVirtualItems()[virtualizer.getVirtualItems().length - 1].end
+                                }px`,
+                              }}
+                            />
+                          )}
+                        </>
                       )}
                     </TableBody>
                   </Table>
