@@ -36,6 +36,7 @@ import { User } from "@/types/user";
 import usePermissions from "@/hooks/use-permissions";
 import { Badge } from "@/components/ui/badge";
 import UserCreate from "../user-editor/user-create";
+import UserBulkCreate from "../user-editor/user-bulk-create";
 import { useTranslation } from "react-i18next";
 import { useUsers, useUserSearch } from "@/hooks/api/use-users";
 
@@ -176,6 +177,7 @@ const UserList = function () {
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
+          <UserBulkCreate />
           <UserCreate />
         </div>
       </div>
