@@ -35,7 +35,7 @@
   "heading.permissions": "Permissions",
   "heading.basic-info": "Basic Info",
   "heading.edit-user": "Edit User",
-  "heading.create-user": "Create User",
+  "heading.create-user": "Create",
 
   "message.hello": "Hello, {{name}}!",
   "message.authenticating": "Authenticating...",
