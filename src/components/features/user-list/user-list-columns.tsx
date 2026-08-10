@@ -5,7 +5,7 @@ import { User } from "@/types/user";
 import { ColumnDef } from "@tanstack/react-table";
 import { Link } from "wouter";
 import i18n from "i18next";
-import { Shield, User as UserIcon, Sparkles, BadgeCheck, UserMinus, UserX, Pencil } from "lucide-react";
+import { Shield, User as UserIcon, Sparkles, BadgeCheck, UserMinus, UserX, Pencil, Users, UserCheck, Coins } from "lucide-react";
 
 export const userListColumns: ColumnDef<User>[] = [
   {
@@ -138,19 +138,46 @@ export const userListColumns: ColumnDef<User>[] = [
     accessorKey: "followerCount",
     header: i18n.t("label.followers") || "Followers",
     id: "followerCount",
-    cell: ({ row }) => row.getValue("followerCount"),
+    cell: ({ row }) => {
+      const count = (row.getValue("followerCount") as number) || 0;
+      return (
+        <div className="flex items-center gap-1.5 text-xs font-mono text-muted-foreground">
+          <Users className="w-3.5 h-3.5 opacity-60" />
+          <span>{count.toLocaleString()}</span>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "followingCount",
     header: i18n.t("label.following") || "Following",
     id: "followingCount",
-    cell: ({ row }) => row.getValue("followingCount"),
+    cell: ({ row }) => {
+      const count = (row.getValue("followingCount") as number) || 0;
+      return (
+        <div className="flex items-center gap-1.5 text-xs font-mono text-muted-foreground">
+          <UserCheck className="w-3.5 h-3.5 opacity-60" />
+          <span>{count.toLocaleString()}</span>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "credits",
     header: i18n.t("label.credits") || "Credits",
     id: "credits",
-    cell: ({ row }) => row.getValue("credits"),
+    cell: ({ row }) => {
+      const credits = (row.getValue("credits") as number) || 0;
+      return (
+        <Badge
+          variant="outline"
+          className="gap-1.5 font-mono text-xs font-medium bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 whitespace-nowrap"
+        >
+          <Coins className="w-3 h-3 text-amber-500" />
+          <span>{credits.toLocaleString()}</span>
+        </Badge>
+      );
+    },
   },
   {
     id: "actions",

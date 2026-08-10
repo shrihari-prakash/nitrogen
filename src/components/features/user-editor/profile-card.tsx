@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { User } from "@/types/user";
 import { useTranslation } from "react-i18next";
-import { Calendar, UserCheck, Users, UserX, UserMinus, BadgeCheck } from "lucide-react";
+import { Calendar, UserCheck, Users, UserX, UserMinus, BadgeCheck, Coins } from "lucide-react";
 
 export default function ProfileCard({ user }: { user: User }) {
   const { t } = useTranslation();
@@ -84,22 +84,29 @@ export default function ProfileCard({ user }: { user: User }) {
           )}
 
           {/* User metadata row */}
-          <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground pt-1 border-t border-border/30">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground pt-1 border-t border-border/30">
             {joinDate && (
-              <div className="flex items-center gap-1.5 font-medium">
+              <div className="flex items-center gap-1.5 font-medium text-muted-foreground">
                 <Calendar className="h-3.5 w-3.5 opacity-60" />
                 <span>Joined {joinDate}</span>
               </div>
             )}
 
-            <div className="flex items-center gap-3 font-medium">
-              <div className="flex items-center gap-1">
-                <Users className="h-3.5 w-3.5 opacity-60" />
-                <span>{t("message.followers", { count: user.followerCount || 0 })}</span>
+            <div className="flex items-center gap-2 flex-wrap font-medium">
+              <div className="flex items-center gap-1 bg-muted/40 px-2.5 py-1 rounded-lg border border-border/50">
+                <Users className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="font-semibold text-foreground">{(user.followerCount || 0).toLocaleString()}</span>
+                <span className="text-muted-foreground font-normal">{t("label.followers")}</span>
               </div>
-              <div className="flex items-center gap-1">
-                <UserCheck className="h-3.5 w-3.5 opacity-60" />
-                <span>{t("message.following", { count: user.followingCount || 0 })}</span>
+              <div className="flex items-center gap-1 bg-muted/40 px-2.5 py-1 rounded-lg border border-border/50">
+                <UserCheck className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="font-semibold text-foreground">{(user.followingCount || 0).toLocaleString()}</span>
+                <span className="text-muted-foreground font-normal">{t("label.following")}</span>
+              </div>
+              <div className="flex items-center gap-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2.5 py-1 rounded-lg border border-amber-500/20 font-mono">
+                <Coins className="h-3.5 w-3.5 text-amber-500" />
+                <span className="font-bold text-foreground">{(user.credits || 0).toLocaleString()}</span>
+                <span className="font-normal opacity-80">{t("label.credits")}</span>
               </div>
             </div>
           </div>
