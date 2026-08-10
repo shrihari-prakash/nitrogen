@@ -35,6 +35,7 @@ import {
   LuFileX,
   LuEye,
   LuEyeOff,
+  LuLoader,
 } from "react-icons/lu";
 
 export const UserBulkCreate = () => {
@@ -59,7 +60,7 @@ export const UserBulkCreate = () => {
 
   const handleFileProcess = (selectedFile: File) => {
     if (!selectedFile.name.endsWith(".csv") && selectedFile.type !== "text/csv") {
-      toast.error("Please select a valid .csv file");
+      toast.error(t("error.select-valid-csv"));
       return;
     }
 
@@ -71,7 +72,7 @@ export const UserBulkCreate = () => {
     reader.onload = (e) => {
       const text = e.target?.result as string;
       if (!text) {
-        setHeaderError("Failed to read file contents");
+        setHeaderError(t("error.read-file-failed"));
         return;
       }
 
@@ -145,7 +146,7 @@ export const UserBulkCreate = () => {
 
   async function handleSubmitBulk() {
     if (validRows.length === 0) {
-      toast.error("No valid user rows to import");
+      toast.error(t("error.no-valid-rows"));
       return;
     }
 
@@ -154,7 +155,7 @@ export const UserBulkCreate = () => {
 
     try {
       await createUser(payload as any);
-      toast.success(`Successfully imported ${validRows.length} users!`);
+      toast.success(t("message.imported-users-success", { count: validRows.length }));
 
       const importedCount = validRows.length;
 
@@ -220,7 +221,7 @@ export const UserBulkCreate = () => {
                 (ex.email && ex.email.toLowerCase() === row.data.email.toLowerCase())
             );
             if (isMatch) {
-              rowServerError = "User with this username or email already exists";
+              rowServerError = t("error.user-exists");
             }
           }
 
@@ -239,11 +240,11 @@ export const UserBulkCreate = () => {
 
       const genericError =
         resData?.error === "insufficient-privileges" || resData?.error === "InsufficientPrivileges"
-          ? "Insufficient privileges to create users"
-          : resData?.message || error?.message || "Bulk user creation failed";
+          ? t("error.insufficient-privileges")
+          : resData?.message || error?.message || t("error.bulk-upload-failed");
 
       if (failedCount > 0) {
-        toast.error(`${failedCount} row(s) failed server validation. Please review error details.`);
+        toast.error(t("error.rows-failed-validation", { count: failedCount }));
         setFilterTab("invalid");
       } else {
         toast.error(genericError);
@@ -329,7 +330,7 @@ export const UserBulkCreate = () => {
                 </p>
               </div>
               <Button type="button" variant="secondary" size="sm" className="mt-2 text-xs font-semibold">
-                Select CSV File
+                {t("button.select-csv-file")}
               </Button>
             </div>
           ) : (
@@ -341,7 +342,7 @@ export const UserBulkCreate = () => {
                 <div>
                   <p className="text-sm font-semibold text-foreground">{file.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    {(file.size / 1024).toFixed(1)} KB • {rows.length} total rows parsed
+                    {t("message.file-parsed-summary", { size: (file.size / 1024).toFixed(1), count: rows.length })}
                   </p>
                 </div>
               </div>
@@ -353,7 +354,7 @@ export const UserBulkCreate = () => {
                 className="gap-1 text-xs text-muted-foreground hover:text-foreground"
               >
                 <LuRefreshCw className={`h-3.5 w-3.5 ${submitting ? "animate-spin" : ""}`} />
-                Change
+                {t("button.change-file")}
               </Button>
             </div>
           )}
@@ -462,7 +463,17 @@ export const UserBulkCreate = () => {
               </div>
 
               {/* Preview Data Table (Virtualized) */}
-              <div className="rounded-xl border border-border/60 overflow-hidden bg-card shadow-xs">
+              <div className="rounded-xl border border-border/60 overflow-hidden bg-card shadow-xs relative">
+                {submitting && (
+                  <div className="absolute inset-0 bg-background/75 backdrop-blur-[2px] z-30 flex flex-col items-center justify-center gap-2 transition-all duration-200">
+                    <div className="p-3.5 rounded-full bg-primary/15 border border-primary/30 shadow-lg">
+                      <LuLoader className="h-7 w-7 text-primary animate-spin" />
+                    </div>
+                    <p className="text-sm text-center text-muted-foreground mt-0.5 p-6">
+                      {t("message.importing-users-subtitle", { count: validRows.length })}
+                    </p>
+                  </div>
+                )}
                 <div ref={tableScrollRef} className="max-h-72 overflow-y-auto relative">
                   <Table>
                     <TableHeader className="bg-muted/50 sticky top-0 z-20 backdrop-blur-md">
@@ -479,7 +490,7 @@ export const UserBulkCreate = () => {
                               type="button"
                               onClick={() => setShowPasswords(!showPasswords)}
                               className="text-muted-foreground hover:text-foreground p-0.5 rounded transition-colors"
-                              title={showPasswords ? "Mask passwords" : "Show plain text passwords"}
+                              title={showPasswords ? t("action.mask-passwords") : t("action.show-passwords")}
                             >
                               {showPasswords ? <LuEyeOff className="h-3 w-3" /> : <LuEye className="h-3 w-3" />}
                             </button>
@@ -494,7 +505,7 @@ export const UserBulkCreate = () => {
                       {filteredRows.length === 0 ? (
                         <TableRow>
                           <TableCell colSpan={9} className="h-24 text-center text-xs text-muted-foreground">
-                            No rows match the selected filter.
+                            {t("message.no-rows-match-filter")}
                           </TableCell>
                         </TableRow>
                       ) : (
@@ -544,7 +555,7 @@ export const UserBulkCreate = () => {
                                   )}
                                 </TableCell>
                                 <TableCell className="text-xs font-mono font-medium">
-                                  {row.data.username || <span className="text-muted-foreground italic">missing</span>}
+                                  {row.data.username || <span className="text-muted-foreground italic">{t("label.missing")}</span>}
                                 </TableCell>
                                 <TableCell className="text-xs">
                                   {[row.data.firstName, row.data.lastName].filter(Boolean).join(" ") || (
@@ -552,7 +563,7 @@ export const UserBulkCreate = () => {
                                   )}
                                 </TableCell>
                                 <TableCell className="text-xs font-mono">
-                                  {row.data.email || <span className="text-muted-foreground italic">missing</span>}
+                                  {row.data.email || <span className="text-muted-foreground italic">{t("label.missing")}</span>}
                                 </TableCell>
                                 <TableCell className="text-xs font-mono">
                                   {row.data.password ? (
@@ -562,7 +573,7 @@ export const UserBulkCreate = () => {
                                       <span className="text-muted-foreground font-sans">••••••••</span>
                                     )
                                   ) : (
-                                    <span className="text-muted-foreground italic">missing</span>
+                                    <span className="text-muted-foreground italic">{t("label.missing")}</span>
                                   )}
                                 </TableCell>
                                 <TableCell className="text-xs capitalize whitespace-nowrap">
@@ -578,7 +589,7 @@ export const UserBulkCreate = () => {
                                     onClick={() => handleDeleteRow(row.id)}
                                     disabled={submitting}
                                     className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                                    title="Remove row"
+                                    title={t("action.remove-row")}
                                   >
                                     <LuTrash2 className="h-3.5 w-3.5" />
                                   </Button>
@@ -620,13 +631,17 @@ export const UserBulkCreate = () => {
                           .join(", ");
                       return (
                         <li key={r.id}>
-                          Row {r.rowIndex} ({r.data.username || "unnamed"}): {msg}
+                          {t("label.row-error-summary", {
+                            index: r.rowIndex,
+                            username: r.data.username || t("label.unnamed"),
+                            msg,
+                          })}
                         </li>
                       );
                     })}
                     {invalidRows.length > 5 && (
                       <li className="list-none font-sans italic opacity-80 pt-0.5">
-                        ...and {invalidRows.length - 5} more invalid row(s).
+                        {t("message.more-invalid-rows", { count: invalidRows.length - 5 })}
                       </li>
                     )}
                   </ul>
@@ -637,7 +652,9 @@ export const UserBulkCreate = () => {
         </div>
 
         <SheetFooter className="p-4 border-t border-border/40 bg-card/60 flex items-center justify-between sm:justify-between">
-          <div></div>
+          <Button variant="ghost" size="sm" onClick={() => setOpen(false)} className="text-xs" disabled={submitting}>
+            {t("button.cancel")}
+          </Button>
           <div className="flex items-center gap-2">
             {rows.length > 0 && (
               <Button
@@ -655,7 +672,11 @@ export const UserBulkCreate = () => {
               disabled={validRows.length === 0 || submitting}
               className="gap-2 text-xs font-semibold"
             >
-              <LuUsers className="h-4 w-4" />
+              {submitting ? (
+                <LuLoader className="h-4 w-4 animate-spin" />
+              ) : (
+                <LuUsers className="h-4 w-4" />
+              )}
               {submitting
                 ? t("button.importing-users")
                 : t("button.import-users", { count: validRows.length })}
