@@ -170,9 +170,9 @@ export const userListColumns: ColumnDef<User>[] = [
       return (
         <Badge
           variant="outline"
-          className="gap-1.5 font-mono text-xs font-medium bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20 whitespace-nowrap"
+          className="gap-1.5 font-mono text-xs font-medium bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20 whitespace-nowrap"
         >
-          <Coins className="w-3 h-3 text-purple-500" />
+          <Coins className="w-3 h-3 text-pink-500" />
           <span>{credits.toLocaleString()}</span>
         </Badge>
       );
