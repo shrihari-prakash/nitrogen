@@ -40,7 +40,7 @@ export const userListColumns: ColumnDef<User>[] = [
         </span>
         {row.original.isSubscribed && (
           <Badge className="ml-1.5 capitalize text-[10px] px-1.5 py-0" variant="outline">
-            <Sparkles className="mr-0.5 h-3 w-3 text-amber-500" />
+            <Sparkles className="mr-0.5 h-3 w-3" />
             {row.original.subscriptionTier}
           </Badge>
         )}
@@ -82,11 +82,10 @@ export const userListColumns: ColumnDef<User>[] = [
       return (
         <Badge
           variant={isAdmin ? "secondary" : "outline"}
-          className={`gap-1.5 px-2.5 py-0.5 text-xs font-normal capitalize rounded-md ${
-            isAdmin
-              ? "font-medium"
-              : "text-muted-foreground bg-muted/30 border-border/70"
-          }`}
+          className={`gap-1.5 px-2.5 py-0.5 text-xs font-normal capitalize rounded-md ${isAdmin
+            ? "font-medium"
+            : "text-muted-foreground bg-muted/30 border-border/70"
+            }`}
         >
           {isAdmin ? (
             <Shield className="w-3.5 h-3.5 text-primary" />
@@ -171,9 +170,9 @@ export const userListColumns: ColumnDef<User>[] = [
       return (
         <Badge
           variant="outline"
-          className="gap-1.5 font-mono text-xs font-medium bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 whitespace-nowrap"
+          className="gap-1.5 font-mono text-xs font-medium bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20 whitespace-nowrap"
         >
-          <Coins className="w-3 h-3 text-amber-500" />
+          <Coins className="w-3 h-3 text-purple-500" />
           <span>{credits.toLocaleString()}</span>
         </Badge>
       );

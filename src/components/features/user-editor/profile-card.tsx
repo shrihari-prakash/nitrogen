@@ -103,8 +103,8 @@ export default function ProfileCard({ user }: { user: User }) {
                 <span className="font-semibold text-foreground">{(user.followingCount || 0).toLocaleString()}</span>
                 <span className="text-muted-foreground font-normal">{t("label.following")}</span>
               </div>
-              <div className="flex items-center gap-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2.5 py-1 rounded-lg border border-amber-500/20 font-mono">
-                <Coins className="h-3.5 w-3.5 text-amber-500" />
+              <div className="flex items-center gap-1 bg-purple-500/10 text-purple-600 dark:text-purple-400 px-2.5 py-1 rounded-lg border border-purple-500/20 font-mono">
+                <Coins className="h-3.5 w-3.5 text-purple-500" />
                 <span className="font-bold text-foreground">{(user.credits || 0).toLocaleString()}</span>
                 <span className="font-normal opacity-80">{t("label.credits")}</span>
               </div>
