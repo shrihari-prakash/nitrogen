@@ -7,6 +7,7 @@ interface EmptyStateProps {
   description?: string;
   icon?: React.ReactNode;
   className?: string;
+  children?: React.ReactNode;
 }
 
 export function EmptyState({
@@ -14,6 +15,7 @@ export function EmptyState({
   description,
   icon = <FolderOpen className="w-5 h-5 text-muted-foreground" />,
   className,
+  children,
 }: EmptyStateProps) {
   return (
     <div
@@ -33,6 +35,8 @@ export function EmptyState({
           {description}
         </p>
       )}
+      {children && <div className="mt-3">{children}</div>}
     </div>
   );
 }
+

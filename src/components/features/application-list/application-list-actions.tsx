@@ -75,13 +75,14 @@ export const ApplicationListActions = ({
   };
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-end gap-1.5">
       {isPermissionAllowed("admin:profile:access:write") && (
         <ScopeSelector
           entity={row.original}
           setEntity={() => null}
           scopes={meta.scopes || []}
           type="client"
+          iconOnly
         />
       )}
       {canEdit(row.original) && (
@@ -90,56 +91,60 @@ export const ApplicationListActions = ({
           onUpdate={meta.onApplicationUpdate}
         />
       )}
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
-          {canDelete(row.original) && (
-            <Button className="ml-2" variant="outline">
-              <FaTrash className="h-4 w-4" />
-            </Button>
-          )}
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              Delete {row.original.displayName}?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              Deleting clients might have unintended consequences in the system.
-              This action cannot be undone. Are you sure you want to delete?
-              <div className="input-group mt-4">
-                Type <strong>{row.original.id}</strong> in the box below to
-                enable the delete button.
-                <Input
-                  className="mt-4"
-                  value={value}
-                  onChange={onValueChange}
-                />
-              </div>
-              {row.original.role === "internal_client" &&
-                value === row.original.id && (
-                  <Alert className="mt-2" variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>
-                      <strong>
-                        You are deleting an internal client. This might break
-                        your system completely. Delete at your own risk.
-                      </strong>
-                    </AlertDescription>
-                  </Alert>
-                )}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("button.cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={onApplicationDelete}
-              disabled={value !== row.original.id}
+      {canDelete(row.original) && (
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 w-9 rounded-xl border-border/70 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-colors"
+              title={t("action.delete-application")}
             >
-              {t("button.delete")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+              <FaTrash className="h-3.5 w-3.5" />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent className="rounded-2xl border-border/80">
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {t("message.delete-entity", { entity: row.original.displayName })}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                {t("message.delete-client-consequences")}
+                <div className="input-group mt-4 text-sm text-muted-foreground">
+                  {t("message.type-to-delete", { name: row.original.id })}
+                  <Input
+                    className="mt-3 rounded-xl bg-card border-border/80"
+                    value={value}
+                    onChange={onValueChange}
+                    placeholder={t("placeholder.type-to-confirm", { id: row.original.id })}
+                  />
+                </div>
+                {row.original.role === "internal_client" &&
+                  value === row.original.id && (
+                    <Alert className="mt-3 rounded-xl" variant="destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        <strong>
+                          {t("message.delete-internal-client-warning")}
+                        </strong>
+                      </AlertDescription>
+                    </Alert>
+                  )}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="rounded-xl">{t("button.cancel")}</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={onApplicationDelete}
+                disabled={value !== row.original.id}
+                className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {t("button.delete")}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </div>
   );
 };

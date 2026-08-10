@@ -1,85 +1,110 @@
 import { Application } from "@/types/application";
 import { ColumnDef } from "@tanstack/react-table";
-import { RefreshCcw, Copy } from "lucide-react";
+import { Copy, Shield, Laptop, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { ApplicationListActions } from "./application-list-actions";
 import i18n from "i18next";
-import { RiVerifiedBadgeFill } from "react-icons/ri";
-import { BsFillBoxFill } from "react-icons/bs";
-import { PiDevicesFill } from "react-icons/pi";
+import { useState } from "react";
 
-const getGrantIcon = (
-  grantType: "client_credentials" | "authorization_code" | "refresh_token"
-) => {
-  const iconMap = {
-    client_credentials: <BsFillBoxFill className="h-4 w-4 ml-2" />,
-    authorization_code: <PiDevicesFill className="h-4 w-4 ml-2" />,
-    refresh_token: <RefreshCcw className="h-4 w-4 ml-2" />,
+const CopyIdButton = ({ id }: { id: string }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(id);
+      setCopied(true);
+      toast(i18n.t("message.copied-application-id") || "Application ID copied");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast(i18n.t("message.copy-failed") || "Copy failed");
+    }
   };
-  return iconMap[grantType];
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      className="h-5 w-5 text-muted-foreground hover:text-foreground p-0"
+      title={i18n.t("action.copy-application-id") || "Copy ID"}
+      onClick={handleCopy}
+    >
+      {copied ? <Check className="h-3 w-3 text-primary" /> : <Copy className="h-3 w-3" />}
+    </Button>
+  );
 };
 
 export const applicationListColumns: ColumnDef<Application>[] = [
   {
-    accessorKey: "id",
-    header: i18n.t("label.application-id") || "Application ID",
-    enableHiding: false,
-    cell: ({ row }) => (
-      <div className="flex items-center flex-nowrap whitespace-nowrap gap-1.5">
-        <span>{row.getValue("id")}</span>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-6 w-6 text-muted-foreground hover:text-foreground"
-          title={i18n.t("action.copy-application-id")}
-          onClick={async () => {
-            try {
-              await navigator.clipboard.writeText(row.getValue("id"));
-              toast(i18n.t("message.copied-application-id"));
-            } catch (err) {
-              toast(i18n.t("message.copy-failed"));
-            }
-          }}
-        >
-          <Copy className="h-3 w-3" />
-        </Button>
-        {row.original.role === "internal_client" && (
-          <RiVerifiedBadgeFill className="h-4 w-4 text-primary ml-1" />
-        )}
-      </div>
-    ),
-  },
-  {
     accessorKey: "displayName",
-    header: i18n.t("label.display-name") || "Display Name",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("displayName")} </div>
-    ),
+    header: i18n.t("label.display-name") || "Application Name",
+    cell: ({ row }) => {
+      const isInternal = row.original.role === "internal_client";
+      return (
+        <div className="flex flex-col gap-1 py-0.5 min-w-[180px]">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-foreground text-sm tracking-tight">
+              {row.getValue("displayName")}
+            </span>
+            {isInternal && (
+              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-medium">
+                Internal
+              </Badge>
+            )}
+          </div>
+          <div className="flex items-center gap-1 text-[11px] font-mono text-muted-foreground">
+            <span>{row.original.id}</span>
+            <CopyIdButton id={row.original.id} />
+          </div>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "role",
-    header: i18n.t("label.role") || "Role",
-    cell: ({ row }) => (
-      <div className="capitalize flex items-center flex-nowrap whitespace-nowrap">
-        {(row.getValue("role") as string).split("_").join(" ")}
-      </div>
-    ),
+    header: i18n.t("label.role") || "Client Type",
+    cell: ({ row }) => {
+      const role = row.getValue("role") as string;
+      const isInternal = role === "internal_client";
+
+      return (
+        <Badge
+          variant="outline"
+          className="gap-1.5 px-2.5 py-0.5 text-xs font-normal rounded-md text-muted-foreground bg-muted/30 border-border/70 whitespace-nowrap select-none"
+        >
+          {isInternal ? (
+            <Shield className="w-3.5 h-3.5 text-primary" />
+          ) : (
+            <Laptop className="w-3.5 h-3.5 text-muted-foreground" />
+          )}
+          <span className="text-foreground font-medium capitalize">
+            {role.split("_").join(" ")}
+          </span>
+        </Badge>
+      );
+    },
   },
   {
     accessorKey: "grants",
     header: i18n.t("label.grants") || "Grants",
-    cell: ({ row }) => (
-      <div className="flex items-center">
-        {(row.getValue("grants") as any as string[])
-          .sort()
-          .map((grant: string) => (
-            <div className="capitalize flex items-center" key={grant}>
-              {getGrantIcon(grant as any)}&nbsp;{grant.split("_")[0]}
-            </div>
+    cell: ({ row }) => {
+      const grants = (row.getValue("grants") as string[]) || [];
+
+      return (
+        <div className="flex items-center gap-1.5 flex-wrap min-w-[180px]">
+          {grants.map((grant) => (
+            <Badge
+              key={grant}
+              variant="outline"
+              className="text-[11px] font-mono font-normal px-2 py-0.5 bg-muted/40 text-muted-foreground border-border/60 whitespace-nowrap select-none"
+            >
+              {grant.split("_").join(" ")}
+            </Badge>
           ))}
-      </div>
-    ),
+        </div>
+      );
+    },
   },
   {
     id: "actions",
@@ -87,3 +112,4 @@ export const applicationListColumns: ColumnDef<Application>[] = [
     cell: ApplicationListActions,
   },
 ];
+

@@ -191,26 +191,31 @@ export default function ApplicationEditor({
   }
 
   async function onSubmit(formValues: any) {
-    formValues = {
-      ...formValues,
-      redirectUris: redirectUris.map((uri) => uri.text),
-      grants: selectedGrants,
-    };
-    if (!Array.isArray(formValues.redirectUris)) {
-      formValues.redirectUris = formValues.redirectUris.split(",");
-    }
-    if (!application) {
-      const result = await create(formValues);
-      if (onCreate) {
-        onCreate(result.data.client);
+    try {
+      formValues = {
+        ...formValues,
+        redirectUris: redirectUris.map((uri) => uri.text),
+        grants: selectedGrants,
+      };
+      if (!Array.isArray(formValues.redirectUris)) {
+        formValues.redirectUris = formValues.redirectUris.split(",");
       }
-    } else {
-      await update(formValues);
-    }
-    setOpen(false);
+      if (!application) {
+        const result = await create(formValues);
+        const createdClient = result?.client || result?.data?.client || result;
+        if (onCreate && createdClient) {
+          onCreate(createdClient);
+        }
+      } else {
+        await update(formValues);
+      }
+      setOpen(false);
 
-    if (!application) {
-      form.reset();
+      if (!application) {
+        form.reset();
+      }
+    } catch (error) {
+      console.error("Error submitting application form:", error);
     }
   }
 
@@ -224,16 +229,21 @@ export default function ApplicationEditor({
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
-        <Button variant={application ? "outline" : "default"} className="ml-2">
-          {application ? (
-            <FaPen className="h-4 w-4" />
-          ) : (
-            <>
-              <FaCirclePlus className="h-4 w-4 mr-2" />
-              {t("heading.create-application")}
-            </>
-          )}
-        </Button>
+        {application ? (
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-9 w-9 rounded-xl border-border/70 hover:bg-accent transition-colors"
+            title={t("action.edit-application")}
+          >
+            <FaPen className="h-3.5 w-3.5 text-muted-foreground" />
+          </Button>
+        ) : (
+          <Button variant="default">
+            <FaCirclePlus className="h-4 w-4 mr-2" />
+            {t("heading.create-application")}
+          </Button>
+        )}
       </SheetTrigger>
       <SheetContent className="sm:max-w-md md:max-w-[500px] overflow-y-auto">
         <SheetHeader>

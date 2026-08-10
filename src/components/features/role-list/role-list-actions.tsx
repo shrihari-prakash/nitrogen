@@ -20,6 +20,7 @@ import RoleEditor from "../role-editor/role-editor";
 import RolesContext from "@/context/roles-context";
 import { useTranslation } from "react-i18next";
 import { FaTrash } from "react-icons/fa";
+import { Lock } from "lucide-react";
 import { useDeleteRole } from "@/hooks/api/use-role-mutations";
 
 export const RoleListActions = ({
@@ -69,57 +70,78 @@ export const RoleListActions = ({
     refreshRoles();
   };
 
+  const role: Role = row.original;
+
   return (
-    <div className="flex items-center justify-right">
+    <div className="flex items-center justify-end gap-1.5">
       {isPermissionAllowed("admin:profile:access:write") &&
-        row.original.id !== "super_admin" && (
+        role.id !== "super_admin" && (
           <ScopeSelector
-            entity={row.original}
+            entity={role}
             setEntity={onScopeChange}
             scopes={meta.scopes || []}
             type="role"
             warning
+            iconOnly
           />
         )}
-      {canEdit(row.original) && (
-        <RoleEditor role={row.original} onUpdate={meta.onRoleUpdate} />
+      {canEdit(role) && (
+        <RoleEditor role={role} onUpdate={meta.onRoleUpdate} />
       )}
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
-          {canDelete(row.original) && (
-            <Button className="ml-2" variant="outline">
-              <FaTrash className="h-4 w-4" />
-            </Button>
-          )}
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t("message.delete-entity", { entity: row.original.displayName })}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              <div className="input-group mt-4">
-                Type <strong>{row.original.id}</strong> in the box below to
-                enable the delete button.
-                <Input
-                  className="mt-4"
-                  value={value}
-                  onChange={onValueChange}
-                />
-              </div>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={onRoleDelete}
-              disabled={value !== row.original.id}
+
+      {canDelete(role) ? (
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 w-9 rounded-xl border-border/70 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-colors"
+              title={t("action.delete-role")}
             >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+              <FaTrash className="h-3.5 w-3.5" />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent className="rounded-2xl border-border/80">
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {t("message.delete-entity", { entity: role.displayName })}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                <div className="input-group mt-4 text-sm text-muted-foreground">
+                  {t("message.type-to-delete", { name: role.id })}
+                  <Input
+                    className="mt-3 rounded-xl bg-card border-border/80"
+                    value={value}
+                    onChange={onValueChange}
+                    placeholder={t("placeholder.type-to-confirm", { id: role.id })}
+                  />
+                </div>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="rounded-xl">{t("button.cancel")}</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={onRoleDelete}
+                disabled={value !== role.id}
+                className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {t("button.delete")}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      ) : role.system ? (
+        <Button
+          variant="outline"
+          size="icon"
+          disabled
+          className="h-9 w-9 rounded-xl opacity-50 cursor-not-allowed border-border/50 bg-muted/30"
+          title={t("message.system-role-protected")}
+        >
+          <Lock className="h-3.5 w-3.5 text-muted-foreground" />
+        </Button>
+      ) : null}
     </div>
   );
 };
+

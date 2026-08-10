@@ -144,7 +144,7 @@ const UserList = function () {
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10 pointer-events-none" />
             <Input
-              placeholder="Search users by name, email, username..."
+              placeholder={t("placeholder.search-users")}
               className="pl-9 pr-20 h-10 rounded-xl bg-card border-border/70 focus-visible:ring-primary/40"
               value={inputValue}
               onChange={onSearchChange}
@@ -163,7 +163,7 @@ const UserList = function () {
         <div className="flex items-center gap-2 ml-auto">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="h-10 rounded-xl px-3.5 border-border/70 bg-card/60 backdrop-blur-sm font-medium">
+              <Button variant="outline">
                 {t("button.columns")} <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
               </Button>
             </DropdownMenuTrigger>
@@ -220,18 +220,21 @@ const UserList = function () {
           >
             <div className="rounded-xl border border-border/70 bg-card shadow-xs overflow-hidden">
               <Table>
-                <TableHeader className="sticky top-0 z-10 backdrop-blur-md">
+                <TableHeader className="sticky top-0 z-10 bg-muted/40 backdrop-blur-md">
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id} className="hover:bg-transparent">
                       {headerGroup.headers.map((header) => {
                         return (
-                          <TableHead key={header.id} className="text-sm font-semibold text-muted-foreground py-3">
+                          <TableHead
+                            key={header.id}
+                            className="text-xs font-semibold text-muted-foreground uppercase tracking-wider py-3.5"
+                          >
                             {header.isPlaceholder
                               ? null
                               : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
                           </TableHead>
                         );
                       })}

@@ -6,8 +6,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import { HiSparkles } from "react-icons/hi";
 import { Link } from "wouter";
 import i18n from "i18next";
-import { FaPen, FaUserCog, FaUserMinus, FaUserTimes } from "react-icons/fa";
+import { FaPen, FaUserMinus, FaUserTimes } from "react-icons/fa";
 import { RiVerifiedBadgeFill } from "react-icons/ri";
+import { Shield, User as UserIcon } from "lucide-react";
 
 export const userListColumns: ColumnDef<User>[] = [
   {
@@ -15,9 +16,9 @@ export const userListColumns: ColumnDef<User>[] = [
     header: "",
     id: "profilePicture",
     cell: ({ row }) => (
-      <Avatar>
+      <Avatar className="h-8 w-8 border border-border/60">
         <AvatarImage src={row.original.profilePictureUrl} />
-        <AvatarFallback>
+        <AvatarFallback className="text-xs font-semibold bg-muted">
           {row.original.firstName
             ? row.original.firstName.charAt(0) + row.original.lastName.charAt(0)
             : row.original.name && row.original.name.charAt(0)}
@@ -33,19 +34,20 @@ export const userListColumns: ColumnDef<User>[] = [
     cell: ({ row }) => (
       <Link
         href={`/users/${row.original._id}`}
-        className="flex items-center justify-start flex-nowrap whitespace-nowrap"
+        className="flex items-center justify-start flex-nowrap whitespace-nowrap font-medium text-foreground hover:text-primary transition-colors"
       >
-        {row.getValue("username") || (
-          <i className="opacity-50">{i18n.t("message.not-available")}</i>
-        )}
-        &nbsp;
+        <span>
+          {row.getValue("username") || (
+            <i className="opacity-50 text-muted-foreground">{i18n.t("message.not-available")}</i>
+          )}
+        </span>
         {row.original.isSubscribed && (
-          <Badge className="mr-2 capitalize" variant="outline">
-            <HiSparkles />
-            &nbsp;{row.original.subscriptionTier}
+          <Badge className="ml-1.5 capitalize text-[10px] px-1.5 py-0" variant="outline">
+            <HiSparkles className="mr-0.5 text-amber-500" />
+            {row.original.subscriptionTier}
           </Badge>
         )}
-        {row.original.verified && <RiVerifiedBadgeFill className="h-4 w-4" />}
+        {row.original.verified && <RiVerifiedBadgeFill className="h-3.5 w-3.5 text-primary ml-1" />}
       </Link>
     ),
   },
@@ -54,7 +56,7 @@ export const userListColumns: ColumnDef<User>[] = [
     header: i18n.t("label.first-name") || "First Name",
     id: "firstName",
     cell: ({ row }) => (
-      <div className="capitalize">
+      <div className="capitalize font-medium text-foreground">
         {row.getValue("firstName") ||
           ((row.original.name || "") as string).split(" ")[0]}
       </div>
@@ -65,7 +67,7 @@ export const userListColumns: ColumnDef<User>[] = [
     header: i18n.t("label.last-name") || "Last Name",
     id: "lastName",
     cell: ({ row }) => (
-      <div className="capitalize">
+      <div className="capitalize text-muted-foreground">
         {row.getValue("lastName") ||
           ((row.original.name || "") as string).split(" ")[1]}
       </div>
@@ -75,21 +77,35 @@ export const userListColumns: ColumnDef<User>[] = [
     accessorKey: "role",
     header: i18n.t("label.role") || "Role",
     id: "role",
-    cell: ({ row }) => (
-      <div className="capitalize flex items-center flex-nowrap whitespace-nowrap">
-        {(row.getValue("role") as string).split("_").join(" ")}{" "}
-        {(row.getValue("role") === "admin" ||
-          row.getValue("role") === "super_admin") && (
-          <FaUserCog className="h-4 w-4 ml-2" />
-        )}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const roleStr = (row.getValue("role") as string) || "user";
+      const isAdmin = roleStr === "admin" || roleStr === "super_admin";
+      const formattedRole = roleStr.split("_").join(" ");
+
+      return (
+        <Badge
+          variant={isAdmin ? "secondary" : "outline"}
+          className={`gap-1.5 px-2.5 py-0.5 text-xs font-normal capitalize rounded-md ${
+            isAdmin
+              ? "font-medium"
+              : "text-muted-foreground bg-muted/30 border-border/70"
+          }`}
+        >
+          {isAdmin ? (
+            <Shield className="w-3.5 h-3.5 text-primary" />
+          ) : (
+            <UserIcon className="w-3.5 h-3.5 text-muted-foreground" />
+          )}
+          <span>{formattedRole}</span>
+        </Badge>
+      );
+    },
   },
   {
     accessorKey: "email",
     header: i18n.t("label.email") || "Email",
     id: "email",
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    cell: ({ row }) => <div className="lowercase text-muted-foreground text-xs font-mono">{row.getValue("email")}</div>,
   },
   {
     header: i18n.t("label.restrictions") || "Restrictions",
@@ -98,16 +114,16 @@ export const userListColumns: ColumnDef<User>[] = [
       const restricted = row.original.isRestricted;
       const banned = row.original.isBanned;
       return (
-        <div className="flex gap-2">
+        <div className="flex gap-1.5">
           {restricted ? (
-            <Badge variant={"secondary"} className="flex gap-1">
-              <FaUserMinus className="h-4 w-4" />
+            <Badge variant="secondary" className="flex gap-1 text-[11px] px-2 py-0.5 font-medium">
+              <FaUserMinus className="h-3 w-3 text-muted-foreground" />
               Restricted
             </Badge>
           ) : null}
           {banned ? (
-            <Badge variant="destructive" className="flex gap-1">
-              <FaUserTimes className="h-4 w-4 " />
+            <Badge variant="destructive" className="flex gap-1 text-[11px] px-2 py-0.5 font-medium">
+              <FaUserTimes className="h-3 w-3" />
               Banned
             </Badge>
           ) : null}
@@ -119,7 +135,7 @@ export const userListColumns: ColumnDef<User>[] = [
     accessorKey: "organization",
     header: i18n.t("label.organization") || "Organization",
     id: "organization",
-    cell: ({ row }) => row.getValue("organization"),
+    cell: ({ row }) => <div className="text-muted-foreground">{row.getValue("organization") || "-"}</div>,
   },
   {
     accessorKey: "followerCount",
@@ -144,12 +160,20 @@ export const userListColumns: ColumnDef<User>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       return (
-        <Link href={`/users/${row.original._id}`}>
-          <Button variant="outline">
-            <FaPen className="h-4 w-4" />
-          </Button>
-        </Link>
+        <div className="flex items-center justify-end">
+          <Link href={`/users/${row.original._id}`}>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 w-9 rounded-xl border-border/70 hover:bg-accent transition-colors"
+              title={i18n.t("action.edit-user") || "Edit User"}
+            >
+              <FaPen className="h-3.5 w-3.5 text-muted-foreground" />
+            </Button>
+          </Link>
+        </div>
       );
     },
   },
 ];
+

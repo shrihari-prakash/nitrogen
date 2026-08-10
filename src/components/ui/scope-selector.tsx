@@ -64,6 +64,7 @@ const ScopeSelector = ({
   type,
   role,
   warning = false,
+  iconOnly = false,
 }: {
   scopes: Scope[];
   onSelect?: any;
@@ -72,6 +73,7 @@ const ScopeSelector = ({
   type: "user" | "client" | "role";
   role?: string;
   warning?: boolean;
+  iconOnly?: boolean;
 }) => {
   const scopesObject: { [name: string]: Scope } = scopes.reduce(
     (scopes, scope) => Object.assign(scopes, { [scope.name]: scope }),
@@ -325,10 +327,21 @@ const ScopeSelector = ({
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>
-        <Button variant="outline" className="whitespace-nowrap">
-          <FaKey className="h-4 w-4 mr-2" />
-          {t("button.manage-permissions")}
-        </Button>
+        {iconOnly ? (
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-9 w-9 rounded-xl border-border/70 hover:bg-accent transition-colors"
+            title={t("button.manage-permissions")}
+          >
+            <FaKey className="h-3.5 w-3.5 text-muted-foreground" />
+          </Button>
+        ) : (
+          <Button variant="outline" className="whitespace-nowrap">
+            <FaKey className="h-4 w-4 mr-2" />
+            {t("button.manage-permissions")}
+          </Button>
+        )}
       </SheetTrigger>
       <SheetContent
         className="w-full md:!max-w-[700px] overflow-y-auto flex flex-col justify-between p-0 gap-0"

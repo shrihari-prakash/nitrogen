@@ -113,18 +113,23 @@ export default function RoleEditor({
   }
 
   async function onSubmit(formValues: any) {
-    if (!role) {
-      const result = await create(formValues);
-      if (onCreate) {
-        onCreate(result.data.role);
+    try {
+      if (!role) {
+        const result = await create(formValues);
+        const createdRole = result?.role || result?.data?.role || result;
+        if (onCreate && createdRole) {
+          onCreate(createdRole);
+        }
+      } else {
+        await update(formValues);
       }
-    } else {
-      await update(formValues);
-    }
-    setOpen(false);
+      setOpen(false);
 
-    if (!role) {
-      form.reset();
+      if (!role) {
+        form.reset();
+      }
+    } catch (error) {
+      console.error("Error submitting role form:", error);
     }
   }
 
@@ -135,16 +140,21 @@ export default function RoleEditor({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant={role ? "outline" : "default"} className="ml-2">
-          {role ? (
-            <FaPen className="h-4 w-4" />
-          ) : (
-            <>
-              <FaCirclePlus className="h-4 w-4 mr-2" />
-              {t("button.create-role")}
-            </>
-          )}
-        </Button>
+        {role ? (
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-9 w-9 rounded-xl border-border/70 hover:bg-accent transition-colors"
+            title={t("action.edit-role")}
+          >
+            <FaPen className="h-3.5 w-3.5 text-muted-foreground" />
+          </Button>
+        ) : (
+          <Button variant="default">
+            <FaCirclePlus className="h-4 w-4 mr-2" />
+            {t("button.create-role")}
+          </Button>
+        )}
       </SheetTrigger>
       <SheetContent
         className="w-full md:!max-w-[500px] overflow-y-auto flex flex-col justify-between p-0 gap-0"

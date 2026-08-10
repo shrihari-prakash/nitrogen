@@ -9,9 +9,17 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown, ShieldAlert } from "lucide-react";
+import {
+  ChevronDown,
+  ShieldAlert,
+  Search,
+  X,
+  RotateCcw,
+  User,
+  Laptop,
+} from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
-
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -36,19 +44,28 @@ import { useTranslation } from "react-i18next";
 import { useRolesList } from "@/hooks/api/use-roles";
 
 const RoleList = function () {
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [typeFilter, setTypeFilter] = React.useState<"all" | "user" | "client">("all");
+  const [categoryFilter, setCategoryFilter] = React.useState<"all" | "system" | "custom">("all");
+
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+
   let savedColumnVisibilityState = localStorage.getItem(
-    "nitrogen.application-list.column-visibility"
+    "nitrogen.role-list.column-visibility"
   );
   if (savedColumnVisibilityState) {
-    savedColumnVisibilityState = JSON.parse(savedColumnVisibilityState);
+    try {
+      savedColumnVisibilityState = JSON.parse(savedColumnVisibilityState);
+    } catch {
+      savedColumnVisibilityState = null;
+    }
   }
+
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>(
       (savedColumnVisibilityState as unknown as VisibilityState) || {}
     );
+
   const { data: rolesData, isLoading: loading } = useRolesList();
   const [roles, setRoles] = React.useState<Role[]>([]);
 
@@ -58,8 +75,14 @@ const RoleList = function () {
     }
   }, [rolesData]);
 
-  const { scopes, refreshScopes } = React.useContext(ScopesContext);
+  React.useEffect(() => {
+    localStorage.setItem(
+      "nitrogen.role-list.column-visibility",
+      JSON.stringify(columnVisibility)
+    );
+  }, [columnVisibility]);
 
+  const { scopes, refreshScopes } = React.useContext(ScopesContext);
   const { t } = useTranslation();
 
   React.useEffect(() => {
@@ -67,15 +90,48 @@ const RoleList = function () {
   }, [scopes, refreshScopes]);
 
   const onRoleCreate = (role: Role) => {
-    setRoles((roles) => [...roles, role]);
+    setRoles((prev) => [...prev, role]);
   };
 
   const onRoleDelete = (id: string) => {
-    setRoles((apps) => apps.filter((app) => app.id !== id));
+    setRoles((prev) => prev.filter((app) => app.id !== id));
+  };
+
+  // Filtered Roles
+  const filteredRoles = React.useMemo(() => {
+    return roles.filter((role) => {
+      // Search Filter
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        const matchName = role.displayName?.toLowerCase().includes(q);
+        const matchId = role.id?.toLowerCase().includes(q);
+        const matchDesc = role.description?.toLowerCase().includes(q);
+        if (!matchName && !matchId && !matchDesc) return false;
+      }
+
+      // Type Filter
+      if (typeFilter !== "all" && (role.type || "user") !== typeFilter) {
+        return false;
+      }
+
+      // System vs Custom Category Filter
+      if (categoryFilter === "system" && !role.system) return false;
+      if (categoryFilter === "custom" && role.system) return false;
+
+      return true;
+    });
+  }, [roles, searchQuery, typeFilter, categoryFilter]);
+
+  const isFiltered = searchQuery !== "" || typeFilter !== "all" || categoryFilter !== "all";
+
+  const resetFilters = () => {
+    setSearchQuery("");
+    setTypeFilter("all");
+    setCategoryFilter("all");
   };
 
   const table = useReactTable({
-    data: roles,
+    data: filteredRoles,
     columns: roleListColumns,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -88,27 +144,83 @@ const RoleList = function () {
     meta: {
       scopes,
       onRoleDelete: onRoleDelete,
-      onRoleUpdate: (role: Role) => {
-        console.log("on update.");
-        const newRoles = roles.map((r) => {
-          if (r.id === role.id) {
-            return role;
-          }
-          return r;
-        });
-        setRoles(() => newRoles);
+      onRoleUpdate: (updatedRole: Role) => {
+        setRoles((prev) =>
+          prev.map((r) => (r.id === updatedRole.id ? updatedRole : r))
+        );
       },
     },
   });
 
   return (
-    <div className="w-full h-full px-4 md:px-8 py-4">
-      <div className="flex items-center justify-between gap-3 mb-4">
-        <div className="flex items-center gap-2 ml-auto">
+    <div className="w-full h-full px-4 md:px-8 py-4 space-y-4">
+      {/* Toolbar & Filters */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        {/* Search Bar */}
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none z-10" />
+          <Input
+            placeholder={t("placeholder.search-roles")}
+            className="pl-9 pr-9 h-10 rounded-xl bg-card border-border/70 focus-visible:ring-primary/40 text-sm"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-md"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+
+        {/* Filters and Actions */}
+        <div className="flex items-center gap-2 flex-wrap ml-auto">
+          {/* Target Type Filter Segment */}
+          <div className="flex items-center bg-muted/50 border border-border/80 rounded-xl p-1 gap-1">
+            <button
+              type="button"
+              onClick={() => setTypeFilter("all")}
+              className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors ${
+                typeFilter === "all"
+                  ? "bg-background text-foreground shadow-xs border border-border/60 font-semibold"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t("filter.all-types")}
+            </button>
+            <button
+              type="button"
+              onClick={() => setTypeFilter("user")}
+              className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5 ${
+                typeFilter === "user"
+                  ? "bg-background text-foreground shadow-xs border border-border/60 font-semibold"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <User className="w-3 h-3" /> {t("filter.user")}
+            </button>
+            <button
+              type="button"
+              onClick={() => setTypeFilter("client")}
+              className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5 ${
+                typeFilter === "client"
+                  ? "bg-background text-foreground shadow-xs border border-border/60 font-semibold"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Laptop className="w-3 h-3" /> {t("filter.client")}
+            </button>
+          </div>
+
+          {/* Columns Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="h-10 rounded-xl px-3.5 border-border/70 bg-card/60 backdrop-blur-sm font-medium">
-                {t("button.columns")} <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
+              <Button variant="outline">
+                {t("button.columns")}{" "}
+                <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
@@ -131,30 +243,35 @@ const RoleList = function () {
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* Role Editor Trigger (Add Role) */}
           <RoleEditor onCreate={onRoleCreate} />
         </div>
       </div>
+
+      {/* Table Section */}
       {loading ? (
-        <div
-          className={`h-[calc(100%-100px)] w-full flex-1 flex items-center justify-center cursor-default relative`}
-        >
+        <div className="h-[400px] w-full flex items-center justify-center relative">
           <Loader />
         </div>
       ) : (
         <div className="rounded-xl border border-border/70 bg-card shadow-xs overflow-hidden">
           <Table className="overflow-y-auto">
-            <TableHeader>
+            <TableHeader className="bg-muted/40">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className="hover:bg-transparent">
                   {headerGroup.headers.map((header) => {
                     return (
-                      <TableHead key={header.id} className="text-sm font-semibold text-muted-foreground py-3">
+                      <TableHead
+                        key={header.id}
+                        className="text-xs font-semibold text-muted-foreground uppercase tracking-wider py-3.5"
+                      >
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                       </TableHead>
                     );
                   })}
@@ -164,7 +281,10 @@ const RoleList = function () {
             <TableBody>
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} className="transition-colors hover:bg-primary/5 border-b border-border/40">
+                  <TableRow
+                    key={row.id}
+                    className="transition-colors hover:bg-primary/5 border-b border-border/40"
+                  >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} className="py-3.5">
                         {flexRender(
@@ -179,13 +299,29 @@ const RoleList = function () {
                 <TableRow>
                   <TableCell
                     colSpan={roleListColumns.length}
-                    className="h-48 text-center p-0"
+                    className="h-64 text-center p-0"
                   >
                     <EmptyState
-                      title={t("message.nothing-to-show")}
-                      description={t("message.no-roles-found")}
-                      icon={<ShieldAlert className="w-5 h-5 text-muted-foreground" />}
-                    />
+                      title={isFiltered ? t("message.no-matching-roles") : t("message.nothing-to-show")}
+                      description={
+                        isFiltered
+                          ? t("message.no-roles-filter-help")
+                          : t("message.no-roles-found")
+                      }
+                      icon={<ShieldAlert className="w-6 h-6 text-muted-foreground" />}
+                    >
+                      {isFiltered && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={resetFilters}
+                          className="mt-1"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
+                          {t("button.reset")}
+                        </Button>
+                      )}
+                    </EmptyState>
                   </TableCell>
                 </TableRow>
               )}
@@ -198,3 +334,4 @@ const RoleList = function () {
 };
 
 export default RoleList;
+

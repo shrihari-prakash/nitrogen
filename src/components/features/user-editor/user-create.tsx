@@ -212,7 +212,7 @@ const UserCreate = () => {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button className="gap-1" data-t="create-user-button">
+        <Button variant="default" className="gap-1.5" data-t="create-user-button">
           <FaUserPlus className="h-4 w-4" />
           {t("heading.create-user")}
         </Button>

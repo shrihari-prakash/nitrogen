@@ -9,8 +9,9 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown, AppWindow } from "lucide-react";
+import { ChevronDown, AppWindow, Search, X, Shield, Laptop } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Input } from "@/components/ui/input";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -36,19 +37,27 @@ import { useTranslation } from "react-i18next";
 import { useApplications } from "@/hooks/api/use-applications";
 
 const ApplicationList = function () {
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [roleFilter, setRoleFilter] = React.useState<"all" | "internal_client" | "external_client">("all");
+
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+
   let savedColumnVisibilityState = localStorage.getItem(
     "nitrogen.application-list.column-visibility"
   );
   if (savedColumnVisibilityState) {
-    savedColumnVisibilityState = JSON.parse(savedColumnVisibilityState);
+    try {
+      savedColumnVisibilityState = JSON.parse(savedColumnVisibilityState);
+    } catch {
+      savedColumnVisibilityState = null;
+    }
   }
+
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>(
       (savedColumnVisibilityState as unknown as VisibilityState) || {}
     );
+
   const { data: applicationsData, isLoading: loading } = useApplications();
   const [applications, setApplications] = React.useState<Application[]>([]);
 
@@ -59,7 +68,6 @@ const ApplicationList = function () {
   }, [applicationsData]);
 
   const { scopes, refreshScopes } = React.useContext(ScopesContext);
-
   const { t } = useTranslation();
 
   React.useEffect(() => {
@@ -81,8 +89,30 @@ const ApplicationList = function () {
     setApplications((apps) => apps.filter((app) => app._id !== _id));
   };
 
+  // Filtered applications
+  const filteredApplications = React.useMemo(() => {
+    return applications.filter((app) => {
+      // Search Filter
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        const matchName = app.displayName?.toLowerCase().includes(q);
+        const matchId = app.id?.toLowerCase().includes(q);
+        if (!matchName && !matchId) return false;
+      }
+
+      // Role Filter
+      if (roleFilter !== "all" && app.role !== roleFilter) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [applications, searchQuery, roleFilter]);
+
+  const isFiltered = searchQuery !== "" || roleFilter !== "all";
+
   const table = useReactTable({
-    data: applications,
+    data: filteredApplications,
     columns: applicationListColumns,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -96,7 +126,6 @@ const ApplicationList = function () {
       scopes,
       onApplicationDelete,
       onApplicationUpdate: (application: Application) => {
-        console.log("on up[date.");
         const newApplications = applications.map((app: Application) =>
           app.id === application.id ? { ...app, ...application } : app
         );
@@ -106,13 +135,74 @@ const ApplicationList = function () {
   });
 
   return (
-    <div className="w-full h-full px-4 md:px-8 py-4">
-      <div className="flex items-center justify-between gap-3 mb-4">
-        <div className="flex items-center gap-2 ml-auto">
+    <div className="w-full h-full px-4 md:px-8 py-4 space-y-4">
+      {/* Toolbar & Filters */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        {/* Search Bar */}
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none z-10" />
+          <Input
+            placeholder={t("placeholder.search-applications")}
+            className="pl-9 pr-9 h-10 rounded-xl bg-card border-border/70 focus-visible:ring-primary/40 text-sm"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-md"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+
+        {/* Filters and Actions */}
+        <div className="flex items-center gap-2 flex-wrap ml-auto">
+          {/* Target Type Filter Segment */}
+          <div className="flex items-center bg-muted/50 border border-border/80 rounded-xl p-1 gap-1">
+            <button
+              type="button"
+              onClick={() => setRoleFilter("all")}
+              className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors ${
+                roleFilter === "all"
+                  ? "bg-background text-foreground shadow-xs border border-border/60 font-semibold"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t("filter.all-types")}
+            </button>
+            <button
+              type="button"
+              onClick={() => setRoleFilter("internal_client")}
+              className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5 ${
+                roleFilter === "internal_client"
+                  ? "bg-background text-foreground shadow-xs border border-border/60 font-semibold"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Shield className="w-3 h-3 text-primary" /> {t("filter.internal")}
+            </button>
+            <button
+              type="button"
+              onClick={() => setRoleFilter("external_client")}
+              className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5 ${
+                roleFilter === "external_client"
+                  ? "bg-background text-foreground shadow-xs border border-border/60 font-semibold"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Laptop className="w-3 h-3" /> {t("filter.external")}
+            </button>
+          </div>
+
+          {/* Columns Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="h-10 rounded-xl px-3.5 border-border/70 bg-card/60 backdrop-blur-sm font-medium">
-                {t("button.columns")} <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
+              <Button variant="outline">
+                {t("button.columns")}{" "}
+                <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
@@ -135,30 +225,35 @@ const ApplicationList = function () {
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* Application Editor Trigger */}
           <ApplicationEditor onCreate={onApplicationCreate} />
         </div>
       </div>
+
+      {/* Table Section */}
       {loading ? (
-        <div
-          className={`h-[calc(100%-100px)] w-full flex-1 flex items-center justify-center cursor-default relative`}
-        >
+        <div className="h-[400px] w-full flex items-center justify-center relative">
           <Loader />
         </div>
       ) : (
         <div className="rounded-xl border border-border/70 bg-card shadow-xs overflow-hidden">
           <Table className="overflow-y-auto">
-            <TableHeader>
+            <TableHeader className="bg-muted/40">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className="hover:bg-transparent">
                   {headerGroup.headers.map((header) => {
                     return (
-                      <TableHead key={header.id} className="text-sm font-semibold text-muted-foreground py-3">
+                      <TableHead
+                        key={header.id}
+                        className="text-xs font-semibold text-muted-foreground uppercase tracking-wider py-3.5"
+                      >
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                       </TableHead>
                     );
                   })}
@@ -168,7 +263,10 @@ const ApplicationList = function () {
             <TableBody>
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} className="transition-colors hover:bg-primary/5 border-b border-border/40">
+                  <TableRow
+                    key={row.id}
+                    className="transition-colors hover:bg-primary/5 border-b border-border/40"
+                  >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} className="py-3.5">
                         {flexRender(
@@ -183,12 +281,16 @@ const ApplicationList = function () {
                 <TableRow>
                   <TableCell
                     colSpan={applicationListColumns.length}
-                    className="h-48 text-center p-0"
+                    className="h-64 text-center p-0"
                   >
                     <EmptyState
-                      title={t("message.nothing-to-show")}
-                      description={t("message.no-applications-found")}
-                      icon={<AppWindow className="w-5 h-5 text-muted-foreground" />}
+                      title={isFiltered ? t("message.no-matching-applications") : t("message.nothing-to-show")}
+                      description={
+                        isFiltered
+                          ? t("message.no-apps-filter-help")
+                          : t("message.no-applications-found")
+                      }
+                      icon={<AppWindow className="w-6 h-6 text-muted-foreground" />}
                     />
                   </TableCell>
                 </TableRow>
@@ -202,3 +304,4 @@ const ApplicationList = function () {
 };
 
 export default ApplicationList;
+

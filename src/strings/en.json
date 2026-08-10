@@ -206,5 +206,39 @@
   "error.insufficient-privileges": "Insufficient privileges to create users",
   "error.bulk-upload-failed": "Bulk user creation failed",
   "error.rows-failed-validation": "{{count}} row(s) failed server validation. Please review error details.",
-  "error.telemetry-failed": "Failed to communicate with Liquid telemetry endpoint. Please check permissions."
+  "error.telemetry-failed": "Failed to communicate with Liquid telemetry endpoint. Please check permissions.",
+
+  "filter.all-types": "All Types",
+  "filter.user": "User",
+  "filter.client": "Client",
+  "filter.internal": "Internal",
+  "filter.external": "External",
+  "filter.system": "System",
+  "filter.custom": "Custom",
+
+  "placeholder.search-roles": "Search roles by name, ID, or description...",
+  "placeholder.search-applications": "Search applications by name or ID...",
+  "placeholder.search-users": "Search users by name, email, username...",
+  "placeholder.type-to-confirm": "Type {{id}} to confirm",
+
+  "label.client-type": "Client Type",
+  "label.target-type": "Target Type",
+  "label.system": "System",
+  "label.custom": "Custom",
+  "label.internal": "Internal",
+
+  "action.edit-role": "Edit Role",
+  "action.delete-role": "Delete Role",
+  "action.edit-application": "Edit Application",
+  "action.delete-application": "Delete Application",
+  "action.edit-user": "Edit User",
+
+  "message.no-matching-roles": "No matching roles",
+  "message.no-matching-applications": "No matching applications",
+  "message.no-matching-users": "No matching users",
+  "message.no-roles-filter-help": "No roles match your active search or filter criteria. Try adjusting your inputs.",
+  "message.no-apps-filter-help": "No applications match your active search or filter criteria. Try adjusting your inputs.",
+  "message.system-role-protected": "System protected roles cannot be deleted",
+  "message.delete-client-consequences": "Deleting clients might have unintended consequences in the system. This action cannot be undone. Are you sure you want to delete?",
+  "message.delete-internal-client-warning": "You are deleting an internal client. This might break your system completely. Delete at your own risk."
 }
