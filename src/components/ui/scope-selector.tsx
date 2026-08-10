@@ -4,14 +4,14 @@ import MeContext from "@/context/me-context";
 import { User } from "@/types/user";
 import { Button } from "./button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./dialog";
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./sheet";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "./alert";
 import { Checkbox } from "./checkbox";
@@ -85,6 +85,7 @@ const ScopeSelector = ({
     }
   });
 
+  const [open, setOpen] = useState<boolean>(false);
   const [selectedScopes, setSelectedScopes] = useState<string[]>(
     initialScopes as string[]
   );
@@ -153,7 +154,7 @@ const ScopeSelector = ({
           newSelectedItems.includes(child.name)
         );
 
-        if (allChildrenSelected && !newSelectedItems.includes(parent)) {
+        if (allChildrenSelected) {
           newSelectedItems.push(parent);
         }
 
@@ -181,7 +182,8 @@ const ScopeSelector = ({
     return allChildren;
   };
 
-  const onOpenChange = () => {
+  const onOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
     setSearch("");
   };
 
@@ -219,6 +221,7 @@ const ScopeSelector = ({
       if (setEntity) {
         setEntity(userCopy);
       }
+      setOpen(false);
     } catch (e) {
       // Error handled by toast
     }
@@ -320,26 +323,28 @@ const ScopeSelector = ({
   }
 
   return (
-    <Dialog onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
-        <div>
-          <Button variant="outline" className="whitespace-nowrap">
-            <FaKey className="h-4 w-4 mr-2" />
-            {t("button.manage-permissions")}
-          </Button>
-        </div>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[800px] max-h-full flex flex-col px-1 sm:px-4">
-        <DialogHeader>
-          <DialogTitle className="px-6">
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetTrigger asChild>
+        <Button variant="outline" className="whitespace-nowrap">
+          <FaKey className="h-4 w-4 mr-2" />
+          {t("button.manage-permissions")}
+        </Button>
+      </SheetTrigger>
+      <SheetContent
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+        className="w-full md:!max-w-[700px] overflow-y-auto flex flex-col justify-between p-0 gap-0"
+      >
+        <SheetHeader className="p-6 pb-4 border-b border-border/40 bg-card/60">
+          <SheetTitle className="text-xl font-bold tracking-tight text-left">
             {t("heading.managing-permissions-for", {
               entity:
                 "firstName" in entity
                   ? (entity as User).firstName + " " + (entity as User).lastName
                   : entity.displayName,
             })}
-          </DialogTitle>
-          <DialogDescription>
+          </SheetTitle>
+          <SheetDescription className="text-xs text-muted-foreground mt-0.5 text-left">
             {isUserMe() && (
               <Alert className="mt-2">
                 <AlertDescription>
@@ -347,55 +352,65 @@ const ScopeSelector = ({
                 </AlertDescription>
               </Alert>
             )}
-          </DialogDescription>
-          <div className="p-2">
+          </SheetDescription>
+          <div className="pt-3">
             <Input
-              placeholder="Start typing to search"
+              placeholder="Start typing to search permissions..."
+              value={search}
               onChange={(e) => setSearch(e.target.value)}
               autoCapitalize="none"
+              className="h-9 text-xs rounded-xl"
             />
           </div>
-        </DialogHeader>
+        </SheetHeader>
         <div
           className={
-            "grid overflow-auto flex-1 " + (isUserMe() ? "opacity-50" : "")
+            "p-6 overflow-y-auto flex-1 " + (isUserMe() ? "opacity-50 pointer-events-none" : "")
           }
         >
           {scopes && renderTree(scopes)}
         </div>
-        <DialogFooter>
-          {!warning ? (
-            <Button
-              type="submit"
-              disabled={submitting || isUserMe()}
-              onClick={onSave}
-            >
-              {t("button.save-changes")}
-            </Button>
-          ) : (
-            <Popover open={popoverOpen} onOpenChange={onPopoverOpenChange}>
-              <PopoverTrigger disabled={submitting || isUserMe()}>
-                <Button disabled={submitting || isUserMe()}>
-                  {t("button.save-changes")}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="flex flex-col gap-3">
-                <span className="text-sm opacity-75">
-                  {t(warning ? t("message.scopes-changed") : "")}
-                </span>
-                <Button
-                  type="submit"
-                  disabled={submitting || isUserMe()}
-                  onClick={onSave}
-                >
-                  {t("button.yes")}
-                </Button>
-              </PopoverContent>
-            </Popover>
-          )}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        <SheetFooter className="p-4 border-t border-border/40 bg-card/60 flex items-center justify-between sm:justify-between">
+          <Button variant="ghost" size="sm" onClick={() => setOpen(false)} className="text-xs hidden md:block" disabled={submitting}>
+            {t("button.cancel")}
+          </Button>
+          <div className="flex items-center gap-2">
+            {!warning ? (
+              <Button
+                type="submit"
+                size="sm"
+                className="text-xs font-semibold"
+                disabled={submitting || isUserMe()}
+                onClick={onSave}
+              >
+                {t("button.save-changes")}
+              </Button>
+            ) : (
+              <Popover open={popoverOpen} onOpenChange={onPopoverOpenChange}>
+                <PopoverTrigger asChild disabled={submitting || isUserMe()}>
+                  <Button size="sm" className="text-xs font-semibold" disabled={submitting || isUserMe()}>
+                    {t("button.save-changes")}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="flex flex-col gap-3">
+                  <span className="text-sm opacity-75">
+                    {t(warning ? t("message.scopes-changed") : "")}
+                  </span>
+                  <Button
+                    type="submit"
+                    size="sm"
+                    disabled={submitting || isUserMe()}
+                    onClick={onSave}
+                  >
+                    {t("button.yes")}
+                  </Button>
+                </PopoverContent>
+              </Popover>
+            )}
+          </div>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
 };
 

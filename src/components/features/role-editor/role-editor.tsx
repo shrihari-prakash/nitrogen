@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetDescription,
+  SheetFooter,
+} from "@/components/ui/sheet";
 import {
   Form,
   FormControl,
@@ -131,8 +133,8 @@ export default function RoleEditor({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
         <Button variant={role ? "outline" : "default"} className="ml-2">
           {role ? (
             <FaPen className="h-4 w-4" />
@@ -143,17 +145,26 @@ export default function RoleEditor({
             </>
           )}
         </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-full md:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle>{role ? "Update Role" : "Create Role"}</DialogTitle>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-2 p-4 max-h-[60vh] overflow-y-auto"
-            >
+      </SheetTrigger>
+      <SheetContent
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+        className="w-full md:!max-w-[500px] overflow-y-auto flex flex-col justify-between p-0 gap-0"
+      >
+        <SheetHeader className="p-6 pb-4 border-b border-border/40 bg-card/60">
+          <SheetTitle className="text-xl font-bold tracking-tight text-left">
+            {role ? t("heading.update-role") : t("heading.create-role")}
+          </SheetTitle>
+          <SheetDescription className="text-xs text-muted-foreground mt-0.5 text-left">
+            {role ? "Modify role settings and ranking." : "Create a new role definition."}
+          </SheetDescription>
+        </SheetHeader>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex-1 flex flex-col justify-between"
+          >
+            <div className="p-6 space-y-4 overflow-y-auto flex-1">
               <FormField
                 control={form.control}
                 name="id"
@@ -214,11 +225,18 @@ export default function RoleEditor({
                   </FormItem>
                 )}
               />
-              <Button type="submit">{t("button.save-changes")}</Button>
-            </form>
-          </Form>
-        </div>
-      </DialogContent>
-    </Dialog>
+            </div>
+            <SheetFooter className="p-4 border-t border-border/40 bg-card/60 flex items-center justify-between sm:justify-between">
+              <Button type="button" variant="ghost" size="sm" onClick={() => setOpen(false)} className="text-xs hidden md:block">
+                {t("button.cancel")}
+              </Button>
+              <Button type="submit" size="sm" className="text-xs font-semibold">
+                {role ? t("button.save-changes") : t("button.create")}
+              </Button>
+            </SheetFooter>
+          </form>
+        </Form>
+      </SheetContent>
+    </Sheet>
   );
 }
