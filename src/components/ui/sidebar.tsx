@@ -69,7 +69,7 @@ export default function SideBar() {
           id="applications"
           currentLocation={location}
         />
-        {isPermissionAllowed("delegated:system:read") && (
+        {isPermissionAllowed("delegated:system:settings:read") && (
           <SideBarIcon
             icon={<Activity size="20" />}
             text={t("heading.system-telemetry")}
