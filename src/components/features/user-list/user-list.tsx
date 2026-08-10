@@ -220,7 +220,7 @@ const UserList = function () {
           >
             <div className="rounded-xl border border-border/70 bg-card shadow-xs overflow-hidden">
               <Table>
-                <TableHeader className="bg-muted/50 sticky top-0 z-10 backdrop-blur-md">
+                <TableHeader className="sticky top-0 z-10 backdrop-blur-md">
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id} className="hover:bg-transparent">
                       {headerGroup.headers.map((header) => {
@@ -279,10 +279,9 @@ const UserList = function () {
                       {virtualizer.getVirtualItems().length > 0 && (
                         <tr
                           style={{
-                            height: `${
-                              virtualizer.getTotalSize() -
+                            height: `${virtualizer.getTotalSize() -
                               virtualizer.getVirtualItems()[virtualizer.getVirtualItems().length - 1].end
-                            }px`,
+                              }px`,
                           }}
                         />
                       )}
