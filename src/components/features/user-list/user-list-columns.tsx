@@ -118,7 +118,7 @@ export const userListColumns: ColumnDef<User>[] = [
             </Badge>
           ) : null}
           {banned ? (
-            <Badge variant="destructive" className="flex gap-1 text-[11px] px-2 py-0.5 font-medium">
+            <Badge variant="outline" className="flex gap-1 text-[11px] px-2 py-0.5 font-medium border-red-600/30 text-red-600 dark:text-red-400">
               <UserX className="h-3 w-3" />
               Banned
             </Badge>
