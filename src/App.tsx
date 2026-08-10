@@ -26,7 +26,7 @@ import UsersContext, {
 import RolesContext from "./context/roles-context";
 import SettingsContext from "./context/settings-context";
 import MeContext from "./context/me-context";
-import { KeyRound, ShieldOff, LogIn } from "lucide-react";
+import { ShieldOff, LogIn } from "lucide-react";
 import { BsFillBoxFill, BsFillShieldLockFill } from "react-icons/bs";
 import ScopesContext from "./context/scopes-context";
 import ApplicationList from "./components/features/application-list/application-list";
@@ -151,22 +151,25 @@ function App() {
   if (authError) {
     return (
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <div className="min-h-screen w-full bg-background flex items-center justify-center p-4 select-none">
-          <div className="flex flex-col items-center p-8 rounded-lg bg-card border border-border shadow-sm max-w-sm w-full text-center animate-in fade-in-50 duration-200">
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-destructive/10 border border-destructive/20 text-destructive mb-4">
-              <ShieldOff className="w-6 h-6" />
+        <div className="min-h-screen w-full bg-background relative flex items-center justify-center p-4 select-none overflow-hidden">
+          {/* Ambient Glow Orbs */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-destructive/10 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative flex flex-col items-center p-8 rounded-2xl bg-card/80 border border-destructive/20 shadow-2xl backdrop-blur-xl max-w-sm w-full text-center animate-in fade-in-50 zoom-in-95 duration-300">
+            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive mb-5 shadow-lg shadow-destructive/10">
+              <ShieldOff className="w-7 h-7" />
             </div>
 
-            <h2 className="text-lg font-semibold tracking-tight text-foreground mb-1">
+            <h2 className="text-xl font-bold tracking-tight text-foreground mb-1.5">
               {t("error.authentication-failed")}
             </h2>
-            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+            <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
               {t("message.authentication-failed-description")}
             </p>
 
             <button
               onClick={redirectToLogin}
-              className="w-full py-2 px-4 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 font-medium text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-2.5 px-4 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-xs shadow-md shadow-primary/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
             >
               <LogIn className="w-4 h-4" />
               <span>{t("button.sign-in-again")}</span>
@@ -180,16 +183,21 @@ function App() {
   if (!me) {
     return (
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <div className="min-h-screen w-full bg-background flex items-center justify-center p-4 select-none">
-          <div className="flex flex-col items-center p-8 rounded-lg bg-card border border-border shadow-sm max-w-sm w-full text-center animate-in fade-in-50 duration-200">
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 border border-primary/20 text-primary mb-4">
-              <KeyRound className="w-6 h-6 animate-pulse" />
+        <div className="min-h-screen w-full bg-background relative flex items-center justify-center p-4 select-none overflow-hidden">
+
+          <div className="relative flex flex-col items-center p-8 rounded-2xl bg-card/70 border border-border/80 shadow-2xl shadow-primary/5 backdrop-blur-xl max-w-sm w-full text-center animate-in fade-in-50 zoom-in-95 duration-300">
+            {/* Spinning Outer Circular Ring & Glowing Icon */}
+            <div className="relative flex items-center justify-center w-16 h-16 mb-5">
+              <div className="absolute inset-0 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/15 border border-primary/30 text-primary shadow-inner shadow-primary/20">
+                <BsFillShieldLockFill className="w-5 h-5 animate-pulse" />
+              </div>
             </div>
 
-            <h2 className="text-lg font-semibold tracking-tight text-foreground mb-1">
+            <h2 className="text-xl font-bold tracking-tight text-foreground mb-1">
               {t("message.authenticating")}
             </h2>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs text-muted-foreground leading-relaxed max-w-[250px]">
               {t("message.authenticating-description")}
             </p>
           </div>
