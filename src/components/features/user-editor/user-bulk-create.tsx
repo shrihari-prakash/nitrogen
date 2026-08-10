@@ -271,13 +271,13 @@ export const UserBulkCreate = () => {
         className="w-full md:!max-w-[700px] overflow-y-auto flex flex-col justify-between p-0 gap-0"
       >
         <SheetHeader className="p-6 pb-4 border-b border-border/40 bg-card/60">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-col md:flex-row">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/15">
                 <LuUsers className="h-5 w-5" />
               </div>
-              <div>
-                <SheetTitle className="text-xl font-bold tracking-tight">
+              <div className="">
+                <SheetTitle className="text-xl font-bold tracking-tight text-left">
                   {t("heading.bulk-upload-users")}
                 </SheetTitle>
                 <SheetDescription className="text-xs text-muted-foreground mt-0.5">
@@ -289,7 +289,7 @@ export const UserBulkCreate = () => {
               variant="outline"
               size="sm"
               onClick={downloadSampleCsvTemplate}
-              className="gap-1.5 text-xs h-8 border-border/70 mr-6"
+              className="gap-1.5 text-xs h-8 border-border/70 mr-0 mt-2 md:mr-6 md:mt-0"
             >
               <LuDownload className="h-3.5 w-3.5" />
               {t("action.download-template")}
@@ -333,7 +333,7 @@ export const UserBulkCreate = () => {
               </Button>
             </div>
           ) : (
-            <div className="flex items-center justify-between p-4 rounded-xl border border-border/60 bg-card shadow-xs">
+            <div className="flex items-center justify-between p-3 rounded-xl border border-border/60 bg-card shadow-xs">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                   <LuFileSpreadsheet className="h-5 w-5" />
@@ -350,10 +350,10 @@ export const UserBulkCreate = () => {
                 size="sm"
                 onClick={handleReset}
                 disabled={submitting}
-                className="gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+                className="gap-1 text-xs text-muted-foreground hover:text-foreground"
               >
                 <LuRefreshCw className={`h-3.5 w-3.5 ${submitting ? "animate-spin" : ""}`} />
-                Change File
+                Change
               </Button>
             </div>
           )}
