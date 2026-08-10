@@ -72,7 +72,7 @@ export const UserNav = () => {
               </AvatarFallback>
             </Avatar>
 
-            <span className="text-sm font-medium" data-t="greeting">
+            <span className="text-sm font-medium hidden md:block" data-t="greeting">
               {t("message.hello", { name: firstName || fullName })}
             </span>
 
