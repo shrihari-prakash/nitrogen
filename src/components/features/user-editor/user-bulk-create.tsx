@@ -652,7 +652,7 @@ export const UserBulkCreate = () => {
         </div>
 
         <SheetFooter className="p-4 border-t border-border/40 bg-card/60 flex items-center justify-between sm:justify-between">
-          <Button variant="ghost" size="sm" onClick={() => setOpen(false)} className="text-xs" disabled={submitting}>
+          <Button variant="ghost" size="sm" onClick={() => setOpen(false)} className="text-xs hidden md:block" disabled={submitting}>
             {t("button.cancel")}
           </Button>
           <div className="flex items-center gap-2">
