@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   ColumnFiltersState,
   VisibilityState,
@@ -127,6 +128,15 @@ const UserList = function () {
     },
   });
 
+  const tableRows = table.getRowModel().rows;
+
+  const virtualizer = useVirtualizer({
+    count: tableRows.length,
+    getScrollElement: () => document.getElementById("page"),
+    estimateSize: React.useCallback(() => 56, []),
+    overscan: 10,
+  });
+
   return (
     <div className="w-full h-full px-4 md:px-8 py-4">
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-4">
@@ -209,8 +219,8 @@ const UserList = function () {
             }
           >
             <div className="rounded-xl border border-border/70 bg-card shadow-xs overflow-hidden">
-              <Table className="overflow-y-auto">
-                <TableHeader>
+              <Table>
+                <TableHeader className="bg-muted/50 sticky top-0 z-10 backdrop-blur-md">
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id} className="hover:bg-transparent">
                       {headerGroup.headers.map((header) => {
@@ -229,29 +239,54 @@ const UserList = function () {
                   ))}
                 </TableHeader>
                 <TableBody>
-                  {table.getRowModel().rows?.length ? (
-                    table.getRowModel().rows.map((row) => (
-                      <TableRow 
-                        key={row.id}
-                        className="cursor-pointer transition-colors hover:bg-primary/5 border-b border-border/40"
-                        onClick={(e) => {
-                          const target = e.target as HTMLElement;
-                          if (target.closest("button") || target.closest("a") || target.closest("input")) {
-                            return;
-                          }
-                          setLocation(`/users/${row.original._id}`);
-                        }}
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id} className="py-3.5">
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))
+                  {tableRows.length ? (
+                    <>
+                      {/* Virtual Spacer Top */}
+                      {virtualizer.getVirtualItems().length > 0 && (
+                        <tr style={{ height: `${virtualizer.getVirtualItems()[0].start}px` }} />
+                      )}
+
+                      {virtualizer.getVirtualItems().map((virtualRow) => {
+                        const row = tableRows[virtualRow.index];
+                        if (!row) return null;
+
+                        return (
+                          <TableRow
+                            key={row.id}
+                            style={{ height: `${virtualRow.size}px` }}
+                            className="cursor-pointer transition-colors hover:bg-primary/5 border-b border-border/40"
+                            onClick={(e) => {
+                              const target = e.target as HTMLElement;
+                              if (target.closest("button") || target.closest("a") || target.closest("input")) {
+                                return;
+                              }
+                              setLocation(`/users/${row.original._id}`);
+                            }}
+                          >
+                            {row.getVisibleCells().map((cell) => (
+                              <TableCell key={cell.id} className="py-3.5">
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        );
+                      })}
+
+                      {/* Virtual Spacer Bottom */}
+                      {virtualizer.getVirtualItems().length > 0 && (
+                        <tr
+                          style={{
+                            height: `${
+                              virtualizer.getTotalSize() -
+                              virtualizer.getVirtualItems()[virtualizer.getVirtualItems().length - 1].end
+                            }px`,
+                          }}
+                        />
+                      )}
+                    </>
                   ) : (
                     <TableRow>
                       <TableCell
