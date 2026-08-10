@@ -92,7 +92,7 @@ export default function CreditsEditor({
       <div className="flex justify-between items-center pb-4 mb-2 border-b">
         <div>
           <h3 className="font-medium text-sm text-muted-foreground">{t("label.credits")} Balance</h3>
-          <p className="text-2xl font-semibold">{user.credits || 0}</p>
+          <p className="text-2xl font-semibold">{(user.credits || 0).toLocaleString()}</p>
         </div>
       </div>
       <Form {...form}>
