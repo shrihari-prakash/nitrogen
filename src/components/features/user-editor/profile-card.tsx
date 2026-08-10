@@ -64,8 +64,9 @@ export default function ProfileCard({ user }: { user: User }) {
                 </Badge>
               )}
               {user.isBanned && (
-                <Badge variant="destructive" className="flex items-center gap-1 px-2.5 py-0.5 text-xs">
-                  <UserX className="h-3 w-3" /> Banned
+                <Badge variant="outline" className="flex gap-1 text-[11px] px-2 py-0.5 font-medium border-red-600/30 text-red-600 dark:text-red-400">
+                  <UserX className="h-3 w-3" />
+                  Banned
                 </Badge>
               )}
               {user.isRestricted && (
