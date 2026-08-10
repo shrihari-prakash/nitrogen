@@ -331,8 +331,6 @@ const ScopeSelector = ({
         </Button>
       </SheetTrigger>
       <SheetContent
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onEscapeKeyDown={(e) => e.preventDefault()}
         className="w-full md:!max-w-[700px] overflow-y-auto flex flex-col justify-between p-0 gap-0"
       >
         <SheetHeader className="p-6 pb-4 border-b border-border/40 bg-card/60">
