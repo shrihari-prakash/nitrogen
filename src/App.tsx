@@ -34,8 +34,10 @@ import CountriesContext from "./context/countries-context";
 import SubscriptionTiersContext from "./context/subscription-tiers-context";
 import { Toaster } from "./components/ui/sonner";
 import RoleList from "./components/features/role-list/role-list";
+import SystemTelemetry from "./components/features/system-telemetry/system-telemetry";
 import { PageTitle } from "./components/features/common/page-title";
 import { FaUsers } from "react-icons/fa";
+import { Activity } from "lucide-react";
 
 
 i18n.use(initReactI18next).init({
@@ -269,6 +271,13 @@ function App() {
                                   }
                                 />
                                 <RoleList />
+                              </Route>
+                              <Route path="/system">
+                                <PageTitle
+                                  title={t("heading.system-telemetry")}
+                                  icon={<Activity className="h-6 w-6" />}
+                                />
+                                <SystemTelemetry />
                               </Route>
                             </Switch>
                             <Route path="/users/:id" component={UserEditor} />

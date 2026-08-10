@@ -126,6 +126,7 @@ export interface TagInputProps
   onFocus?: React.FocusEventHandler<HTMLInputElement>;
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
   onTagClick?: (tag: Tag) => void;
+  addOnBlur?: boolean;
 }
 
 const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>((props) => {
@@ -165,6 +166,7 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>((props) => {
     onFocus,
     onBlur,
     onTagClick,
+    addOnBlur = true,
   } = props;
 
   const [inputValue, setInputValue] = React.useState("");
@@ -250,8 +252,10 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>((props) => {
     : displayedTags;
 
   const onTagInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    // add existing value as a tag and clear input by triggering the delimiter key on the input
-    handleKeyDown({ key: delimiter, preventDefault: () => {} } as any);
+    // Only add tag on input unfocus if addOnBlur is enabled and user is active in window (not switching browser tabs)
+    if (addOnBlur && typeof document !== "undefined" && document.hasFocus() && !document.hidden) {
+      handleKeyDown({ key: delimiter, preventDefault: () => {} } as any);
+    }
     onBlur?.(e);
   };
 

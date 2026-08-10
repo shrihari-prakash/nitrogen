@@ -1,6 +1,8 @@
 import { Application } from "@/types/application";
 import { ColumnDef } from "@tanstack/react-table";
-import { RefreshCcw } from "lucide-react";
+import { RefreshCcw, Copy } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { ApplicationListActions } from "./application-list-actions";
 import i18n from "i18next";
 import { RiVerifiedBadgeFill } from "react-icons/ri";
@@ -24,10 +26,26 @@ export const applicationListColumns: ColumnDef<Application>[] = [
     header: i18n.t("label.application-id") || "Application ID",
     enableHiding: false,
     cell: ({ row }) => (
-      <div className="flex items-center flex-nowrap whitespace-nowrap">
-        {row.getValue("id")}
+      <div className="flex items-center flex-nowrap whitespace-nowrap gap-1.5">
+        <span>{row.getValue("id")}</span>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 text-muted-foreground hover:text-foreground"
+          title={i18n.t("action.copy-application-id")}
+          onClick={async () => {
+            try {
+              await navigator.clipboard.writeText(row.getValue("id"));
+              toast(i18n.t("message.copied-application-id"));
+            } catch (err) {
+              toast(i18n.t("message.copy-failed"));
+            }
+          }}
+        >
+          <Copy className="h-3 w-3" />
+        </Button>
         {row.original.role === "internal_client" && (
-          <RiVerifiedBadgeFill className="h-4 w-4 ml-2" />
+          <RiVerifiedBadgeFill className="h-4 w-4 text-primary ml-1" />
         )}
       </div>
     ),

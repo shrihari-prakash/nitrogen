@@ -2,6 +2,7 @@ import usePermissions from "@/hooks/use-permissions";
 import { useTranslation } from "react-i18next";
 import { BsFillBoxFill, BsFillShieldLockFill } from "react-icons/bs";
 import { FaUsers } from "react-icons/fa";
+import { Activity } from "lucide-react";
 import { IoSunny, IoMoon } from "react-icons/io5";
 import { Link, useLocation } from "wouter";
 import { useTheme } from "@/components/theme-provider";
@@ -68,6 +69,15 @@ export default function SideBar() {
           id="applications"
           currentLocation={location}
         />
+        {isPermissionAllowed("delegated:system:read") && (
+          <SideBarIcon
+            icon={<Activity size="20" />}
+            text={t("heading.system-telemetry")}
+            route="/system"
+            id="system"
+            currentLocation={location}
+          />
+        )}
       </div>
 
       {/* Theme Toggle Button at Sidebar Bottom (Desktop Only) */}

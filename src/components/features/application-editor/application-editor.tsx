@@ -34,6 +34,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { FaPen } from "react-icons/fa";
 import { FaCirclePlus } from "react-icons/fa6";
+import { Eye, EyeOff, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 import { useCreateApplication, useUpdateApplication } from "@/hooks/api/use-application-mutations";
@@ -50,6 +51,7 @@ export default function ApplicationEditor({
   const [open, setOpen] = useState(false);
   const [selectedGrants, setSelectedGrants] = useState<any[]>([]);
   const [redirectUris, setRedirectUris] = useState<Tag[]>([]);
+  const [showSecret, setShowSecret] = useState(false);
 
   const { t } = useTranslation();
 
@@ -78,29 +80,56 @@ export default function ApplicationEditor({
 
   const { isPermissionAllowed } = usePermissions();
 
-  const formDefaults = application || {
-    id: undefined,
-    displayName: undefined,
-    secret: undefined,
-    role: undefined,
-    redirectUris: undefined,
-  };
-
-  formDefaults.secret = "";
+  const formDefaults = application
+    ? {
+      id: application.id || "",
+      displayName: application.displayName || "",
+      secret: application.secret || "",
+      role: application.role || "external_client",
+      redirectUris: application.redirectUris || [],
+    }
+    : {
+      id: "",
+      displayName: "",
+      secret: "",
+      role: "external_client" as "internal_client" | "external_client",
+      redirectUris: [] as string[],
+    };
 
   const form = useForm({
     defaultValues: formDefaults,
   });
 
   useEffect(() => {
-    if (application) {
-      const uris = application.redirectUris.map((uri) => ({
-        id: uuid(),
-        text: uri,
-      }));
-      setRedirectUris(uris);
+    if (open) {
+      if (application) {
+        const uris = (application.redirectUris || []).map((uri) => ({
+          id: uuid(),
+          text: uri,
+        }));
+        setRedirectUris(uris);
+        setSelectedGrants(application.grants || []);
+        form.reset({
+          id: application.id || "",
+          displayName: application.displayName || "",
+          secret: application.secret || "",
+          role: application.role || "external_client",
+          redirectUris: application.redirectUris || [],
+        });
+      } else {
+        setRedirectUris([]);
+        setSelectedGrants([]);
+        form.reset({
+          id: "",
+          displayName: "",
+          secret: "",
+          role: "external_client",
+          redirectUris: [],
+        });
+      }
+      setShowSecret(false);
     }
-  }, [application, setRedirectUris]);
+  }, [open, application, form]);
 
   const { mutateAsync: createApplication } = useCreateApplication();
   const { mutateAsync: updateApplication } = useUpdateApplication();
@@ -185,8 +214,15 @@ export default function ApplicationEditor({
     }
   }
 
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      setShowSecret(false);
+    }
+  };
+
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
         <Button variant={application ? "outline" : "default"} className="ml-2">
           {application ? (
@@ -217,14 +253,36 @@ export default function ApplicationEditor({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t("label.application-id")}</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        autoCapitalize="none"
-                        minLength={8}
-                        disabled={!!application}
-                      />
-                    </FormControl>
+                    <div className="flex items-center gap-2">
+                      <FormControl>
+                        <Input
+                          {...field}
+                          value={field.value ?? ""}
+                          autoCapitalize="none"
+                          minLength={8}
+                          disabled={!!application}
+                        />
+                      </FormControl>
+                      {field.value && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          className="shrink-0"
+                          title={t("action.copy-application-id")}
+                          onClick={async () => {
+                            try {
+                              await navigator.clipboard.writeText(field.value);
+                              toast(t("message.copied-application-id"));
+                            } catch (err) {
+                              toast(t("message.copy-failed"));
+                            }
+                          }}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
                     <FormDescription>
                       {t("message.username-help")}
                     </FormDescription>
@@ -252,11 +310,29 @@ export default function ApplicationEditor({
                   <FormItem>
                     <FormLabel>{t("label.application-secret")}</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          value={field.value ?? ""}
+                          type={showSecret ? "text" : "password"}
+                          className="pr-10"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-muted-foreground hover:text-foreground"
+                          onClick={() => setShowSecret((prev) => !prev)}
+                          aria-label={showSecret ? "Hide secret" : "Show secret"}
+                        >
+                          {showSecret ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
                     </FormControl>
-                    <FormDescription>
-                      {t("message.application-secret-help")}
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
