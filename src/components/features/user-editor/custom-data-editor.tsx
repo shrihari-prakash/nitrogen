@@ -8,7 +8,7 @@ import { User } from "@/types/user";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { FaFloppyDisk, FaCheck, FaWandMagicSparkles } from "react-icons/fa6";
+import { Save, Check, Wand2 } from "lucide-react";
 import { useUpdateCustomData } from "@/hooks/api/use-user-mutations";
 
 const CustomDataEditor = ({ user }: { user: User }) => {
@@ -83,7 +83,7 @@ const CustomDataEditor = ({ user }: { user: User }) => {
         />
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
           <Button size="sm" variant="outline" onClick={formatJson} className="h-7 text-xs">
-            {isFormatting ? <FaCheck className="w-3 h-3 mr-1" /> : <FaWandMagicSparkles className="w-3 h-3 mr-1" />}
+            {isFormatting ? <Check className="w-3 h-3 mr-1" /> : <Wand2 className="w-3 h-3 mr-1" />}
             {t("button.format")}
           </Button>
         </div>
@@ -95,7 +95,7 @@ const CustomDataEditor = ({ user }: { user: User }) => {
           onClick={onSubmit}
           disabled={submitting}
         >
-          <FaFloppyDisk className="h-4 w-4 mr-2" />
+          <Save className="h-4 w-4 mr-2" />
           {submitting ? t("button.saving") : t("button.save-custom-data")}
         </Button>
       </div>

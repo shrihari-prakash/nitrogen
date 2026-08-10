@@ -26,8 +26,7 @@ import UsersContext, {
 import RolesContext from "./context/roles-context";
 import SettingsContext from "./context/settings-context";
 import MeContext from "./context/me-context";
-import { ShieldOff, LogIn } from "lucide-react";
-import { BsFillBoxFill, BsFillShieldLockFill } from "react-icons/bs";
+import { ShieldOff, LogIn, Shield, Users, Box, Activity } from "lucide-react";
 import ScopesContext from "./context/scopes-context";
 import ApplicationList from "./components/features/application-list/application-list";
 import CountriesContext from "./context/countries-context";
@@ -36,8 +35,6 @@ import { Toaster } from "./components/ui/sonner";
 import RoleList from "./components/features/role-list/role-list";
 import SystemTelemetry from "./components/features/system-telemetry/system-telemetry";
 import { PageTitle } from "./components/features/common/page-title";
-import { FaUsers } from "react-icons/fa";
-import { Activity } from "lucide-react";
 
 
 i18n.use(initReactI18next).init({
@@ -192,7 +189,7 @@ function App() {
             <div className="relative flex items-center justify-center w-16 h-16 mb-5">
               <div className="absolute inset-0 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
               <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/15 border border-primary/30 text-primary shadow-inner shadow-primary/20">
-                <BsFillShieldLockFill className="w-5 h-5 animate-pulse" />
+                <Shield className="w-5 h-5 animate-pulse" />
               </div>
             </div>
 
@@ -238,28 +235,28 @@ function App() {
                               <Route path="/">
                                 <PageTitle
                                   title={t("heading.users")}
-                                  icon={<FaUsers className="h-6 w-6" />}
+                                  icon={<Users className="h-6 w-6" />}
                                 />
                                 <UserList />
                               </Route>
                               <Route path="/users">
                                 <PageTitle
                                   title={t("heading.users")}
-                                  icon={<FaUsers className="h-6 w-6" />}
+                                  icon={<Users className="h-6 w-6" />}
                                 />
                                 <UserList />
                               </Route>
                               <Route path="/users/:id">
                                 <PageTitle
                                   title={t("heading.users")}
-                                  icon={<FaUsers className="h-6 w-6" />}
+                                  icon={<Users className="h-6 w-6" />}
                                 />
                                 <UserList />
                               </Route>
                               <Route path="/applications">
                                 <PageTitle
                                   title={t("heading.applications")}
-                                  icon={<BsFillBoxFill className="h-6 w-6" />}
+                                  icon={<Box className="h-6 w-6" />}
                                 />
                                 <ApplicationList />
                               </Route>
@@ -267,7 +264,7 @@ function App() {
                                 <PageTitle
                                   title={t("heading.roles-and-permissions")}
                                   icon={
-                                    <BsFillShieldLockFill className="h-6 w-6" />
+                                    <Shield className="h-6 w-6" />
                                   }
                                 />
                                 <RoleList />

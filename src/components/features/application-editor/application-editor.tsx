@@ -32,9 +32,7 @@ import { camelCaseToWords } from "@/utils/string";
 import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { FaPen } from "react-icons/fa";
-import { FaCirclePlus } from "react-icons/fa6";
-import { Eye, EyeOff, Copy } from "lucide-react";
+import { Eye, EyeOff, Copy, Pencil, PlusCircle } from "lucide-react";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 import { useCreateApplication, useUpdateApplication } from "@/hooks/api/use-application-mutations";
@@ -236,11 +234,11 @@ export default function ApplicationEditor({
             className="h-9 w-9 rounded-xl border-border/70 hover:bg-accent transition-colors"
             title={t("action.edit-application")}
           >
-            <FaPen className="h-3.5 w-3.5 text-muted-foreground" />
+            <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
           </Button>
         ) : (
           <Button variant="default">
-            <FaCirclePlus className="h-4 w-4 mr-2" />
+            <PlusCircle className="h-4 w-4 mr-2" />
             {t("heading.create-application")}
           </Button>
         )}

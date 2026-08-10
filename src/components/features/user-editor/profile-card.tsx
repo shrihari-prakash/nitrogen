@@ -3,8 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { User } from "@/types/user";
 import { useTranslation } from "react-i18next";
-import { FaCalendar, FaUserCheck, FaUsers, FaUserTimes, FaUserMinus } from "react-icons/fa";
-import { RiVerifiedBadgeFill } from "react-icons/ri";
+import { Calendar, UserCheck, Users, UserX, UserMinus, BadgeCheck } from "lucide-react";
 
 export default function ProfileCard({ user }: { user: User }) {
   const { t } = useTranslation();
@@ -47,7 +46,9 @@ export default function ProfileCard({ user }: { user: User }) {
                   {fullName}
                 </h3>
                 {user.verified && (
-                  <RiVerifiedBadgeFill className="h-5 w-5 text-primary shrink-0" title="Verified Account" />
+                  <span title="Verified Account">
+                    <BadgeCheck className="h-5 w-5 text-primary shrink-0" />
+                  </span>
                 )}
               </div>
               <p className="text-sm font-medium text-muted-foreground font-mono">
@@ -64,12 +65,12 @@ export default function ProfileCard({ user }: { user: User }) {
               )}
               {user.isBanned && (
                 <Badge variant="destructive" className="flex items-center gap-1 px-2.5 py-0.5 text-xs">
-                  <FaUserTimes className="h-3 w-3" /> Banned
+                  <UserX className="h-3 w-3" /> Banned
                 </Badge>
               )}
               {user.isRestricted && (
                 <Badge variant="outline" className="flex items-center gap-1 text-muted-foreground border-border px-2.5 py-0.5 text-xs">
-                  <FaUserMinus className="h-3 w-3" /> Restricted
+                  <UserMinus className="h-3 w-3" /> Restricted
                 </Badge>
               )}
             </div>
@@ -86,18 +87,18 @@ export default function ProfileCard({ user }: { user: User }) {
           <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground pt-1 border-t border-border/30">
             {joinDate && (
               <div className="flex items-center gap-1.5 font-medium">
-                <FaCalendar className="h-3.5 w-3.5 opacity-60" />
+                <Calendar className="h-3.5 w-3.5 opacity-60" />
                 <span>Joined {joinDate}</span>
               </div>
             )}
 
             <div className="flex items-center gap-3 font-medium">
               <div className="flex items-center gap-1">
-                <FaUsers className="h-3.5 w-3.5 opacity-60" />
+                <Users className="h-3.5 w-3.5 opacity-60" />
                 <span>{t("message.followers", { count: user.followerCount || 0 })}</span>
               </div>
               <div className="flex items-center gap-1">
-                <FaUserCheck className="h-3.5 w-3.5 opacity-60" />
+                <UserCheck className="h-3.5 w-3.5 opacity-60" />
                 <span>{t("message.following", { count: user.followingCount || 0 })}</span>
               </div>
             </div>

@@ -25,7 +25,7 @@ import { camelCaseToWords } from "@/utils/string";
 import { toast } from "sonner";
 import usePermissions from "@/hooks/use-permissions";
 import { useTranslation } from "react-i18next";
-import { FaUserPlus } from "react-icons/fa";
+import { UserPlus } from "lucide-react";
 import { useCreateUser } from "@/hooks/api/use-users";
 
 const createUserSchema = z.object({
@@ -213,7 +213,7 @@ const UserCreate = () => {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="default" className="gap-1.5" data-t="create-user-button">
-          <FaUserPlus className="h-4 w-4" />
+          <UserPlus className="h-4 w-4" />
           {t("heading.create-user")}
         </Button>
       </SheetTrigger>
@@ -306,7 +306,7 @@ const UserCreate = () => {
                 className="w-full mb-2 md:mb-0"
                 data-t="create-user-submit"
               >
-                <FaUserPlus className="h-4 w-4 mr-2" />
+                <UserPlus className="h-4 w-4 mr-2" />
                 {submitting ? t("button.creating") : t("button.create")}
               </Button>
             </SheetFooter>

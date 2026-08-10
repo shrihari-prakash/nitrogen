@@ -24,7 +24,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { IoLogOut, IoChevronDown, IoSunny, IoMoon } from "react-icons/io5";
+import { LogOut, ChevronDown, Sun, Moon } from "lucide-react";
 
 export const UserNav = () => {
   const { me } = useContext(MeContext);
@@ -76,7 +76,7 @@ export const UserNav = () => {
               {t("message.hello", { name: firstName || fullName })}
             </span>
 
-            <IoChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
+            <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
           </button>
         </DropdownMenuTrigger>
 
@@ -99,9 +99,9 @@ export const UserNav = () => {
             className="cursor-pointer gap-2 font-medium"
           >
             {isDark ? (
-              <IoSunny className="h-4 w-4" />
+              <Sun className="h-4 w-4" />
             ) : (
-              <IoMoon className="h-4 w-4" />
+              <Moon className="h-4 w-4" />
             )}
             <span>{isDark ? "Light Mode" : "Dark Mode"}</span>
           </DropdownMenuItem>
@@ -114,7 +114,7 @@ export const UserNav = () => {
             onClick={() => setShowLogoutConfirm(true)}
             className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive gap-2 font-medium"
           >
-            <IoLogOut className="h-4 w-4 text-destructive" />
+            <LogOut className="h-4 w-4 text-destructive" />
             <span>{t("heading.logout")}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>

@@ -33,8 +33,7 @@ import { camelCaseToWords } from "@/utils/string";
 import { useContext, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { FaCopy } from "react-icons/fa";
-import { FaFloppyDisk } from "react-icons/fa6";
+import { Copy, Save } from "lucide-react";
 import { toast } from "sonner";
 import { useUpdateUser } from "@/hooks/api/use-user-mutations";
 
@@ -213,7 +212,7 @@ export default function BasicInfoEditor({
                     variant="outline"
                     title="Copy ID"
                   >
-                    <FaCopy className="h-4 w-4" />
+                    <Copy className="h-4 w-4" />
                   </Button>
                 </div>
                 <FormMessage />
@@ -429,7 +428,7 @@ export default function BasicInfoEditor({
               disabled={!isPermissionAllowed("admin:profile:write")}
               className="w-full sm:w-auto"
             >
-              <FaFloppyDisk className="h-4 w-4 mr-2" />
+              <Save className="h-4 w-4 mr-2" />
               {submitting ? t("button.saving") : t("button.save-basic-info")}
             </Button>
           </SheetFooter>

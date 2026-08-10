@@ -19,8 +19,7 @@ import { Role } from "@/types/role";
 import RoleEditor from "../role-editor/role-editor";
 import RolesContext from "@/context/roles-context";
 import { useTranslation } from "react-i18next";
-import { FaTrash } from "react-icons/fa";
-import { Lock } from "lucide-react";
+import { Lock, Trash2 } from "lucide-react";
 import { useDeleteRole } from "@/hooks/api/use-role-mutations";
 
 export const RoleListActions = ({
@@ -98,7 +97,7 @@ export const RoleListActions = ({
               className="h-9 w-9 rounded-xl border-border/70 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-colors"
               title={t("action.delete-role")}
             >
-              <FaTrash className="h-3.5 w-3.5" />
+              <Trash2 className="h-3.5 w-3.5" />
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent className="rounded-2xl border-border/80">

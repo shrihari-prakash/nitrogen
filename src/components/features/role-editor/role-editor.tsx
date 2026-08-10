@@ -21,11 +21,10 @@ import { Input } from "@/components/ui/input";
 import usePermissions from "@/hooks/use-permissions";
 import { Role } from "@/types/role";
 import { camelCaseToWords } from "@/utils/string";
-import { FaCirclePlus } from "react-icons/fa6";
+import { PlusCircle, Pencil } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { FaPen } from "react-icons/fa";
 import { toast } from "sonner";
 import { useCreateRole, useUpdateRole } from "@/hooks/api/use-role-mutations";
 
@@ -34,8 +33,8 @@ export default function RoleEditor({
   role,
   onUpdate,
 }: {
-  onCreate?: any;
-  onUpdate?: any;
+  onCreate?: (role: Role) => void;
+  onUpdate?: (role: Role) => void;
   role?: Role;
 }) {
   const [open, setOpen] = useState(false);
@@ -147,11 +146,11 @@ export default function RoleEditor({
             className="h-9 w-9 rounded-xl border-border/70 hover:bg-accent transition-colors"
             title={t("action.edit-role")}
           >
-            <FaPen className="h-3.5 w-3.5 text-muted-foreground" />
+            <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
           </Button>
         ) : (
           <Button variant="default">
-            <FaCirclePlus className="h-4 w-4 mr-2" />
+            <PlusCircle className="h-4 w-4 mr-2" />
             {t("button.create-role")}
           </Button>
         )}

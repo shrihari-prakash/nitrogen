@@ -17,7 +17,7 @@ import { User } from "@/types/user";
 import { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { PiCoinVertical } from "react-icons/pi";
+import { Coins } from "lucide-react";
 import { toast } from "sonner";
 import { useUpdateCredits } from "@/hooks/api/use-user-mutations";
 
@@ -154,7 +154,7 @@ export default function CreditsEditor({
               type="submit"
               disabled={submitting}
             >
-              <PiCoinVertical className="h-4 w-4 mr-2" />
+              <Coins className="h-4 w-4 mr-2" />
               {submitting ? t("button.updating") : t("button.update-credits")}
             </Button>
           </SheetFooter>

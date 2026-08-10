@@ -18,7 +18,7 @@ import { Checkbox } from "./checkbox";
 import usePermissions from "@/hooks/use-permissions";
 import { Application } from "@/types/application";
 import { Input } from "./input";
-import { FaKey, FaChevronRight, FaChevronDown } from "react-icons/fa";
+import { KeyRound, ChevronRight, ChevronDown } from "lucide-react";
 import { Role } from "@/types/role";
 import { Badge } from "./badge";
 import { useTranslation } from "react-i18next";
@@ -279,7 +279,7 @@ const ScopeSelector = ({
                   onClick={(e) => toggleExpand(item.name, e)}
                   className="p-2 mt-1 mr-1 text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {isExpanded ? <FaChevronDown className="h-3 w-3" /> : <FaChevronRight className="h-3 w-3" />}
+                  {isExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
                 </button>
               ) : (
                 <div className="w-7 mr-1 shrink-0" />
@@ -334,11 +334,11 @@ const ScopeSelector = ({
             className="h-9 w-9 rounded-xl border-border/70 hover:bg-accent transition-colors"
             title={t("button.manage-permissions")}
           >
-            <FaKey className="h-3.5 w-3.5 text-muted-foreground" />
+            <KeyRound className="h-3.5 w-3.5 text-muted-foreground" />
           </Button>
         ) : (
           <Button variant="outline" className="whitespace-nowrap">
-            <FaKey className="h-4 w-4 mr-2" />
+            <KeyRound className="h-4 w-4 mr-2" />
             {t("button.manage-permissions")}
           </Button>
         )}

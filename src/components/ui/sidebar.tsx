@@ -1,9 +1,6 @@
 import usePermissions from "@/hooks/use-permissions";
 import { useTranslation } from "react-i18next";
-import { BsFillBoxFill, BsFillShieldLockFill } from "react-icons/bs";
-import { FaUsers } from "react-icons/fa";
-import { Activity } from "lucide-react";
-import { IoSunny, IoMoon } from "react-icons/io5";
+import { Activity, Users, Shield, Box, Sun, Moon } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useTheme } from "@/components/theme-provider";
 
@@ -47,7 +44,7 @@ export default function SideBar() {
     >
       <div className="flex flex-row md:flex-col items-center gap-1 md:gap-3 w-full justify-around md:justify-start">
         <SideBarIcon
-          icon={<FaUsers size="20" />}
+          icon={<Users size="20" />}
           text={t("heading.users")}
           route="/users"
           id="users"
@@ -55,7 +52,7 @@ export default function SideBar() {
         />
         {isPermissionAllowed("delegated:roles:read") && (
           <SideBarIcon
-            icon={<BsFillShieldLockFill size="18" />}
+            icon={<Shield size="18" />}
             text={t("heading.roles-and-permissions")}
             route="/roles"
             id="roles"
@@ -63,7 +60,7 @@ export default function SideBar() {
           />
         )}
         <SideBarIcon
-          icon={<BsFillBoxFill size="18" />}
+          icon={<Box size="18" />}
           text={t("heading.applications")}
           route="/applications"
           id="applications"
@@ -88,7 +85,7 @@ export default function SideBar() {
           aria-label="Toggle theme"
           className="relative flex items-center justify-center h-10 w-10 rounded-2xl hover:rounded-xl bg-secondary text-secondary-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200 group border border-border/40 shadow-sm"
         >
-          {isDark ? <IoSunny size="19" /> : <IoMoon size="18" />}
+          {isDark ? <Sun size="19" /> : <Moon size="18" />}
           <span
             className="absolute
               w-auto

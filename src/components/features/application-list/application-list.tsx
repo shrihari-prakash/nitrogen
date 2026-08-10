@@ -9,7 +9,7 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown, AppWindow, Search, X, Shield, Laptop } from "lucide-react";
+import { ChevronDown, Box, Search, X, Shield, Laptop } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 
@@ -290,7 +290,7 @@ const ApplicationList = function () {
                           ? t("message.no-apps-filter-help")
                           : t("message.no-applications-found")
                       }
-                      icon={<AppWindow className="w-6 h-6 text-muted-foreground" />}
+                      icon={<Box className="w-6 h-6 text-muted-foreground" />}
                     />
                   </TableCell>
                 </TableRow>

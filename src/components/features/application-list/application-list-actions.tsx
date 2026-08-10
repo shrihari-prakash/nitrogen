@@ -14,13 +14,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ScopeSelector from "@/components/ui/scope-selector";
 import usePermissions from "@/hooks/use-permissions";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import ApplicationEditor from "../application-editor/application-editor";
 import { Application } from "@/types/application";
 import { useTranslation } from "react-i18next";
-import { FaTrash } from "react-icons/fa";
 import { useDeleteApplication } from "@/hooks/api/use-application-mutations";
 
 export const ApplicationListActions = ({
@@ -100,7 +99,7 @@ export const ApplicationListActions = ({
               className="h-9 w-9 rounded-xl border-border/70 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-colors"
               title={t("action.delete-application")}
             >
-              <FaTrash className="h-3.5 w-3.5" />
+              <Trash2 className="h-3.5 w-3.5" />
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent className="rounded-2xl border-border/80">

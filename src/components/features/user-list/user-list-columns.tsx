@@ -3,12 +3,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { User } from "@/types/user";
 import { ColumnDef } from "@tanstack/react-table";
-import { HiSparkles } from "react-icons/hi";
 import { Link } from "wouter";
 import i18n from "i18next";
-import { FaPen, FaUserMinus, FaUserTimes } from "react-icons/fa";
-import { RiVerifiedBadgeFill } from "react-icons/ri";
-import { Shield, User as UserIcon } from "lucide-react";
+import { Shield, User as UserIcon, Sparkles, BadgeCheck, UserMinus, UserX, Pencil } from "lucide-react";
 
 export const userListColumns: ColumnDef<User>[] = [
   {
@@ -43,11 +40,11 @@ export const userListColumns: ColumnDef<User>[] = [
         </span>
         {row.original.isSubscribed && (
           <Badge className="ml-1.5 capitalize text-[10px] px-1.5 py-0" variant="outline">
-            <HiSparkles className="mr-0.5 text-amber-500" />
+            <Sparkles className="mr-0.5 h-3 w-3 text-amber-500" />
             {row.original.subscriptionTier}
           </Badge>
         )}
-        {row.original.verified && <RiVerifiedBadgeFill className="h-3.5 w-3.5 text-primary ml-1" />}
+        {row.original.verified && <BadgeCheck className="h-3.5 w-3.5 text-primary ml-1" />}
       </Link>
     ),
   },
@@ -117,13 +114,13 @@ export const userListColumns: ColumnDef<User>[] = [
         <div className="flex gap-1.5">
           {restricted ? (
             <Badge variant="secondary" className="flex gap-1 text-[11px] px-2 py-0.5 font-medium">
-              <FaUserMinus className="h-3 w-3 text-muted-foreground" />
+              <UserMinus className="h-3 w-3 text-muted-foreground" />
               Restricted
             </Badge>
           ) : null}
           {banned ? (
             <Badge variant="destructive" className="flex gap-1 text-[11px] px-2 py-0.5 font-medium">
-              <FaUserTimes className="h-3 w-3" />
+              <UserX className="h-3 w-3" />
               Banned
             </Badge>
           ) : null}
@@ -168,7 +165,7 @@ export const userListColumns: ColumnDef<User>[] = [
               className="h-9 w-9 rounded-xl border-border/70 hover:bg-accent transition-colors"
               title={i18n.t("action.edit-user") || "Edit User"}
             >
-              <FaPen className="h-3.5 w-3.5 text-muted-foreground" />
+              <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
             </Button>
           </Link>
         </div>
