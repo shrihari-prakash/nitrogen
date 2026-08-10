@@ -243,7 +243,16 @@ const UserList = function () {
                     <>
                       {/* Virtual Spacer Top */}
                       {virtualizer.getVirtualItems().length > 0 && (
-                        <tr style={{ height: `${virtualizer.getVirtualItems()[0].start}px` }} />
+                        <tr>
+                          <td
+                            colSpan={table.getVisibleLeafColumns().length}
+                            style={{
+                              height: `${virtualizer.getVirtualItems()[0].start}px`,
+                              padding: 0,
+                              border: 0,
+                            }}
+                          />
+                        </tr>
                       )}
 
                       {virtualizer.getVirtualItems().map((virtualRow) => {
@@ -252,7 +261,9 @@ const UserList = function () {
 
                         return (
                           <TableRow
-                            key={row.id}
+                            key={virtualRow.key}
+                            data-index={virtualRow.index}
+                            ref={virtualizer.measureElement}
                             style={{ height: `${virtualRow.size}px` }}
                             className="cursor-pointer transition-colors hover:bg-primary/5 border-b border-border/40"
                             onClick={(e) => {
@@ -277,14 +288,20 @@ const UserList = function () {
 
                       {/* Virtual Spacer Bottom */}
                       {virtualizer.getVirtualItems().length > 0 && (
-                        <tr
-                          style={{
-                            height: `${virtualizer.getTotalSize() -
-                              virtualizer.getVirtualItems()[virtualizer.getVirtualItems().length - 1].end
-                              }px`,
-                          }}
-                        />
+                        <tr>
+                          <td
+                            colSpan={table.getVisibleLeafColumns().length}
+                            style={{
+                              height: `${virtualizer.getTotalSize() -
+                                virtualizer.getVirtualItems()[virtualizer.getVirtualItems().length - 1].end
+                                }px`,
+                              padding: 0,
+                              border: 0,
+                            }}
+                          />
+                        </tr>
                       )}
+
                     </>
                   ) : (
                     <TableRow>
