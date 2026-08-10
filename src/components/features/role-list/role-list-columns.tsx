@@ -24,11 +24,10 @@ export const roleListColumns: ColumnDef<Role>[] = [
         <div className="flex items-center gap-1.5" title={`Hierarchy Rank: ${rank}`}>
           <Badge
             variant="outline"
-            className={`px-2 py-0.5 flex items-center gap-1 rounded-md text-xs font-mono select-none ${
-              isTopRank
+            className={`px-2 py-0.5 flex items-center gap-1 rounded-md text-xs font-mono select-none ${isTopRank
                 ? "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold"
                 : "bg-muted/60 text-muted-foreground border-border/70 font-medium"
-            }`}
+              }`}
           >
             {isTopRank ? (
               <Crown className="h-3 w-3 text-amber-500 fill-amber-500/20" />
@@ -111,7 +110,7 @@ export const roleListColumns: ColumnDef<Role>[] = [
       }
       return (
         <span
-          className="text-xs text-muted-foreground line-clamp-2 max-w-sm"
+          className="text-muted-foreground line-clamp-2 max-w-sm"
           title={desc}
         >
           {desc}

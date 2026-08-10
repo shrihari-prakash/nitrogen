@@ -53,7 +53,7 @@ export const applicationListColumns: ColumnDef<Application>[] = [
               </Badge>
             )}
           </div>
-          <div className="flex items-center gap-1 text-[11px] font-mono text-muted-foreground">
+          <div className="flex items-center gap-1 font-mono text-xs text-muted-foreground">
             <span>{row.original.id}</span>
             <CopyIdButton id={row.original.id} />
           </div>

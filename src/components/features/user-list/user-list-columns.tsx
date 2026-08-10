@@ -13,7 +13,7 @@ export const userListColumns: ColumnDef<User>[] = [
     header: "",
     id: "profilePicture",
     cell: ({ row }) => (
-      <Avatar className="h-8 w-8 border border-border/60">
+      <Avatar className="h-10 w-10 border border-border/60">
         <AvatarImage src={row.original.profilePictureUrl} />
         <AvatarFallback className="text-xs font-semibold bg-muted">
           {row.original.firstName
@@ -101,7 +101,7 @@ export const userListColumns: ColumnDef<User>[] = [
     accessorKey: "email",
     header: i18n.t("label.email") || "Email",
     id: "email",
-    cell: ({ row }) => <div className="lowercase text-muted-foreground text-xs font-mono">{row.getValue("email")}</div>,
+    cell: ({ row }) => <div className="lowercase text-muted-foreground">{row.getValue("email")}</div>,
   },
   {
     header: i18n.t("label.restrictions") || "Restrictions",
