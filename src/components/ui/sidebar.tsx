@@ -78,7 +78,7 @@ export default function SideBar() {
           aria-label="Toggle theme"
           className="relative flex items-center justify-center h-10 w-10 rounded-2xl hover:rounded-xl bg-secondary text-secondary-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200 group border border-border/40 shadow-sm"
         >
-          {isDark ? <IoSunny size="19" className="text-amber-400" /> : <IoMoon size="18" className="text-indigo-600" />}
+          {isDark ? <IoSunny size="19" /> : <IoMoon size="18" />}
           <span
             className="absolute
               w-auto

@@ -99,9 +99,9 @@ export const UserNav = () => {
             className="cursor-pointer gap-2 font-medium"
           >
             {isDark ? (
-              <IoSunny className="h-4 w-4 text-amber-400" />
+              <IoSunny className="h-4 w-4" />
             ) : (
-              <IoMoon className="h-4 w-4 text-indigo-600" />
+              <IoMoon className="h-4 w-4" />
             )}
             <span>{isDark ? "Light Mode" : "Dark Mode"}</span>
           </DropdownMenuItem>
