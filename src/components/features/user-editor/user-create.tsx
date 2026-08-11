@@ -212,9 +212,9 @@ const UserCreate = () => {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="default" className="gap-1.5" data-t="create-user-button">
+        <Button variant="default" className="gap-1.5 h-9 px-3 shrink-0" data-t="create-user-button">
           <UserPlus className="h-4 w-4" />
-          {t("heading.create-user")}
+          <span>{t("heading.create-user")}</span>
         </Button>
       </SheetTrigger>
       <SheetContent className="w-full md:!max-w-[550px] overflow-y-auto">

@@ -88,11 +88,11 @@ export const userListColumns: ColumnDef<User>[] = [
             }`}
         >
           {isAdmin ? (
-            <Shield className="w-3.5 h-3.5 text-primary" />
+            <Shield className="w-3.5 h-3.5 text-primary shrink-0" />
           ) : (
-            <UserIcon className="w-3.5 h-3.5 text-muted-foreground" />
+            <UserIcon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
           )}
-          <span>{formattedRole}</span>
+          <span className="whitespace-nowrap">{formattedRole}</span>
         </Badge>
       );
     },
@@ -112,14 +112,14 @@ export const userListColumns: ColumnDef<User>[] = [
       return (
         <div className="flex gap-1.5">
           {restricted ? (
-            <Badge variant="secondary" className="flex gap-1 text-[11px] px-2 py-0.5 font-medium">
-              <UserMinus className="h-3 w-3 text-muted-foreground" />
+            <Badge variant="secondary" className="flex gap-1 text-[11px] px-2 py-0.5 font-medium whitespace-nowrap">
+              <UserMinus className="h-3 w-3 text-muted-foreground shrink-0" />
               Restricted
             </Badge>
           ) : null}
           {banned ? (
             <Badge variant="outline" className="flex gap-1 text-[11px] px-2 py-0.5 font-medium border-red-600/30 text-red-600 dark:text-red-400">
-              <UserX className="h-3 w-3" />
+              <UserX className="h-3 w-3 shrink-0" />
               Banned
             </Badge>
           ) : null}

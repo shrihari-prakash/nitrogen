@@ -261,9 +261,9 @@ export const UserBulkCreate = () => {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="outline" className="gap-2" data-t="bulk-upload-users-button">
+        <Button variant="outline" className="gap-1.5 h-9 px-3 shrink-0" data-t="bulk-upload-users-button">
           <LuFileSpreadsheet className="h-4 w-4 text-primary" />
-          {t("button.bulk-upload")}
+          <span>{t("button.bulk-upload")}</span>
         </Button>
       </SheetTrigger>
       <SheetContent

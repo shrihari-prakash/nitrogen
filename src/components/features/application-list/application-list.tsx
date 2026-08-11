@@ -137,13 +137,13 @@ const ApplicationList = function () {
   return (
     <div className="w-full h-full px-4 md:px-8 py-4 space-y-4">
       {/* Toolbar & Filters */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5 mb-4">
         {/* Search Bar */}
-        <div className="relative flex-1 max-w-md">
+        <div className="relative flex-1 w-full lg:max-w-xs xl:max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none z-10" />
           <Input
             placeholder={t("placeholder.search-applications")}
-            className="pl-9 pr-9 h-10 rounded-xl bg-card border-border/70 focus-visible:ring-primary/40 text-sm"
+            className="pl-9 pr-9 h-9 rounded-lg bg-card border-border/70 focus-visible:ring-primary/40 text-sm w-full"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -158,14 +158,14 @@ const ApplicationList = function () {
           )}
         </div>
 
-        {/* Filters and Actions */}
-        <div className="flex items-center gap-2 flex-wrap ml-auto">
-          {/* Target Type Filter Segment */}
-          <div className="flex items-center bg-muted/50 border border-border/80 rounded-xl p-1 gap-1">
+        {/* Filters and Actions Controls Container */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between sm:justify-end gap-2.5 w-full lg:w-auto">
+          {/* Target Type Filter Segment - Full Width on Mobile, Auto on Desktop */}
+          <div className="flex items-center bg-muted/50 border border-border/80 rounded-lg p-1 gap-1 w-full sm:w-auto">
             <button
               type="button"
               onClick={() => setRoleFilter("all")}
-              className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors ${
+              className={`flex-1 sm:flex-none px-3 py-1 text-xs font-medium rounded-md transition-colors text-center justify-center ${
                 roleFilter === "all"
                   ? "bg-background text-foreground shadow-xs border border-border/60 font-semibold"
                   : "text-muted-foreground hover:text-foreground"
@@ -176,58 +176,63 @@ const ApplicationList = function () {
             <button
               type="button"
               onClick={() => setRoleFilter("internal_client")}
-              className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5 ${
+              className={`flex-1 sm:flex-none px-3 py-1 text-xs font-medium rounded-md transition-colors flex items-center justify-center gap-1.5 ${
                 roleFilter === "internal_client"
                   ? "bg-background text-foreground shadow-xs border border-border/60 font-semibold"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <Shield className="w-3 h-3 text-primary" /> {t("filter.internal")}
+              <Shield className="w-3.5 h-3.5 text-primary shrink-0" />
+              <span>{t("filter.internal")}</span>
             </button>
             <button
               type="button"
               onClick={() => setRoleFilter("external_client")}
-              className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5 ${
+              className={`flex-1 sm:flex-none px-3 py-1 text-xs font-medium rounded-md transition-colors flex items-center justify-center gap-1.5 ${
                 roleFilter === "external_client"
                   ? "bg-background text-foreground shadow-xs border border-border/60 font-semibold"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <Laptop className="w-3 h-3" /> {t("filter.external")}
+              <Laptop className="w-3.5 h-3.5 shrink-0" />
+              <span>{t("filter.external")}</span>
             </button>
           </div>
 
-          {/* Columns Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                {t("button.columns")}{" "}
-                <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Action Buttons Group */}
+          <div className="flex items-center justify-end gap-2 shrink-0">
+            {/* Columns Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="h-9 px-3 gap-1.5 shrink-0">
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                  <span>{t("button.columns")}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }
+                      >
+                        {column.id}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-          {/* Application Editor Trigger */}
-          <ApplicationEditor onCreate={onApplicationCreate} />
+            {/* Application Editor Trigger */}
+            <ApplicationEditor onCreate={onApplicationCreate} />
+          </div>
         </div>
       </div>
 

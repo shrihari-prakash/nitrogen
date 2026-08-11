@@ -48,7 +48,7 @@
   "heading.permissions": "Permissions",
   "heading.basic-info": "Basic Info",
   "heading.edit-user": "Edit User",
-  "heading.create-user": "Create",
+  "heading.create-user": "Create User",
   "heading.bulk-upload-users": "Bulk Upload Users",
   "heading.import-complete": "Import Complete",
   "heading.importing-users": "Creating Users in Liquid...",

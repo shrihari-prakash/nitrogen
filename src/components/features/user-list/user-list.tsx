@@ -139,13 +139,15 @@ const UserList = function () {
 
   return (
     <div className="w-full h-full px-4 md:px-8 py-4">
+      {/* Toolbar & Filters */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-4">
+        {/* Search Bar */}
         {isPermissionAllowed("delegated:profile:search") && (
-          <div className="relative flex-1 max-w-md">
+          <div className="relative flex-1 w-full sm:max-w-xs md:max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10 pointer-events-none" />
             <Input
               placeholder={t("placeholder.search-users")}
-              className="pl-9 pr-20 h-10 rounded-xl bg-card border-border/70 focus-visible:ring-primary/40"
+              className="pl-9 pr-20 h-9 rounded-lg bg-card border-border/70 focus-visible:ring-primary/40 text-sm w-full"
               value={inputValue}
               onChange={onSearchChange}
               onKeyDown={handleKeyDown}
@@ -153,18 +155,21 @@ const UserList = function () {
             <Button
               size="sm"
               variant="ghost"
-              className="absolute right-1 top-1/2 -translate-y-1/2 h-8 px-2.5 text-xs font-semibold hover:bg-accent"
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-7 px-2 text-xs font-semibold hover:bg-accent"
               onClick={handleSearch}
             >
               Search
             </Button>
           </div>
         )}
-        <div className="flex items-center gap-2 ml-auto">
+
+        {/* Actions Bar */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 sm:ml-auto justify-end w-full sm:w-auto">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                {t("button.columns")} <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
+              <Button variant="outline" className="h-9 px-2.5 sm:px-3 gap-1 shrink-0">
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                <span className="hidden sm:inline">{t("button.columns")}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
@@ -187,6 +192,7 @@ const UserList = function () {
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
+
           <UserBulkCreate />
           <UserCreate />
         </div>

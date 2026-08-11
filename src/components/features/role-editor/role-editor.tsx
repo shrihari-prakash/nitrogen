@@ -149,9 +149,9 @@ export default function RoleEditor({
             <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
           </Button>
         ) : (
-          <Button variant="default">
-            <PlusCircle className="h-4 w-4 mr-2" />
-            {t("button.create-role")}
+          <Button variant="default" className="gap-1.5 h-9 px-3 shrink-0" data-t="create-role-button">
+            <PlusCircle className="h-4 w-4" />
+            <span>{t("button.create-role")}</span>
           </Button>
         )}
       </SheetTrigger>
