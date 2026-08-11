@@ -79,45 +79,58 @@ export default function SystemTelemetry() {
   return (
     <div className="p-4 md:p-8 space-y-6 pb-12 animate-in fade-in-50 duration-300 select-none">
       {/* Top Controls & Status Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-card border border-border/80 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="relative flex items-center justify-center">
-            {isHealthy ? (
-              <>
-                <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-primary opacity-75" />
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary" />
-              </>
-            ) : (
-              <>
-                <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-destructive opacity-75" />
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-destructive" />
-              </>
-            )}
-          </div>
-          <div>
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-xl bg-card border border-border/80 shadow-xs">
+        {/* Status Indicator & Mobile Refresh */}
+        <div className="flex items-center justify-between sm:justify-start gap-3 w-full sm:w-auto">
+          <div className="flex items-center gap-3">
+            <div className="relative flex items-center justify-center">
+              {isHealthy ? (
+                <>
+                  <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-primary opacity-75" />
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-primary" />
+                </>
+              ) : (
+                <>
+                  <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-destructive opacity-75" />
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-destructive" />
+                </>
+              )}
+            </div>
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-foreground text-sm">
                 {isHealthy ? t("label.system-operational") : t("label.system-degraded")}
               </h3>
-              <Badge variant={isHealthy ? "secondary" : "destructive"} className="text-[10px] px-1.5 py-0">
+              <Badge variant={isHealthy ? "secondary" : "destructive"} className="text-[10px] px-1.5 py-0 font-semibold">
                 {health || "CHECKING"}
               </Badge>
             </div>
           </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleManualRefresh}
+            disabled={isStatsRefetching}
+            className="sm:hidden gap-1.5 text-xs h-8 px-2.5 shrink-0"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${isStatsRefetching ? "animate-spin text-primary" : ""}`} />
+            <span>{t("button.refresh")}</span>
+          </Button>
         </div>
 
-        <div className="flex items-center gap-3 self-end sm:self-auto">
+        {/* Controls Container (Auto-Refresh & Desktop Refresh Button) */}
+        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
           {/* Refresh interval selector */}
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs font-medium text-muted-foreground hidden md:inline">
+          <div className="flex items-center gap-1.5 w-full sm:w-auto">
+            <span className="text-xs font-medium text-muted-foreground hidden md:inline shrink-0">
               {t("label.auto-refresh")}:
             </span>
-            <div className="flex items-center bg-secondary/80 rounded-lg p-0.5 border border-border/60 text-xs">
+            <div className="flex items-center bg-secondary/80 rounded-lg p-0.5 border border-border/60 text-xs w-full sm:w-auto">
               <button
                 type="button"
                 onClick={() => setRefreshInterval(30000)}
-                className={`px-2.5 py-1 rounded-md transition-all font-medium ${refreshInterval === 30000
-                    ? "bg-primary text-primary-foreground shadow-sm"
+                className={`flex-1 sm:flex-none px-2.5 py-1 rounded-md transition-all font-medium text-center ${refreshInterval === 30000
+                    ? "bg-primary text-primary-foreground shadow-xs"
                     : "text-muted-foreground hover:text-foreground"
                   }`}
               >
@@ -126,8 +139,8 @@ export default function SystemTelemetry() {
               <button
                 type="button"
                 onClick={() => setRefreshInterval(60000)}
-                className={`px-2.5 py-1 rounded-md transition-all font-medium ${refreshInterval === 60000
-                    ? "bg-primary text-primary-foreground shadow-sm"
+                className={`flex-1 sm:flex-none px-2.5 py-1 rounded-md transition-all font-medium text-center ${refreshInterval === 60000
+                    ? "bg-primary text-primary-foreground shadow-xs"
                     : "text-muted-foreground hover:text-foreground"
                   }`}
               >
@@ -136,8 +149,8 @@ export default function SystemTelemetry() {
               <button
                 type="button"
                 onClick={() => setRefreshInterval(300000)}
-                className={`px-2.5 py-1 rounded-md transition-all font-medium ${refreshInterval === 300000
-                    ? "bg-primary text-primary-foreground shadow-sm"
+                className={`flex-1 sm:flex-none px-2.5 py-1 rounded-md transition-all font-medium text-center ${refreshInterval === 300000
+                    ? "bg-primary text-primary-foreground shadow-xs"
                     : "text-muted-foreground hover:text-foreground"
                   }`}
               >
@@ -146,8 +159,8 @@ export default function SystemTelemetry() {
               <button
                 type="button"
                 onClick={() => setRefreshInterval(false)}
-                className={`px-2.5 py-1 rounded-md transition-all font-medium ${refreshInterval === false
-                    ? "bg-primary text-primary-foreground shadow-sm"
+                className={`flex-1 sm:flex-none px-2.5 py-1 rounded-md transition-all font-medium text-center ${refreshInterval === false
+                    ? "bg-primary text-primary-foreground shadow-xs"
                     : "text-muted-foreground hover:text-foreground"
                   }`}
               >
@@ -161,7 +174,7 @@ export default function SystemTelemetry() {
             size="sm"
             onClick={handleManualRefresh}
             disabled={isStatsRefetching}
-            className="gap-2 text-xs"
+            className="hidden sm:flex gap-2 text-xs h-9 px-3 shrink-0"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${isStatsRefetching ? "animate-spin text-primary" : ""}`} />
             <span>{t("button.refresh")}</span>
