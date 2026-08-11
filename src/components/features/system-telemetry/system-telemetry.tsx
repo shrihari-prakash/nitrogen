@@ -133,8 +133,8 @@ export default function SystemTelemetry() {
                 type="button"
                 onClick={() => setRefreshInterval(30000)}
                 className={`flex-1 sm:flex-none px-2.5 py-1 rounded-md transition-all font-medium text-center ${refreshInterval === 30000
-                    ? "bg-primary text-primary-foreground shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
                   }`}
               >
                 30s
@@ -143,8 +143,8 @@ export default function SystemTelemetry() {
                 type="button"
                 onClick={() => setRefreshInterval(60000)}
                 className={`flex-1 sm:flex-none px-2.5 py-1 rounded-md transition-all font-medium text-center ${refreshInterval === 60000
-                    ? "bg-primary text-primary-foreground shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
                   }`}
               >
                 60s
@@ -153,8 +153,8 @@ export default function SystemTelemetry() {
                 type="button"
                 onClick={() => setRefreshInterval(300000)}
                 className={`flex-1 sm:flex-none px-2.5 py-1 rounded-md transition-all font-medium text-center ${refreshInterval === 300000
-                    ? "bg-primary text-primary-foreground shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
                   }`}
               >
                 5m
@@ -163,8 +163,8 @@ export default function SystemTelemetry() {
                 type="button"
                 onClick={() => setRefreshInterval(false)}
                 className={`flex-1 sm:flex-none px-2.5 py-1 rounded-md transition-all font-medium text-center ${refreshInterval === false
-                    ? "bg-primary text-primary-foreground shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
                   }`}
               >
                 {t("label.paused")}
@@ -243,7 +243,7 @@ export default function SystemTelemetry() {
           </CardHeader>
           <CardContent className="space-y-3">
             <div>
-              <p className="text-sm font-semibold tracking-tight text-foreground truncate" title={stats?.cpuMake}>
+              <p className="text-sm font-semibold tracking-tight text-foreground" title={stats?.cpuMake}>
                 {stats?.cpuMake || (isStatsLoading ? "Loading..." : "Unknown CPU")}
                 {stats?.cpuCount ? ` (${stats.cpuCount} Cores)` : ""}
               </p>
@@ -297,8 +297,8 @@ export default function SystemTelemetry() {
             <div className="w-full bg-secondary/80 rounded-full h-2 overflow-hidden border border-border/40">
               <div
                 className={`h-full transition-all duration-500 rounded-full ${memoryPercentage > 85
-                    ? "bg-destructive"
-                    : "bg-primary"
+                  ? "bg-destructive"
+                  : "bg-primary"
                   }`}
                 style={{ width: `${memoryPercentage}%` }}
               />
