@@ -61,7 +61,10 @@ export default function SystemTelemetry() {
 
   const heapUsed = stats?.heapUsed ?? 0;
   const heapTotal = stats?.heapTotal ?? 0;
-  const memoryPercentage = heapTotal > 0 ? Math.min(100, Math.round((heapUsed / heapTotal) * 100)) : 0;
+  const heapLimit = stats?.heapLimit ?? heapTotal;
+  const rss = stats?.rss ?? 0;
+  const systemTotalMemory = stats?.systemTotalMemory ?? 0;
+  const memoryPercentage = heapLimit > 0 ? Math.min(100, Math.round((heapUsed / heapLimit) * 100)) : 0;
 
   const isHealthy = health === "UP";
 
@@ -242,15 +245,24 @@ export default function SystemTelemetry() {
             <div>
               <p className="text-sm font-semibold tracking-tight text-foreground truncate" title={stats?.cpuMake}>
                 {stats?.cpuMake || (isStatsLoading ? "Loading..." : "Unknown CPU")}
+                {stats?.cpuCount ? ` (${stats.cpuCount} Cores)` : ""}
               </p>
             </div>
             <div className="pt-2 border-t border-border/40 text-xs space-y-1">
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">{t("label.platform")}:</span>
                 <Badge variant="secondary" className="font-mono text-[10px] px-1.5 py-0">
-                  {stats?.platform || "N/A"}
+                  {stats?.platform || "N/A"} {stats?.arch ? `(${stats.arch})` : ""}
                 </Badge>
               </div>
+              {Boolean(stats?.loadAvg?.length) && (
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">{t("label.load-avg")}:</span>
+                  <span className="font-mono font-medium text-foreground text-[11px]">
+                    {stats?.loadAvg?.join(" / ")}
+                  </span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-muted-foreground">{t("label.process-id")}:</span>
                 <span className="font-mono font-medium text-foreground">{stats?.processId ?? "N/A"}</span>
@@ -277,7 +289,7 @@ export default function SystemTelemetry() {
                 {heapUsed} <span className="text-xs font-normal text-muted-foreground">MB</span>
               </span>
               <span className="text-xs font-semibold text-muted-foreground">
-                / {heapTotal} MB ({memoryPercentage}%)
+                / {heapLimit ? `${heapLimit} MB` : "N/A"} ({memoryPercentage}%)
               </span>
             </div>
 
@@ -292,9 +304,21 @@ export default function SystemTelemetry() {
               />
             </div>
 
-            <div className="pt-1 text-[11px] text-muted-foreground flex justify-between">
-              <span>{t("label.allocated")}: {heapUsed} MB</span>
-              <span>{t("label.limit")}: {heapTotal} MB</span>
+            <div className="pt-2 border-t border-border/40 text-xs space-y-1">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">{t("label.committed-pool")}:</span>
+                <span className="font-mono font-medium text-foreground">{heapTotal} MB</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">{t("label.process-rss")}:</span>
+                <span className="font-mono font-medium text-foreground">{rss ? `${rss} MB` : "N/A"}</span>
+              </div>
+              {systemTotalMemory > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">{t("label.system-ram")}:</span>
+                  <span className="font-mono font-medium text-foreground">{systemTotalMemory} MB</span>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

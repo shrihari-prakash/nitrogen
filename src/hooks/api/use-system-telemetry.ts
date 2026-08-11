@@ -1,24 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { liquid } from "@/service/liquid";
 
-export interface SystemStatsData {
-  processId?: number;
-  platform?: string;
-  nodeVersion?: string;
-  cpuMake?: string;
-  upTime?: number;
-  requestsHandled?: number;
-  heapTotal?: number;
-  heapUsed?: number;
-  [key: string]: any;
-}
-
 export const useSystemStats = (refetchInterval: number | false = 30000) => {
   return useQuery({
     queryKey: ["system-stats"],
     queryFn: async () => {
       const response = await liquid.admin.system.getStats();
-      return ((response.data as any)?.stats || {}) as SystemStatsData;
+      return response.data.stats;
     },
     refetchInterval,
     staleTime: 2000,
@@ -30,7 +18,7 @@ export const useSystemHealth = () => {
     queryKey: ["system-health"],
     queryFn: async () => {
       const response = await liquid.health.check();
-      return (response.data as any)?.status || "UNKNOWN";
+      return response.data.status || "UNKNOWN";
     },
     refetchInterval: 15000,
   });
@@ -41,7 +29,7 @@ export const useSystemVersion = () => {
     queryKey: ["system-version"],
     queryFn: async () => {
       const response = await liquid.system.getVersion();
-      return (response.data as any)?.version || "0.0.0";
+      return response.data.version || "0.0.0";
     },
   });
 };
@@ -51,7 +39,7 @@ export const useSystemSettingsList = (enabled: boolean = true) => {
     queryKey: ["system-settings-list"],
     queryFn: async () => {
       const response = await liquid.system.getSettings();
-      return ((response.data as any)?.settings || {}) as Record<string, any>;
+      return response.data.settings as Record<string, any>;
     },
     enabled,
   });
