@@ -27,8 +27,6 @@ class OAuthManager {
   async redirectToLogin() {
     const verifier = this.generateCodeVerifier();
     sessionStorage.setItem("pkce_code_verifier", verifier);
-    localStorage.setItem("pkce_code_verifier", verifier);
-    Cookies.set("pkce_code_verifier", verifier, { expires: 1 / 24 });
     const challenge = await this.generateCodeChallenge(verifier);
     window.location.href =
       import.meta.env.VITE_LIQUID_HOST +
@@ -40,11 +38,7 @@ class OAuthManager {
   }
 
   async getTokenFromCode(code: string) {
-    const codeVerifier =
-      sessionStorage.getItem("pkce_code_verifier") ||
-      localStorage.getItem("pkce_code_verifier") ||
-      Cookies.get("pkce_code_verifier") ||
-      "";
+    const codeVerifier = sessionStorage.getItem("pkce_code_verifier") || "";
     const data: Record<string, string> = {
       grant_type: "authorization_code",
       client_id: import.meta.env.VITE_LIQUID_CLIENT_ID,
@@ -64,8 +58,6 @@ class OAuthManager {
       }
     );
     sessionStorage.removeItem("pkce_code_verifier");
-    localStorage.removeItem("pkce_code_verifier");
-    Cookies.remove("pkce_code_verifier");
     this.saveTokens(response);
     return response.data;
   }
