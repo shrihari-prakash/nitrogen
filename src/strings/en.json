@@ -127,6 +127,7 @@
   "message.loading-settings": "Loading configuration parameters...",
   "message.no-settings-matching": "No settings matching filter.",
   "message.no-settings-found": "No system settings available.",
+  "message.public-client-help": "Public clients do not use a client secret. PKCE implementation is required for public clients.",
 
   "label.id": "ID",
   "label.username": "Username",
@@ -229,6 +230,7 @@
   "placeholder.type-to-confirm": "Type {{id}} to confirm",
 
   "label.client-type": "Client Type",
+  "label.public-client": "Public Client (SPA / Mobile App)",
   "label.target-type": "Target Type",
   "label.system": "System",
   "label.custom": "Custom",

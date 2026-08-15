@@ -74,10 +74,7 @@ function App() {
 
 
   const redirectToLogin = () => {
-    window.location.href =
-      import.meta.env.VITE_LIQUID_HOST +
-      "?redirect_uri=" +
-      oauthManager.makeRedirectUri();
+    oauthManager.redirectToLogin();
   };
 
   const onLogin = async (me: any) => {

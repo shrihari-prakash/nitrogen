@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { Tag, TagInput } from "@/components/ui/tag-input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Switch } from "@/components/ui/switch";
 import RolesContext from "@/context/roles-context";
 import usePermissions from "@/hooks/use-permissions";
 import { Application } from "@/types/application";
@@ -82,6 +83,7 @@ export default function ApplicationEditor({
     ? {
       id: application.id || "",
       displayName: application.displayName || "",
+      isPublic: application.isPublic ?? false,
       secret: application.secret || "",
       role: application.role || "external_client",
       redirectUris: application.redirectUris || [],
@@ -89,6 +91,7 @@ export default function ApplicationEditor({
     : {
       id: "",
       displayName: "",
+      isPublic: false,
       secret: "",
       role: "external_client" as "internal_client" | "external_client",
       redirectUris: [] as string[],
@@ -98,6 +101,14 @@ export default function ApplicationEditor({
     defaultValues: formDefaults,
   });
 
+  const isPublic = form.watch("isPublic");
+
+  useEffect(() => {
+    if (isPublic) {
+      setSelectedGrants((prev) => prev.filter((g) => g !== "client_credentials"));
+    }
+  }, [isPublic]);
+
   useEffect(() => {
     if (open) {
       if (application) {
@@ -106,10 +117,14 @@ export default function ApplicationEditor({
           text: uri,
         }));
         setRedirectUris(uris);
-        setSelectedGrants(application.grants || []);
+        const activeGrants = application.isPublic
+          ? (application.grants || []).filter((g) => g !== "client_credentials")
+          : application.grants || [];
+        setSelectedGrants(activeGrants);
         form.reset({
           id: application.id || "",
           displayName: application.displayName || "",
+          isPublic: application.isPublic ?? false,
           secret: application.secret || "",
           role: application.role || "external_client",
           redirectUris: application.redirectUris || [],
@@ -120,6 +135,7 @@ export default function ApplicationEditor({
         form.reset({
           id: "",
           displayName: "",
+          isPublic: false,
           secret: "",
           role: "external_client",
           redirectUris: [],
@@ -313,38 +329,60 @@ export default function ApplicationEditor({
               />
               <FormField
                 control={form.control}
-                name="secret"
+                name="isPublic"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("label.application-secret")}</FormLabel>
+                  <FormItem className="flex flex-row items-center justify-between rounded-xl gap-1 border border-border/80 p-3 shadow-xs">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-xs font-semibold">{t("label.public-client")}</FormLabel>
+                      <FormDescription className="text-[11px]">
+                        {t("message.public-client-help")}
+                      </FormDescription>
+                    </div>
                     <FormControl>
-                      <div className="relative">
-                        <Input
-                          {...field}
-                          value={field.value ?? ""}
-                          type={showSecret ? "text" : "password"}
-                          className="pr-10"
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-muted-foreground hover:text-foreground"
-                          onClick={() => setShowSecret((prev) => !prev)}
-                          aria-label={showSecret ? "Hide secret" : "Show secret"}
-                        >
-                          {showSecret ? (
-                            <EyeOff className="h-4 w-4" />
-                          ) : (
-                            <Eye className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </div>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
+              {!isPublic && (
+                <FormField
+                  control={form.control}
+                  name="secret"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("label.application-secret")}</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            {...field}
+                            value={field.value ?? ""}
+                            type={showSecret ? "text" : "password"}
+                            className="pr-10"
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-muted-foreground hover:text-foreground"
+                            onClick={() => setShowSecret((prev) => !prev)}
+                            aria-label={showSecret ? "Hide secret" : "Show secret"}
+                          >
+                            {showSecret ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
               <FormField
                 control={form.control}
                 name="role"
@@ -393,9 +431,9 @@ export default function ApplicationEditor({
                   size={"sm"}
                   className="justify-between"
                   type="multiple"
+                  value={selectedGrants}
                   onValueChange={onGrantSelect}
                   variant="outline"
-                  defaultValue={application && application.grants}
                 >
                   {grants.map((grant) => (
                     <ToggleGroupItem
@@ -403,6 +441,7 @@ export default function ApplicationEditor({
                       aria-label={grant.label}
                       className="text-xs"
                       key={grant.value}
+                      disabled={isPublic && grant.value === "client_credentials"}
                     >
                       {grant.label}
                     </ToggleGroupItem>

@@ -5,13 +5,49 @@ import { liquid } from "./liquid";
 class OAuthManager {
   tokenEndpoint = `${import.meta.env.VITE_LIQUID_HOST}/oauth/token`;
 
+  generateCodeVerifier(): string {
+    const array = new Uint8Array(32);
+    window.crypto.getRandomValues(array);
+    return btoa(String.fromCharCode.apply(null, Array.from(array)))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+  }
+
+  async generateCodeChallenge(verifier: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(verifier);
+    const digest = await window.crypto.subtle.digest("SHA-256", data);
+    return btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(digest))))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+  }
+
+  async redirectToLogin() {
+    const verifier = this.generateCodeVerifier();
+    sessionStorage.setItem("pkce_code_verifier", verifier);
+    const challenge = await this.generateCodeChallenge(verifier);
+    window.location.href =
+      import.meta.env.VITE_LIQUID_HOST +
+      "?redirect_uri=" +
+      encodeURIComponent(this.makeRedirectUri()) +
+      "&code_challenge=" +
+      encodeURIComponent(challenge) +
+      "&code_challenge_method=S256";
+  }
+
   async getTokenFromCode(code: string) {
-    const data = {
+    const codeVerifier = sessionStorage.getItem("pkce_code_verifier") || "";
+    const data: Record<string, string> = {
       grant_type: "authorization_code",
       client_id: import.meta.env.VITE_LIQUID_CLIENT_ID,
       redirect_uri: this.makeRedirectUri(),
       code: code,
     };
+    if (codeVerifier) {
+      data.code_verifier = codeVerifier;
+    }
     const response = await axiosInstance.post(
       this.tokenEndpoint,
       new URLSearchParams(data),
@@ -21,6 +57,7 @@ class OAuthManager {
         },
       }
     );
+    sessionStorage.removeItem("pkce_code_verifier");
     this.saveTokens(response);
     return response.data;
   }
