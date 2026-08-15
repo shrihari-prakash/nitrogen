@@ -37,6 +37,8 @@ import { Eye, EyeOff, Copy, Pencil, PlusCircle } from "lucide-react";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 import { useCreateApplication, useUpdateApplication } from "@/hooks/api/use-application-mutations";
+import ScopesContext from "@/context/scopes-context";
+import ScopeSelector from "@/components/ui/scope-selector";
 
 export default function ApplicationEditor({
   onCreate,
@@ -53,6 +55,11 @@ export default function ApplicationEditor({
   const [showSecret, setShowSecret] = useState(false);
 
   const { t } = useTranslation();
+  const { scopes, refreshScopes } = useContext(ScopesContext);
+
+  useEffect(() => {
+    if (!scopes) refreshScopes();
+  }, [scopes, refreshScopes]);
 
   const grants = [
     {
@@ -259,7 +266,7 @@ export default function ApplicationEditor({
           </Button>
         )}
       </SheetTrigger>
-      <SheetContent className="sm:max-w-md md:max-w-[500px] overflow-y-auto">
+      <SheetContent className="w-full md:!max-w-[500px] overflow-y-auto">
         <SheetHeader>
           <SheetTitle>
             {application ? "Update Application" : "Create Application"}
@@ -271,6 +278,21 @@ export default function ApplicationEditor({
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-4"
             >
+              {application && scopes && isPermissionAllowed("admin:profile:access:write") && (
+                <div>
+                  <FormLabel className="block mb-2">{t("heading.permissions")}</FormLabel>
+                  <ScopeSelector
+                    entity={application}
+                    setEntity={() => {
+                      if (onUpdate) onUpdate(application);
+                    }}
+                    scopes={scopes}
+                    type="client"
+                    role={application.role}
+                    warning
+                  />
+                </div>
+              )}
               <FormField
                 control={form.control}
                 name="id"

@@ -22,11 +22,14 @@ import usePermissions from "@/hooks/use-permissions";
 import { Role } from "@/types/role";
 import { camelCaseToWords } from "@/utils/string";
 import { PlusCircle, Pencil } from "lucide-react";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useCreateRole, useUpdateRole } from "@/hooks/api/use-role-mutations";
+import ScopesContext from "@/context/scopes-context";
+import RolesContext from "@/context/roles-context";
+import ScopeSelector from "@/components/ui/scope-selector";
 
 export default function RoleEditor({
   onCreate,
@@ -40,6 +43,12 @@ export default function RoleEditor({
   const [open, setOpen] = useState(false);
 
   const { isPermissionAllowed } = usePermissions();
+  const { scopes, refreshScopes } = useContext(ScopesContext);
+  const { refreshRoles } = useContext(RolesContext);
+
+  useEffect(() => {
+    if (!scopes) refreshScopes();
+  }, [scopes, refreshScopes]);
 
   const { t } = useTranslation();
 
@@ -172,6 +181,21 @@ export default function RoleEditor({
             className="flex-1 flex flex-col justify-between"
           >
             <div className="p-6 space-y-4 overflow-y-auto flex-1">
+              {role && scopes && isPermissionAllowed("admin:profile:access:write") && role.id !== "super_admin" && (
+                <div>
+                  <FormLabel className="block mb-2">{t("heading.permissions")}</FormLabel>
+                  <ScopeSelector
+                    entity={role}
+                    setEntity={() => {
+                      refreshRoles();
+                      if (onUpdate) onUpdate(role);
+                    }}
+                    scopes={scopes}
+                    type="role"
+                    warning
+                  />
+                </div>
+              )}
               <FormField
                 control={form.control}
                 name="id"
