@@ -22,15 +22,26 @@ axiosInstance.interceptors.request.use(async (config) => {
     return config;
 });
 
-// axiosInstance.interceptors.response.use(
-//   (response) => {
-//     // Handle successful responses
-//     return response;
-//   },
-//   (error) => {
-//     // Handle errors
-//     return Promise.reject(error);
-//   }
-// );
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry &&
+      !originalRequest?.url?.includes("/oauth/token")
+    ) {
+      originalRequest._retry = true;
+      const newToken = await oauthManager.refreshAccessToken();
+      if (newToken) {
+        axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
+        originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
+        return axiosInstance(originalRequest);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default axiosInstance;

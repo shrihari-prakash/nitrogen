@@ -93,7 +93,7 @@
   "message.followers": "{{count}} Followers",
   "message.copied-application-id": "Copied Application ID!",
   "message.copy-failed": "Copy failed!",
-  "message.scopes-changed": "Removing permissions will log out users immediately. Adding permissions will not log out users, but will require them to log in again to have the updated permissions. Are you sure you want to proceed?",
+  "message.scopes-changed": "Are you sure you want to save these permission changes? This might take a few minutes to reflect in the system",
   "message.processing-credits-update": "Processing credits update...",
   "message.credits-updated-successfully": "Credits updated successfully",
   "message.credits-update-failed": "Credits update failed!",

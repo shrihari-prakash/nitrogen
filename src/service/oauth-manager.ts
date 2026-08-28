@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import axios from "axios";
 import axiosInstance from "./axios";
 import { liquid } from "./liquid";
 
@@ -48,7 +49,7 @@ class OAuthManager {
     if (codeVerifier) {
       data.code_verifier = codeVerifier;
     }
-    const response = await axiosInstance.post(
+    const response = await axios.post(
       this.tokenEndpoint,
       new URLSearchParams(data),
       {
@@ -73,32 +74,54 @@ class OAuthManager {
     Cookies.remove("oauth_refresh_token");
   }
 
-  async getAccessToken() {
+  private refreshPromise: Promise<string | null> | null = null;
+
+  async refreshAccessToken(): Promise<string | null> {
+    if (this.refreshPromise) {
+      return this.refreshPromise;
+    }
+
+    this.refreshPromise = (async () => {
+      try {
+        const refreshToken = Cookies.get("oauth_refresh_token");
+        if (!refreshToken) {
+          this.clearCredentials();
+          return null;
+        }
+        const data: Record<string, string> = {
+          grant_type: "refresh_token",
+          client_id: import.meta.env.VITE_LIQUID_CLIENT_ID,
+          refresh_token: refreshToken,
+        };
+        const response = await axios.post(
+          this.tokenEndpoint,
+          new URLSearchParams(data),
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
+        );
+        this.saveTokens(response);
+        return response.data.access_token;
+      } catch (error: any) {
+        console.error("Token refresh error:", error?.response?.data || error?.message || error);
+        this.clearCredentials();
+        return null;
+      } finally {
+        this.refreshPromise = null;
+      }
+    })();
+
+    return this.refreshPromise;
+  }
+
+  async getAccessToken(forceRefresh = false): Promise<string | null> {
     const accessToken = Cookies.get("oauth_access_token");
-    if (accessToken) {
+    if (accessToken && !forceRefresh) {
       return accessToken;
     }
-    const refreshToken = Cookies.get("oauth_refresh_token");
-    if (refreshToken) {
-      const data = {
-        grant_type: "refresh_token",
-        client_id: import.meta.env.VITE_LIQUID_CLIENT_ID,
-        redirect_uri: this.makeRedirectUri(),
-        refresh_token: refreshToken,
-      };
-      const response = await axiosInstance.post(
-        this.tokenEndpoint,
-        new URLSearchParams(data),
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      );
-      this.saveTokens(response);
-      return response.data.access_token;
-    }
-    return null;
+    return this.refreshAccessToken();
   }
 
   saveTokens(response: any) {
@@ -112,11 +135,20 @@ class OAuthManager {
     Cookies.set("oauth_refresh_token", response.data.refresh_token, {
       expires: 15,
     });
+    axiosInstance.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${response.data.access_token}`;
   }
 
   async me() {
     try {
-      const response = await liquid.users.getMe();
+      let response = await liquid.users.getMe();
+      if (response.status === 401) {
+        const newToken = await this.refreshAccessToken();
+        if (newToken) {
+          response = await liquid.users.getMe();
+        }
+      }
       if (!response.ok) {
         if (response.status === 401) {
           throw new Error("Unauthorized");

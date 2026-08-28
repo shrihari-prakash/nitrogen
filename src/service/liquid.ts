@@ -7,4 +7,8 @@ export const liquid = createLiquidClient({
     const token = await oauthManager.getAccessToken();
     return token || "";
   },
+  onUnauthorized: async () => {
+    const token = await oauthManager.refreshAccessToken();
+    return token || null;
+  },
 });
