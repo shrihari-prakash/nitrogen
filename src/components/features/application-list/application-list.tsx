@@ -20,7 +20,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Loader from "@/components/ui/loader";
+import TableSkeleton from "@/components/features/common/table-skeleton";
 import {
   Table,
   TableBody,
@@ -238,9 +238,7 @@ const ApplicationList = function () {
 
       {/* Table Section */}
       {loading ? (
-        <div className="h-[400px] w-full flex items-center justify-center relative">
-          <Loader />
-        </div>
+        <TableSkeleton type="application" rows={6} />
       ) : (
         <div className="rounded-xl border border-border/70 bg-card shadow-xs overflow-hidden">
           <Table className="overflow-y-auto">

@@ -23,7 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import Loader from "@/components/ui/loader";
+import TableSkeleton, { UserTableRowSkeleton } from "@/components/features/common/table-skeleton";
 import {
   Table,
   TableBody,
@@ -206,11 +206,7 @@ const UserList = function () {
         </div>
       </div>
       {loading && !displayData.length ? (
-        <div
-          className={`h-[calc(100%-124px)] w-full flex-1 flex items-center justify-center cursor-default relative`}
-        >
-          <Loader />
-        </div>
+        <TableSkeleton type="user" rows={8} />
       ) : (
         <>
           <InfiniteScroll
@@ -219,8 +215,13 @@ const UserList = function () {
             scrollableTarget="page"
             hasMore={!!hasNextPage && !searchResults}
             loader={
-              <div className="h-20">
-                <Loader />
+              <div className="mt-2 rounded-xl border border-border/70 bg-card overflow-hidden">
+                <Table>
+                  <TableBody>
+                    <UserTableRowSkeleton index={0} />
+                    <UserTableRowSkeleton index={1} />
+                  </TableBody>
+                </Table>
               </div>
             }
           >
@@ -238,9 +239,9 @@ const UserList = function () {
                             {header.isPlaceholder
                               ? null
                               : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
                           </TableHead>
                         );
                       })}
