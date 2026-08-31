@@ -249,5 +249,26 @@
   "message.no-apps-filter-help": "No applications match your active search or filter criteria. Try adjusting your inputs.",
   "message.system-role-protected": "System protected roles cannot be deleted",
   "message.delete-client-consequences": "Deleting clients might have unintended consequences in the system. This action cannot be undone. Are you sure you want to delete?",
-  "message.delete-internal-client-warning": "You are deleting an internal client. This might break your system completely. Delete at your own risk."
+  "message.delete-internal-client-warning": "You are deleting an internal client. This might break your system completely. Delete at your own risk.",
+
+  "heading.audit-logins": "Login Audit Trail",
+  "label.total-attempts": "Total Attempts",
+  "label.successful-logins": "Successful",
+  "label.failed-attempts": "Failed Attempts",
+  "label.success-rate": "Success Rate",
+  "label.ip-address": "IP Address",
+  "label.auth-source": "Auth Method",
+  "label.device-os": "Device & OS",
+  "label.raw-user-agent": "Raw User-Agent",
+  "label.failure-reason": "Failure Reason",
+  "filter.all": "All",
+  "filter.success": "Success",
+  "filter.failed": "Failed",
+  "placeholder.search-login-history": "Search by IP, browser, OS, or method...",
+  "message.no-login-history": "No login history recorded yet",
+  "message.no-login-history-desc": "Authentication attempts for this account will appear here.",
+  "message.no-matching-logins": "No matching login attempts",
+  "message.no-matching-logins-desc": "No audit records match your search or filter query.",
+  "message.copied-ip": "IP address copied to clipboard"
 }
+
