@@ -12,7 +12,6 @@ import {
   SheetTrigger,
 } from "./sheet";
 import { toast } from "sonner";
-import { Alert, AlertDescription } from "./alert";
 import { Checkbox } from "./checkbox";
 import usePermissions from "@/hooks/use-permissions";
 import { Application } from "@/types/application";
@@ -490,12 +489,10 @@ const ScopeSelector = ({
             })}
           </SheetTitle>
           {isUserMe() && (
-            <Alert className="mt-2 bg-destructive/10 border-destructive/20 text-destructive text-xs py-2">
+            <div className="mt-3 flex items-center gap-2.5 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive font-medium text-left">
               <ShieldAlert className="h-4 w-4 shrink-0 text-destructive" />
-              <AlertDescription className="text-xs font-medium ml-2">
-                {t("message.cannot-edit-own-permissions")}
-              </AlertDescription>
-            </Alert>
+              <span>{t("message.cannot-edit-own-permissions")}</span>
+            </div>
           )}
         </SheetHeader>
 
