@@ -269,6 +269,20 @@
   "message.no-login-history-desc": "Authentication attempts for this account will appear here.",
   "message.no-matching-logins": "No matching login attempts",
   "message.no-matching-logins-desc": "No audit records match your search or filter query.",
-  "message.copied-ip": "IP address copied to clipboard"
+  "message.copied-ip": "IP address copied to clipboard",
+
+  "button.select-all": "Select All",
+  "button.deselect-all": "Deselect All",
+  "button.expand-all": "Expand All",
+  "button.collapse-all": "Collapse All",
+  "filter.selected": "Granted",
+  "filter.unselected": "Not Granted",
+  "filter.inherited": "Role Inherited",
+  "label.permissions-granted": "{{count}} of {{total}} granted",
+  "label.selected-count": "{{count}} selected",
+  "placeholder.search-permissions": "Search permissions by name, path, or description...",
+  "message.no-matching-permissions": "No matching permissions",
+  "message.no-matching-permissions-desc": "No permissions match your current search query or active filter."
 }
+
 

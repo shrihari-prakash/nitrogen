@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import * as React from "react";
 import { Label } from "./label";
 import MeContext from "@/context/me-context";
 import { User } from "@/types/user";
@@ -6,7 +6,6 @@ import { Button } from "./button";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -18,12 +17,24 @@ import { Checkbox } from "./checkbox";
 import usePermissions from "@/hooks/use-permissions";
 import { Application } from "@/types/application";
 import { Input } from "./input";
-import { KeyRound, ChevronRight, ChevronDown } from "lucide-react";
+import {
+  KeyRound,
+  ChevronRight,
+  ChevronDown,
+  ChevronsUpDown,
+  ChevronsDownUp,
+  Search,
+  X,
+  Shield,
+  ShieldAlert, Check,
+  Crown,
+} from "lucide-react";
 import { Role } from "@/types/role";
 import { Badge } from "./badge";
 import { useTranslation } from "react-i18next";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { useUpdateAccess } from "@/hooks/api/use-user-mutations";
+import { EmptyState } from "./empty-state";
 
 export interface Scope {
   name: string;
@@ -75,47 +86,73 @@ const ScopeSelector = ({
   warning?: boolean;
   iconOnly?: boolean;
 }) => {
-  const scopesObject: { [name: string]: Scope } = scopes.reduce(
-    (scopes, scope) => Object.assign(scopes, { [scope.name]: scope }),
-    {}
-  );
+  const scopesObject: { [name: string]: Scope } = React.useMemo(() => {
+    return (scopes || []).reduce(
+      (acc, scope) => Object.assign(acc, { [scope.name]: scope }),
+      {}
+    );
+  }, [scopes]);
 
-  const initialScopes: string[] = [];
-  scopes.forEach((scope) => {
-    if (isScopeAllowed(scope.name, entity.scope as string[], scopesObject)) {
-      initialScopes.push(scope.name);
+  const initialScopes: string[] = React.useMemo(() => {
+    const list: string[] = [];
+    if (scopes && entity.scope) {
+      scopes.forEach((scope) => {
+        if (isScopeAllowed(scope.name, entity.scope as string[], scopesObject)) {
+          list.push(scope.name);
+        }
+      });
     }
-  });
+    return list;
+  }, [scopes, entity.scope, scopesObject]);
 
-  const [open, setOpen] = useState<boolean>(false);
-  const [selectedScopes, setSelectedScopes] = useState<string[]>(
-    initialScopes as string[]
-  );
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [selectedScopes, setSelectedScopes] = React.useState<string[]>(initialScopes);
+  const [expandedScopes, setExpandedScopes] = React.useState<string[]>([]);
+  const [search, setSearch] = React.useState<string>("");
+  const [popoverOpen, setPopoverOpen] = React.useState<boolean>(false);
 
-  const [expandedScopes, setExpandedScopes] = useState<string[]>([]);
+  // Sync initial scopes when sheet opens or entity changes
+  React.useEffect(() => {
+    setSelectedScopes(initialScopes);
+  }, [initialScopes, open]);
 
-  const [search, setSearch] = useState<string>("");
-  const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
+  // Ensure pointer-events are unlocked whenever the sheet closes
+  React.useEffect(() => {
+    if (!open) {
+      setPopoverOpen(false);
+      const timer = setTimeout(() => {
+        document.body.style.pointerEvents = "";
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
 
   const onPopoverOpenChange = (state: boolean) => {
-    console.log("Popover open state: " + state);
     setPopoverOpen(state);
   };
 
-  const { me } = useContext(MeContext);
-
+  const { me } = React.useContext(MeContext);
   const { t } = useTranslation();
-
   const { isPermissionAllowed, isPermissionAllowedByRole } = usePermissions();
 
   const isUserMe = () => {
-    if (!me) {
-      return false;
-    }
-    if (me.role === (entity as Role).id) {
-      return true;
-    }
+    if (!me) return false;
+    if (type === "role" && me.role === (entity as Role).id) return true;
     return me._id === entity._id;
+  };
+
+  const getParent = (itemName: string) => {
+    const item = scopes.find((item) => item.name === itemName);
+    return item ? item.parent : null;
+  };
+
+  const getAllChildren = (parent: string): string[] => {
+    const children = scopes.filter((item) => item.parent === parent);
+    let allChildren = [...children.map((child) => child.name)];
+    children.forEach((child) => {
+      allChildren = [...allChildren, ...getAllChildren(child.name)];
+    });
+    return allChildren;
   };
 
   const handleToggle = (itemName: string) => {
@@ -148,7 +185,7 @@ const ScopeSelector = ({
       const children = getAllChildren(itemName);
       newSelectedItems = [...selectedScopes, itemName, ...children];
 
-      // Select all parent levels if their children are deselected
+      // Select all parent levels if all their children are selected
       let parent = getParent(itemName);
       while (parent) {
         const parentChildren = scopes.filter((item) => item.parent === parent);
@@ -168,31 +205,61 @@ const ScopeSelector = ({
     onSelect(newSelectedItems.join(", "));
   };
 
-  const getParent = (itemName: string) => {
-    const item = scopes.find((item) => item.name === itemName);
-    return item ? item.parent : null;
+  // Batch Select / Deselect All Toggle
+  const allowableScopes = React.useMemo(() => {
+    return (scopes || [])
+      .filter((s) => isScopeAllowed(s.name, me?.scope as string[], scopesObject))
+      .map((s) => s.name);
+  }, [scopes, me?.scope, scopesObject]);
+
+  const isAllSelected =
+    allowableScopes.length > 0 &&
+    allowableScopes.every((name) => selectedScopes.includes(name));
+
+  const handleToggleSelectAll = () => {
+    if (isAllSelected) {
+      setSelectedScopes([]);
+      onSelect("");
+    } else {
+      setSelectedScopes(allowableScopes);
+      onSelect(allowableScopes.join(", "));
+    }
   };
 
-  const getAllChildren = (parent: string) => {
-    const children = scopes.filter((item) => item.parent === parent);
-    let allChildren = [...children.map((child) => child.name)];
+  // Parent Scopes & Expand All Toggle
+  const allParentScopes = React.useMemo(() => {
+    return (scopes || [])
+      .filter((s) => scopes.some((c) => c.parent === s.name))
+      .map((s) => s.name);
+  }, [scopes]);
 
-    children.forEach((child) => {
-      allChildren = [...allChildren, ...getAllChildren(child.name)];
-    });
+  const isAllExpanded =
+    allParentScopes.length > 0 &&
+    allParentScopes.every((s) => expandedScopes.includes(s));
 
-    return allChildren;
+  const handleToggleExpandAll = () => {
+    if (isAllExpanded) {
+      setExpandedScopes([]);
+    } else {
+      setExpandedScopes(allParentScopes);
+    }
   };
 
   const onOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
-    setSearch("");
+    if (!isOpen) {
+      setSearch("");
+      setPopoverOpen(false);
+      setTimeout(() => {
+        document.body.style.pointerEvents = "";
+      }, 50);
+    }
   };
 
   const { mutateAsync: updateAccess, isPending: submitting } = useUpdateAccess();
 
   const onSave = async () => {
-    onPopoverOpenChange(false);
+    setPopoverOpen(false);
     let newScopeList = [...selectedScopes];
     scopes.forEach((scope) => {
       if (!scope.parent) {
@@ -202,10 +269,10 @@ const ScopeSelector = ({
         newScopeList = newScopeList.filter((s) => s !== scope.name);
       }
     });
-    let promise;
+
     try {
       const targetId = type === "role" ? (entity as any).id : entity._id;
-      promise = updateAccess({
+      const promise = updateAccess({
         targets: [targetId],
         targetType: type,
         scope: newScopeList,
@@ -213,18 +280,20 @@ const ScopeSelector = ({
       });
       toast.promise(promise, {
         loading: "Updating permissions...",
-        success: "Permissions updated",
+        success: "Permissions updated successfully",
         error: "Update failed!",
       });
       await promise;
-      console.log("Permissions granted " + newScopeList.join(","));
       const userCopy = { ...entity };
       userCopy.scope = newScopeList;
       if (setEntity) {
         setEntity(userCopy);
       }
       setOpen(false);
-    } catch (e) {
+      setTimeout(() => {
+        document.body.style.pointerEvents = "";
+      }, 50);
+    } catch {
       // Error handled by toast
     }
   };
@@ -244,8 +313,24 @@ const ScopeSelector = ({
     return children.some(
       (child) =>
         child.name.toLowerCase().includes(searchTerm) ||
+        (child.description && child.description.toLowerCase().includes(searchTerm)) ||
+        (child.adminDescription && child.adminDescription.toLowerCase().includes(searchTerm)) ||
         hasMatchingDescendant(child.name, searchTerm)
     );
+  };
+
+  const grantedCount = selectedScopes.length;
+
+  // Entity display name helper
+  const getEntityDisplayName = () => {
+    if ("firstName" in entity) {
+      const u = entity as User;
+      return `${u.firstName || ""} ${u.lastName || ""}`.trim() || u.username || u.name || "User";
+    }
+    if ("displayName" in entity) {
+      return (entity as Role | Application).displayName || (entity as any).id || "Entity";
+    }
+    return "Entity";
   };
 
   const renderTree = (items: Scope[], parent = "*") => {
@@ -260,58 +345,104 @@ const ScopeSelector = ({
 
         const children = items.filter((child) => child.parent === item.name);
         const hasChildren = children.length > 0;
+        const isSelected = selectedScopes.includes(item.name);
+        const isInherited = role
+          ? isPermissionAllowedByRole(item.name, role) && role !== "super_admin"
+          : false;
 
-        const searchTerm = search.toLowerCase();
-        const matchesSearch = searchTerm === "" || item.name.toLowerCase().includes(searchTerm);
-        const childrenMatchSearch = searchTerm !== "" && hasMatchingDescendant(item.name, searchTerm);
+        // Search Match
+        const searchTerm = search.toLowerCase().trim();
+        const matchesSearch =
+          searchTerm === "" ||
+          item.name.toLowerCase().includes(searchTerm) ||
+          (item.description && item.description.toLowerCase().includes(searchTerm)) ||
+          (item.adminDescription && item.adminDescription.toLowerCase().includes(searchTerm));
+        const childrenMatchSearch =
+          searchTerm !== "" && hasMatchingDescendant(item.name, searchTerm);
 
         if (searchTerm !== "" && !matchesSearch && !childrenMatchSearch) {
           return null;
         }
 
         const isExpanded = searchTerm !== "" || expandedScopes.includes(item.name);
+        const isWildcard = item.name === "*" || item.name.endsWith(":*");
 
         return (
-          <div key={item.name} className="flex flex-col mt-1">
-            <div className={`flex items-start rounded-md transition-colors ${matchesSearch ? "hover:bg-secondary/40" : "opacity-50"}`}>
+          <div key={item.name} className="flex flex-col mt-1 group/tree">
+            <div
+              className={`flex items-start rounded-xl p-1.5 sm:p-2 transition-colors hover:bg-accent/40 ${!scopeAllowed ? "opacity-60" : ""
+                }`}
+            >
+              {/* Expand / Collapse Button or Leaf Dot Indicator */}
               {hasChildren ? (
                 <button
+                  type="button"
                   onClick={(e) => toggleExpand(item.name, e)}
-                  className="p-2 mt-1 mr-1 text-muted-foreground hover:text-foreground transition-colors"
+                  className="w-[22px] h-[22px] mt-0.5 mr-1 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors shrink-0"
+                  title={isExpanded ? "Collapse group" : "Expand group"}
                 >
-                  {isExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+                  {isExpanded ? (
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  ) : (
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  )}
                 </button>
               ) : (
-                <div className="w-7 mr-1 shrink-0" />
+                <div className="w-[22px] h-[22px] mt-0.5 mr-1 shrink-0 flex items-center justify-center">
+                  <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/60" />
+                </div>
               )}
-              <Label className="flex-1 flex items-start py-2 pr-3 cursor-pointer">
-                <div className="mt-1 flex items-center justify-center">
+
+              {/* Label & Checkbox */}
+              <Label className="flex-1 flex items-start py-0.5 pr-2 cursor-pointer select-none">
+                <div className="mt-0.5 flex items-center justify-center">
                   <Checkbox
                     disabled={!scopeAllowed || isUserMe()}
-                    checked={selectedScopes.includes(item.name)}
+                    checked={isSelected}
                     onCheckedChange={() => handleToggle(item.name)}
                   />
                 </div>
-                <span className="mx-3 flex-1">
-                  <div className="mb-1 text-sm font-medium leading-none">
-                    {item.name}
-                    {role &&
-                      !selectedScopes.includes(item.name) &&
-                      isPermissionAllowedByRole(item.name, role) &&
-                      role !== "super_admin" ? (
-                      <Badge variant="secondary" className="ml-2 font-normal text-xs">
+
+                <div className="mx-3 flex-1 min-w-0">
+                  {/* Name and Badges Header */}
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <span className="font-mono text-xs font-semibold text-foreground tracking-tight break-all">
+                      {item.name}
+                    </span>
+
+                    {/* Wildcard Badge */}
+                    {isWildcard && (
+                      <Badge
+                        variant="outline"
+                        className="text-xs px-2 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/25 font-medium gap-1.5 rounded-md shadow-2xs"
+                      >
+                        <Crown className="w-3.5 h-3.5" /> Wildcard Full
+                      </Badge>
+                    )}
+
+                    {/* Role Inherited Badge */}
+                    {isInherited && (
+                      <Badge
+                        variant="secondary"
+                        className="text-xs px-2.5 py-0.5 font-medium bg-primary/10 text-primary border border-primary/25 rounded-md gap-1.5 shadow-2xs"
+                      >
+                        <Shield className="w-3.5 h-3.5 text-primary shrink-0" />
                         {t("message.allowed-by-role")}
                       </Badge>
-                    ) : null}
+                    )}
                   </div>
-                  <div className="text-sm text-muted-foreground font-normal leading-snug">
-                    {item.adminDescription || item.description}
-                  </div>
-                </span>
+
+                  {/* Description */}
+                  <p className="text-xs text-muted-foreground font-normal leading-relaxed">
+                    {item.adminDescription || item.description || "No description provided."}
+                  </p>
+                </div>
               </Label>
             </div>
+
+            {/* Nested Subtree with Visual Hierarchy Branch Line */}
             {isExpanded && hasChildren && (
-              <div className="ml-4 pl-3 border-l-2 border-border/50">
+              <div className="ml-4 pl-3 sm:ml-5 sm:pl-4 border-l-2 border-border/50 my-1 space-y-1">
                 {renderTree(items, item.name)}
               </div>
             )}
@@ -343,78 +474,177 @@ const ScopeSelector = ({
           </Button>
         )}
       </SheetTrigger>
+
       <SheetContent
-        className="w-full md:!max-w-[700px] overflow-y-auto flex flex-col justify-between p-0 gap-0"
+        className="w-full md:!max-w-[700px] overflow-hidden flex flex-col p-0 gap-0 border-l border-border/80 shadow-2xl bg-background"
+        onCloseAutoFocus={(e) => {
+          e.preventDefault();
+          document.body.style.pointerEvents = "";
+        }}
       >
+        {/* Modal Header */}
         <SheetHeader className="p-6 pb-4 border-b border-border/40 bg-card/60">
           <SheetTitle className="text-xl font-bold tracking-tight text-left">
             {t("heading.managing-permissions-for", {
-              entity:
-                "firstName" in entity
-                  ? (entity as User).firstName + " " + (entity as User).lastName
-                  : entity.displayName,
+              entity: getEntityDisplayName(),
             })}
           </SheetTitle>
-          <SheetDescription className="text-xs text-muted-foreground mt-0.5 text-left">
-            {isUserMe() && (
-              <Alert className="mt-2">
-                <AlertDescription>
-                  {t("message.cannot-edit-own-permissions")}
-                </AlertDescription>
-              </Alert>
-            )}
-          </SheetDescription>
-          <div className="pt-3">
+          {isUserMe() && (
+            <Alert className="mt-2 bg-destructive/10 border-destructive/20 text-destructive text-xs py-2">
+              <ShieldAlert className="h-4 w-4 shrink-0 text-destructive" />
+              <AlertDescription className="text-xs font-medium ml-2">
+                {t("message.cannot-edit-own-permissions")}
+              </AlertDescription>
+            </Alert>
+          )}
+        </SheetHeader>
+
+        {/* Search Bar & Action Controls Bar */}
+        <div className="p-4 sm:p-5 border-b border-border/40 bg-card/20 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+          {/* Search Input */}
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <Input
-              placeholder="Start typing to search permissions..."
+              placeholder={t("placeholder.search-permissions") || "Search permissions..."}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               autoCapitalize="none"
-              className="h-9 text-xs rounded-xl"
+              className="pl-9 pr-9 h-9 text-xs rounded-lg bg-card border-border/70 focus-visible:ring-primary/40"
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-md"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
-        </SheetHeader>
-        <div
-          className={
-            "p-6 overflow-y-auto flex-1 " + (isUserMe() ? "opacity-50 pointer-events-none" : "")
-          }
-        >
-          {scopes && renderTree(scopes)}
+
+          {/* Action Buttons */}
+          <div className="flex items-center gap-1.5 justify-end shrink-0">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={handleToggleExpandAll}
+              className="h-9 w-9 text-muted-foreground hover:text-foreground rounded-lg border-border/70 shrink-0"
+              title={isAllExpanded ? t("button.collapse-all") || "Collapse All" : t("button.expand-all") || "Expand All"}
+            >
+              {isAllExpanded ? (
+                <ChevronsDownUp className="h-4 w-4" />
+              ) : (
+                <ChevronsUpDown className="h-4 w-4" />
+              )}
+            </Button>
+
+            {!isUserMe() && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleToggleSelectAll}
+                className="h-9 px-3 text-xs rounded-lg border-border/70 shrink-0"
+              >
+                {isAllSelected
+                  ? t("button.deselect-all") || "Deselect All"
+                  : t("button.select-all") || "Select All"}
+              </Button>
+            )}
+          </div>
         </div>
-        <SheetFooter className="p-4 border-t border-border/40 bg-card/60 flex items-center justify-between sm:justify-between">
-          <Button variant="ghost" size="sm" onClick={() => setOpen(false)} className="text-xs hidden md:block" disabled={submitting}>
-            {t("button.cancel")}
-          </Button>
+
+        {/* Tree Content Container */}
+        <div
+          className={`p-4 sm:p-6 overflow-y-auto flex-1 ${isUserMe() ? "opacity-50 pointer-events-none" : ""
+            }`}
+        >
+          {scopes && scopes.length > 0 ? (
+            <div className="space-y-1">
+              {renderTree(scopes)}
+            </div>
+          ) : (
+            <div className="py-12">
+              <EmptyState
+                title={t("message.no-matching-permissions")}
+                description={t("message.no-matching-permissions-desc")}
+                icon={<KeyRound className="w-6 h-6 text-muted-foreground" />}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Modal Footer */}
+        <SheetFooter className="p-4 px-6 border-t border-border/50 bg-card/70 backdrop-blur-md flex flex-row items-center justify-between sm:justify-between gap-3">
+          {/* Selected Counter */}
+          <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
+            <span>
+              <strong className="text-foreground font-mono">{grantedCount}</strong> permissions selected
+            </span>
+          </div>
+
+          {/* Action Buttons */}
           <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setOpen(false)}
+              className="text-xs h-9 px-3.5"
+              disabled={submitting}
+            >
+              {t("button.cancel")}
+            </Button>
+
             {!warning ? (
               <Button
                 type="submit"
                 size="sm"
-                className="text-xs font-semibold"
+                className="text-xs font-semibold h-9 px-4 shadow-xs gap-1.5"
                 disabled={submitting || isUserMe()}
                 onClick={onSave}
               >
-                {t("button.save-changes")}
+                <Check className="h-3.5 w-3.5" />
+                <span>{submitting ? t("button.saving") : t("button.save-changes")}</span>
               </Button>
             ) : (
-              <Popover open={popoverOpen} onOpenChange={onPopoverOpenChange}>
+              <Popover open={popoverOpen} onOpenChange={onPopoverOpenChange} modal={false}>
                 <PopoverTrigger asChild disabled={submitting || isUserMe()}>
-                  <Button size="sm" className="text-xs font-semibold" disabled={submitting || isUserMe()}>
-                    {t("button.save-changes")}
+                  <Button
+                    size="sm"
+                    className="text-xs font-semibold h-9 px-4 shadow-xs gap-1.5"
+                    disabled={submitting || isUserMe()}
+                  >
+                    <Check className="h-3.5 w-3.5" />
+                    <span>{submitting ? t("button.saving") : t("button.save-changes")}</span>
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="flex flex-col gap-3">
-                  <span className="text-sm opacity-75">
-                    {t(warning ? t("message.scopes-changed") : "")}
-                  </span>
-                  <Button
-                    type="submit"
-                    size="sm"
-                    disabled={submitting || isUserMe()}
-                    onClick={onSave}
-                  >
-                    {t("button.yes")}
-                  </Button>
+                <PopoverContent className="flex flex-col gap-3 p-4 rounded-xl border-border/80 shadow-xl max-w-xs">
+                  <div className="flex items-start gap-2 text-xs">
+                    <ShieldAlert className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground leading-relaxed">
+                      {t("message.scopes-changed")}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-end gap-2 pt-1 border-t border-border/40">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPopoverOpen(false)}
+                      className="text-xs h-8 px-2.5"
+                    >
+                      {t("button.cancel")}
+                    </Button>
+                    <Button
+                      type="submit"
+                      size="sm"
+                      disabled={submitting || isUserMe()}
+                      onClick={onSave}
+                      className="text-xs h-8 px-3 font-semibold"
+                    >
+                      {t("button.yes")}
+                    </Button>
+                  </div>
                 </PopoverContent>
               </Popover>
             )}
